@@ -1,0 +1,379 @@
+/* MHGU Set Builder — state, persistence, wiring.
+ *
+ * Save model (matches the Equipment Box's): one shared document lives in
+ * localStorage under the Collection Tracker's key, and this app owns only its
+ * `sets` section — everything else is read back immediately before every write
+ * so the other apps' halves are never clobbered from a stale copy. A save file
+ * is either a tracker envelope (rewritten whole, only `sets` replaced) or this
+ * app's own standalone format.
+ */
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const UI = window.SBUI, Pickers = window.SBPickers, Engine = window.SBEngine;
+
+  const SAVE_APP = "mhgu-set-builder";
+  const SAVE_VERSION = 1;
+  const TRACKER_APP = "mhgu-collection-tracker";
+  const SETS_KEY = "sets";
+  const AUTOSAVE_KEY = "mhgu-tracker-autosave";   // legacy name, shared contents
+  const LOCAL_ENABLED_KEY = "mhgu-sets-local";
+  const DATA_VERSION = "1";
+  const SLOTS = UI.SLOTS;
+
+  const DATA = {
+    skills: window.SB_SKILLS, souls: window.SB_SOULS,
+    decos: window.SB_DECOS, armor: window.SB_ARMOR,
+  };
+
+  // ── State ──────────────────────────────────────────────────────────────
+  const newSet = name => ({
+    name: name || "New Set",
+    weapon: null,                     // { cls, id, lv, decos: [] }
+    pieces: { head: null, chest: null, arms: null, waist: null, legs: null },
+    talisman: null,                   // { tier, slots, sk: [[tree,pts],...], decos: [] }
+  });
+  let sets = { version: 1, active: 0, list: [newSet("Set 1")] };
+  let host = null;          // tracker-file envelope (minus `sets`) when hosted
+  let fileHandle = null;
+  let dirty = false;
+  let localSaveEnabled = true;
+  try { localSaveEnabled = localStorage.getItem(LOCAL_ENABLED_KEY) !== "0"; } catch (e) {}
+
+  const currentSet = () => sets.list[sets.active] || sets.list[0];
+
+  // ── Weapon data (lazy per class) ───────────────────────────────────────
+  const weaponCache = new Map();
+  function weaponData(cls) {
+    if (weaponCache.has(cls)) return weaponCache.get(cls);
+    const p = fetch(`data/weapons/${cls}.json?v=${DATA_VERSION}`)
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)));
+    weaponCache.set(cls, p);
+    p.catch(() => weaponCache.delete(cls));
+    return p;
+  }
+
+  // ── Dirty / autosave ───────────────────────────────────────────────────
+  function markDirty() {
+    if (!dirty) { dirty = true; $("dirtyDot").classList.remove("hidden"); document.title = "● MHGU Set Builder"; }
+    scheduleAutosave();
+  }
+  function clearDirty() { dirty = false; $("dirtyDot").classList.add("hidden"); document.title = "MHGU Set Builder"; }
+
+  const readStored = key => {
+    let raw;
+    try { raw = localStorage.getItem(key); } catch (e) { return null; }
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  };
+  let autosaveTimer = null;
+  function scheduleAutosave() {
+    if (!localSaveEnabled) return;
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(flushAutosave, 500);
+  }
+  // Read-modify-write the shared document: only the sets section is ours.
+  function flushAutosave() {
+    if (!localSaveEnabled) return;
+    let doc = readStored(AUTOSAVE_KEY);
+    if (!doc || typeof doc !== "object")
+      doc = { app: TRACKER_APP, version: 2, owned: { w: {}, a: {}, p: {} }, levels: { w: {}, a: {}, p: {} } };
+    doc[SETS_KEY] = sectionPayload();
+    doc.savedAt = new Date().toISOString();
+    try { localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(doc)); } catch (e) {}
+  }
+  // Drop only our section; delete the key only if nothing else lives there.
+  function clearLocalSave() {
+    clearTimeout(autosaveTimer);
+    const doc = readStored(AUTOSAVE_KEY);
+    try {
+      if (doc && typeof doc === "object") {
+        delete doc[SETS_KEY];
+        const meaningful = Object.keys(doc).some(k => !["app", "version", "savedAt"].includes(k));
+        if (meaningful) localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(doc));
+        else localStorage.removeItem(AUTOSAVE_KEY);
+      }
+    } catch (e) {}
+  }
+
+  // ── Save / load ────────────────────────────────────────────────────────
+  const sectionPayload = () => ({ version: sets.version, active: sets.active, list: sets.list });
+  function serializeSave() {
+    if (host) {
+      const out = Object.assign({}, host);
+      out[SETS_KEY] = sectionPayload();
+      out.savedAt = new Date().toISOString();
+      return out;
+    }
+    return { app: SAVE_APP, version: SAVE_VERSION, savedAt: new Date().toISOString(), [SETS_KEY]: sectionPayload() };
+  }
+  const isTrackerFile = obj => !!obj && typeof obj === "object" && obj.app === TRACKER_APP;
+  function validateSave(obj) {
+    if (!obj || typeof obj !== "object") return "Not a valid file.";
+    if (obj.app !== SAVE_APP && !isTrackerFile(obj))
+      return "This file isn't an MHGU Set Builder or Collection Tracker save.";
+    if (obj.app === SAVE_APP && (!Number.isInteger(obj.version) || obj.version > SAVE_VERSION))
+      return "This save was made with a newer version.";
+    const s = obj[SETS_KEY];
+    if (s == null) return isTrackerFile(obj) ? null : "Save file contains no sets.";
+    if (typeof s !== "object" || !Array.isArray(s.list)) return "Set data is malformed.";
+    return null;
+  }
+  // Sanitize a stored set against the current data tables; anything broken is
+  // dropped rather than crashing the render.
+  function sanitizeSet(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const s = newSet(typeof raw.name === "string" && raw.name.trim() ? raw.name : "Set");
+    const decoList = d => (Array.isArray(d) ? d.filter(id => window.SB_DECOS[id]) : []);
+    if (raw.weapon && typeof raw.weapon === "object" && window.SB_WEAPONS.index[raw.weapon.cls]
+        && window.SB_WEAPONS.index[raw.weapon.cls].some(e => e[0] === raw.weapon.id)) {
+      s.weapon = { cls: raw.weapon.cls, id: raw.weapon.id, lv: Number(raw.weapon.lv) || 1, decos: decoList(raw.weapon.decos) };
+    }
+    if (raw.pieces && typeof raw.pieces === "object") {
+      for (const slot of SLOTS) {
+        const p = raw.pieces[slot];
+        if (p && typeof p === "object" && window.SB_ARMOR[slot][p.id])
+          s.pieces[slot] = { id: Number(p.id), lv: Number(p.lv) || 0, decos: decoList(p.decos) };
+      }
+    }
+    const t = raw.talisman;
+    if (t && typeof t === "object" && window.SB_CHARM[t.tier]) {
+      const sk = (Array.isArray(t.sk) ? t.sk : []).slice(0, 2)
+        .filter(e => Array.isArray(e) && window.SB_SKILLS.trees[e[0]] && Number.isInteger(e[1]))
+        .map(e => [Number(e[0]), Number(e[1])]);
+      if (sk.length) s.talisman = { tier: t.tier, slots: Math.min(Math.max(Number(t.slots) || 0, 0), 3), sk, decos: decoList(t.decos) };
+    }
+    return s;
+  }
+  function applySave(obj, opts) {
+    const section = obj[SETS_KEY];
+    if (!opts || opts.adopt !== false) {
+      if (isTrackerFile(obj)) { host = Object.assign({}, obj); delete host[SETS_KEY]; }
+      else host = null;
+    }
+    const list = section && Array.isArray(section.list) ? section.list.map(sanitizeSet).filter(Boolean) : [];
+    sets = {
+      version: 1,
+      active: section && Number.isInteger(section.active) ? section.active : 0,
+      list: list.length ? list : [newSet("Set 1")],
+    };
+    if (sets.active < 0 || sets.active >= sets.list.length) sets.active = 0;
+    renderSetSelect();
+    render();
+    scheduleAutosave();
+  }
+
+  const supportsFsApi = "showSaveFilePicker" in window;
+  const saveName = () => (host ? "mhgu-collection.json" : "mhgu-sets.json");
+  const saveOpts = () => ({ suggestedName: saveName(), types: [{ description: "JSON", accept: { "application/json": [".json"] } }] });
+  async function saveToFile(forceNew) {
+    const data = JSON.stringify(serializeSave(), null, 2);
+    if (supportsFsApi) {
+      try {
+        if (forceNew || !fileHandle) fileHandle = await window.showSaveFilePicker(saveOpts());
+        const w = await fileHandle.createWritable(); await w.write(data); await w.close();
+        clearDirty(); UI.toast("Saved."); return;
+      } catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = saveName(); a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    clearDirty(); UI.toast("Downloaded save file.");
+  }
+  function loadFromText(text) {
+    let obj;
+    try { obj = JSON.parse(text); } catch (e) { UI.toast("That file isn't valid JSON."); return; }
+    const err = validateSave(obj);
+    if (err) { UI.toast(err); return; }
+    applySave(obj);
+    clearDirty();
+    UI.toast(host ? "Loaded sets from a shared collection file." : "Loaded.");
+  }
+  async function openFile() {
+    if (supportsFsApi) {
+      try {
+        const [h] = await window.showOpenFilePicker({ types: saveOpts().types });
+        fileHandle = h;
+        const f = await h.getFile();
+        loadFromText(await f.text());
+        return;
+      } catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    $("importFile").click();
+  }
+
+  // ── Mutation API (handed to the pickers and cards) ─────────────────────
+  function update(fn) {
+    fn(currentSet());
+    markDirty();
+    render();
+  }
+  function freeSlots(target) {
+    const set = currentSet();
+    if (target.kind === "weapon") {
+      const st = resolved.weaponStat;
+      return st ? st.slots - Engine.decoCost(set.weapon.decos, DATA) : 0;
+    }
+    if (target.kind === "talisman")
+      return set.talisman ? set.talisman.slots - Engine.decoCost(set.talisman.decos, DATA) : 0;
+    const p = set.pieces[target.slot];
+    const a = p && window.SB_ARMOR[target.slot][p.id];
+    return a ? a.slots - Engine.decoCost(p.decos, DATA) : 0;
+  }
+  const decosOf = (set, target) =>
+    target.kind === "weapon" ? set.weapon.decos :
+    target.kind === "talisman" ? set.talisman.decos :
+    set.pieces[target.slot].decos;
+  const api = {
+    freeSlots,
+    setPiece: (slot, id) => update(s => { s.pieces[slot] = { id, lv: 0, decos: [] }; }),
+    clearPiece: slot => update(s => { s.pieces[slot] = null; }),
+    setPieceLevel: (slot, lv) => update(s => { if (s.pieces[slot]) s.pieces[slot].lv = lv; }),
+    setWeapon: (cls, id) => update(s => {
+      const entry = window.SB_WEAPONS.index[cls].find(e => e[0] === id);
+      s.weapon = { cls, id, lv: entry ? entry[4] : 1, decos: [] };
+    }),
+    clearWeapon: () => update(s => { s.weapon = null; }),
+    setWeaponLevel: lv => update(s => { if (s.weapon) { s.weapon.lv = lv; s.weapon.decos = []; } }),
+    setTalismanTier: tier => update(s => {
+      if (!tier) { s.talisman = null; return; }
+      const old = s.talisman;
+      s.talisman = { tier, slots: old ? old.slots : 0, sk: [], decos: old ? old.decos : [] };
+      // Keep the old skills where the new tier can roll them, clamped to range.
+      const table = window.SB_CHARM[tier];
+      const keep = [];
+      for (let i = 0; i < (old ? old.sk.length : 0); i++) {
+        const [tree, pts] = old.sk[i];
+        const row = table[tree];
+        const [lo, hi] = i === 0 ? [row && row[0], row && row[1]] : [row && row[2], row && row[3]];
+        if (row && (lo !== 0 || hi !== 0)) keep.push([tree, Math.min(Math.max(pts, lo), hi)]);
+      }
+      if (!keep.length) {
+        const first = Object.keys(table).map(Number).find(tr => table[tr][0] !== 0 || table[tr][1] !== 0);
+        keep.push([first, table[first][0]]);
+      }
+      s.talisman.sk = keep;
+    }),
+    setTalismanSkill: (i, tree) => update(s => {
+      const t = s.talisman; if (!t) return;
+      const table = window.SB_CHARM[t.tier];
+      if (tree == null) { t.sk = t.sk.slice(0, 1); return; }
+      const row = table[tree] || [0, 0, 0, 0];
+      const [lo, hi] = i === 0 ? [row[0], row[1]] : [row[2], row[3]];
+      t.sk[i] = [tree, Math.min(Math.max(t.sk[i] ? t.sk[i][1] : lo, lo), hi)];
+    }),
+    setTalismanPoints: (i, pts) => update(s => {
+      const t = s.talisman; if (!t || !t.sk[i]) return;
+      const row = window.SB_CHARM[t.tier][t.sk[i][0]] || [0, 0, 0, 0];
+      const [lo, hi] = i === 0 ? [row[0], row[1]] : [row[2], row[3]];
+      t.sk[i][1] = Math.min(Math.max(pts, lo), hi);
+    }),
+    setTalismanSlots: n => update(s => { if (s.talisman) s.talisman.slots = n; }),
+    addDeco: (target, id) => update(s => { decosOf(s, target).push(id); }),
+    removeDeco: (target, i) => update(s => { decosOf(s, target).splice(i, 1); }),
+  };
+
+  // ── Render ─────────────────────────────────────────────────────────────
+  const resolved = { weaponLevels: null, weaponStat: null };
+  let renderSeq = 0;
+  async function render() {
+    const seq = ++renderSeq;
+    const set = currentSet();
+    resolved.weaponLevels = null;
+    resolved.weaponStat = null;
+    let weapon = null;
+    if (set.weapon) {
+      try {
+        const wd = await weaponData(set.weapon.cls);
+        if (seq !== renderSeq) return;   // superseded while fetching
+        const levels = wd.byId[set.weapon.id] || [];
+        const st = levels.find(l => l.lv === set.weapon.lv) || levels[levels.length - 1];
+        if (st) {
+          resolved.weaponLevels = levels;
+          resolved.weaponStat = st;
+          weapon = { slots: st.slots, def: st.def, decos: set.weapon.decos };
+        }
+      } catch (e) { UI.toast("Couldn't load weapon data."); }
+    }
+    UI.renderCards(set, resolved, api);
+    const build = { weapon, pieces: set.pieces, talisman: set.talisman };
+    UI.renderResults(Engine.compute(build, DATA));
+  }
+
+  // ── Set management ─────────────────────────────────────────────────────
+  function renderSetSelect() {
+    const sel = $("setSelect");
+    sel.innerHTML = sets.list.map((s, i) =>
+      `<option value="${i}"${i === sets.active ? " selected" : ""}>${Pickers.esc(s.name)}</option>`).join("");
+  }
+  function wireHeader() {
+    $("setSelect").addEventListener("change", e => {
+      sets.active = Number(e.target.value);
+      markDirty(); render();
+    });
+    $("setNew").addEventListener("click", () => {
+      sets.list.push(newSet(`Set ${sets.list.length + 1}`));
+      sets.active = sets.list.length - 1;
+      renderSetSelect(); markDirty(); render();
+    });
+    $("setDup").addEventListener("click", () => {
+      const copy = JSON.parse(JSON.stringify(currentSet()));
+      copy.name += " (copy)";
+      sets.list.splice(sets.active + 1, 0, copy);
+      sets.active++;
+      renderSetSelect(); markDirty(); render();
+    });
+    $("setRename").addEventListener("click", () => {
+      const name = prompt("Set name:", currentSet().name);
+      if (name && name.trim()) { currentSet().name = name.trim(); renderSetSelect(); markDirty(); }
+    });
+    $("setDelete").addEventListener("click", () => {
+      UI.confirmDialog("Delete set", `<p>Delete “${Pickers.esc(currentSet().name)}”?</p>`, () => {
+        sets.list.splice(sets.active, 1);
+        if (!sets.list.length) sets.list.push(newSet("Set 1"));
+        sets.active = Math.min(sets.active, sets.list.length - 1);
+        renderSetSelect(); markDirty(); render();
+      });
+    });
+    $("saveBtn").addEventListener("click", () => saveToFile(false));
+    $("saveAsBtn").addEventListener("click", () => saveToFile(true));
+    $("openBtn").addEventListener("click", openFile);
+    $("importFile").addEventListener("change", async e => {
+      const f = e.target.files[0];
+      if (f) loadFromText(await f.text());
+      e.target.value = "";
+    });
+    for (const [btn, modal] of [["settingsBtn", "settingsModal"], ["linksBtn", "linksModal"], ["aboutBtn", "aboutModal"]]) {
+      $(btn).addEventListener("click", () => $(modal).classList.remove("hidden"));
+    }
+    for (const [btn, modal] of [["settingsClose", "settingsModal"], ["linksClose", "linksModal"], ["aboutClose", "aboutModal"]]) {
+      $(btn).addEventListener("click", () => $(modal).classList.add("hidden"));
+    }
+    for (const modal of ["settingsModal", "linksModal", "aboutModal"]) {
+      $(modal).addEventListener("mousedown", e => { if (e.target === $(modal)) $(modal).classList.add("hidden"); });
+    }
+    const toggle = $("localSaveToggle");
+    const syncToggle = () => toggle.setAttribute("aria-checked", String(localSaveEnabled));
+    toggle.addEventListener("click", () => {
+      localSaveEnabled = !localSaveEnabled;
+      try { localStorage.setItem(LOCAL_ENABLED_KEY, localSaveEnabled ? "1" : "0"); } catch (e) {}
+      if (localSaveEnabled) scheduleAutosave(); else clearLocalSave();
+      syncToggle();
+    });
+    syncToggle();
+    $("clearLocalBtn").addEventListener("click", () => {
+      UI.confirmDialog("Clear browser save", "<p>Remove the sets stored in this browser? Other apps' data in the shared save is kept.</p>", () => {
+        clearLocalSave(); UI.toast("Browser save cleared.");
+      });
+    });
+  }
+
+  // ── Startup ────────────────────────────────────────────────────────────
+  Pickers.init();
+  wireHeader();
+  const stored = readStored(AUTOSAVE_KEY);
+  if (stored && stored[SETS_KEY]) applySave(stored, { adopt: false });
+  else { renderSetSelect(); render(); }
+  window.addEventListener("beforeunload", () => { if (localSaveEnabled && dirty) flushAutosave(); });
+})();

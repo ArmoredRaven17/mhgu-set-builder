@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "builder",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8128", "--directory", "docs"],
+      "port": 8128
+    },
+    {
+      "name": "tracker",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8123", "--directory", "C:/Coding Repos/mhgu-collection-tracker/docs"],
+      "port": 8123
+    }
+  ]
+}

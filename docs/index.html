@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MHGU Set Builder</title>
+<link rel="icon" type="image/png" href="assets/icons/icon_armor_body_r7.png">
+<link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+<div id="app">
+
+  <!-- Title bar -->
+  <header class="titlebar titlebar-header">
+    <img class="title-icon" src="assets/icons/icon_armor_body.png" alt="">
+    <h1>MHGU Set Builder</h1>
+    <div class="set-picker">
+      <select id="setSelect" class="mini-select" title="Current set"></select>
+      <button id="setNew" class="nav-btn" title="New set">+ New</button>
+      <button id="setDup" class="nav-btn" title="Duplicate this set">Duplicate</button>
+      <button id="setRename" class="nav-btn" title="Rename this set">Rename</button>
+      <button id="setDelete" class="nav-btn" title="Delete this set">Delete</button>
+    </div>
+    <span class="titlebar-spacer"></span>
+    <button id="saveBtn"   class="btn tiny">Save <span id="dirtyDot" class="dirty-dot hidden">●</span></button>
+    <button id="saveAsBtn" class="btn tiny">Save As…</button>
+    <button id="openBtn"   class="btn tiny">Open…</button>
+    <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+    <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">&#9881;</button>
+    <button id="linksBtn" class="icon-btn" title="Other MHGU apps" aria-label="Other MHGU apps">&#128279;</button>
+    <button id="aboutBtn" class="icon-btn" title="About / Attributions" aria-label="About">&#9432;</button>
+  </header>
+
+  <!-- Builder layout -->
+  <div class="builder-layout">
+    <div class="equip-column" id="equipColumn">
+      <div class="equip-card" id="card-weapon"></div>
+      <div class="equip-card" id="card-head"></div>
+      <div class="equip-card" id="card-chest"></div>
+      <div class="equip-card" id="card-arms"></div>
+      <div class="equip-card" id="card-waist"></div>
+      <div class="equip-card" id="card-legs"></div>
+      <div class="equip-card" id="card-talisman"></div>
+    </div>
+    <aside class="results-panel" id="resultsPanel"></aside>
+  </div>
+</div>
+
+<!-- Piece / weapon / deco picker -->
+<div id="pickerModal" class="modal hidden">
+  <div class="modal-card wide picker-card">
+    <h2 id="pickerTitle">Pick</h2>
+    <div id="pickerFilters" class="picker-filters"></div>
+    <div id="pickerList" class="picker-list"></div>
+    <div class="row end gap modal-actions">
+      <button id="pickerCancel" class="btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div id="confirmModal" class="modal hidden">
+  <div class="modal-card">
+    <h2 id="confirmTitle">Confirm</h2>
+    <div id="confirmBody"></div>
+    <div class="row end gap">
+      <button id="confirmOk" class="btn">OK</button>
+      <button id="confirmCancel" class="btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Other MHGU apps -->
+<div id="linksModal" class="modal hidden">
+  <div class="modal-card">
+    <h2>Other MHGU Apps</h2>
+    <p class="muted">Companion fan tools by the same author. Each opens in a new tab.</p>
+    <ul class="app-links">
+      <li>
+        <a href="https://armoredraven17.github.io/mhgu-collection-tracker/" target="_blank" rel="noopener">Collection Tracker</a>
+        <span class="app-desc">Tracks which weapons, armor and Palico gear you own, and what it costs to finish them. Shares its save file with this builder.</span>
+      </li>
+      <li>
+        <a href="https://armoredraven17.github.io/mhgu-equipment-box/" target="_blank" rel="noopener">Equipment Box</a>
+        <span class="app-desc">Mirrors the in-game box — 2000 hunter slots and 1000 Palico — so you can plan where things sit.</span>
+      </li>
+      <li class="current">
+        <span class="app-name">Set Builder <span class="app-here">you are here</span></span>
+        <span class="app-desc">Assemble a full set by hand and see exactly which skills it activates.</span>
+      </li>
+      <li>
+        <a href="https://armoredraven17.github.io/MHGU-Quest-Randomizer/" target="_blank" rel="noopener">Quest Randomizer</a>
+        <span class="app-desc">Rolls random quests when you can't decide what to hunt.</span>
+      </li>
+      <li>
+        <a href="https://armoredraven17.github.io/MHGU-Bingo/" target="_blank" rel="noopener">Bingo</a>
+        <span class="app-desc">Builds a bingo card of hunting goals, with a shareable seed so a group can race the same board.</span>
+      </li>
+      <li>
+        <a href="https://armoredraven17.github.io/MHGU-Hunting-Log/" target="_blank" rel="noopener">Hunting Log</a>
+        <span class="app-desc">Keeps a running record of your hunts — what you were after, what you wore, who came along.</span>
+      </li>
+      <li>
+        <a href="https://armoredraven17.github.io/MHGU-Zenny-Gauntlet/" target="_blank" rel="noopener">Zenny Gauntlet</a>
+        <span class="app-desc">A scored challenge run — fail a hunt or get carted and you lose that weapon/style combo for the rest of the run.</span>
+      </li>
+    </ul>
+    <div class="row end gap">
+      <button id="linksClose" class="btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- About / Attributions -->
+<div id="aboutModal" class="modal hidden">
+  <div class="modal-card">
+    <h2>About / Attributions</h2>
+    <p>An unofficial, non-commercial fan tool for planning MHGU armor sets by hand.
+      Pick a weapon, five armor pieces, decorations and a talisman; the builder totals
+      defense, resistances and slots and shows every skill the set activates —
+      including negative skills, Torso Up and the compound Soul skills.</p>
+    <p><strong>Development:</strong> Built by the author with substantial help from
+      <a href="https://claude.com/claude-code" target="_blank" rel="noopener">Claude Code</a>,
+      Anthropic's AI coding tool. Most of the code, the data generator and this page
+      were written with AI assistance, reviewed and directed by the author.</p>
+    <p><strong>Armor data:</strong> extracted from the game's own data tables by the
+      <a href="https://github.com/ArmoredRaven17/mhgu-collection-tracker" target="_blank" rel="noopener">Collection Tracker</a>
+      project (see its notices for the full toolchain credits).</p>
+    <p><strong>Weapon stats and talisman tables:</strong> derived from
+      <a href="https://mhgu.kiranico.com" target="_blank" rel="noopener">Kiranico</a>.</p>
+    <p><strong>Skill thresholds, decorations and English names:</strong>
+      <a href="https://github.com/JoeLago/MHGUDB-iOS" target="_blank" rel="noopener">MHGUDB-iOS</a> (MIT) &amp;
+      <a href="https://github.com/gatheringhallstudios/MHGenDatabase" target="_blank" rel="noopener">gatheringhallstudios</a>
+      community database.</p>
+    <p><strong>Equipment icons:</strong>
+      <a href="https://monsterhunterwiki.org" target="_blank" rel="noopener">monsterhunterwiki.org</a> —
+      licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>;
+      adaptations shared under the same licence.</p>
+    <p><strong>Menu textures and font:</strong> carried over from the sibling MHGU apps.</p>
+    <p class="muted">Monster Hunter content is owned by Capcom. This tool is not affiliated
+      with or endorsed by Capcom.</p>
+    <div class="row end gap">
+      <button id="aboutClose" class="btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div id="settingsModal" class="modal hidden">
+  <div class="modal-card">
+    <h2>Settings</h2>
+    <div class="set-section">
+      <div class="set-title">Storage</div>
+      <div class="set-row">
+        <div class="set-label">Save in this browser
+          <span class="set-hint">Keeps your sets here so they load automatically. Use Save to a file for backups or another device. Sets share one file with the Collection Tracker and Equipment Box.</span></div>
+        <button type="button" class="toggle" id="localSaveToggle" role="switch" aria-checked="true" aria-label="Save in this browser"></button>
+      </div>
+      <button id="clearLocalBtn" class="btn tiny">Clear browser save</button>
+    </div>
+    <div class="row end gap">
+      <button id="settingsClose" class="btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="data/skills.js?v=1"></script>
+<script src="data/souls.js?v=1"></script>
+<script src="data/decos.js?v=1"></script>
+<script src="data/charm.js?v=1"></script>
+<script src="data/armor.js?v=1"></script>
+<script src="data/weapons.js?v=1"></script>
+<script src="engine.js?v=1"></script>
+<script src="pickers.js?v=1"></script>
+<script src="ui.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
