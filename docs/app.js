@@ -42,6 +42,94 @@
 
   const currentSet = () => sets.list[sets.active] || sets.list[0];
 
+  // ── Theme ──────────────────────────────────────────────────────────────
+  // Same palette and derivation as the Collection Tracker and Equipment Box,
+  // so the family sits together. Only the storage key is this app's own.
+  const THEME_KEY = "mhgu-sets-theme";
+  const THEME_COLORS = [
+    ["Teostra", "#570B0B"], ["Rathalos", "#b51717"],
+    ["Tetsucabra", "#c65900"], ["Agnaktor", "#fc933e"],
+    ["Tigrex", "#C8A319"], ["Rajang", "#f1d364"],
+    ["Deviljho", "#0B570F"], ["Rathian", "#3a9b3f"],
+    ["Astalos", "#14503d"], ["Zinogre", "#2dae85"],
+    ["Zamtrios", "#005984"], ["Plesioth", "#0080c1"],
+    ["Brachydios", "#0B2757"], ["Lagiacrus", "#0b3f97"],
+    ["G. Magala", "#1F0B57", "Gore Magala"], ["Nerscylla", "#4e2fa2"],
+    ["Y. Garuga", "#62008f", "Yian Garuga"], ["Chameleos", "#8e50ab"],
+    ["Mizutsune", "#D84696"], ["Congalala", "#ce79a8"],
+    ["Duramboros", "#5a411f"], ["Diablos", "#997c54"],
+    ["Barroth", "#B57C45"], ["Bulldrome", "#cfaa87"],
+    ["K. Daora", "#505358", "Kushala Daora"], ["Valstrax", "#aeb5c1"],
+    ["Forbidden", "#1E2025", "Question Mark"],
+  ];
+  const COLORS_HEX = Object.fromEntries(THEME_COLORS.map(([name, hex]) => [hex.toUpperCase(), name]));
+  const COLORS_ICON = Object.fromEntries(THEME_COLORS.filter(c => c[2]).map(([name, , icon]) => [name, icon]));
+  const FALLBACK_ICON = "assets/MonsterIcons/MHGU-Question_Mark_Icon.webp";
+  const monsterIcon = name => name ? "assets/MonsterIcons/MHGU-" + name.replace(/ /g, "_") + "_Icon.webp" : FALLBACK_ICON;
+
+  const hexRgb = h => { h = h.replace("#", ""); return [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16)); };
+  const clampC = n => Math.max(0, Math.min(255, Math.round(n)));
+  const clamp01 = n => Math.max(0, Math.min(1, n));
+  const rgbToHsl = ([r, g, b]) => {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min, l = (max + min) / 2;
+    if (d === 0) return [0, 0, l];
+    const s = d / (1 - Math.abs(2 * l - 1));
+    const h = max === r ? ((g - b) / d + (g < b ? 6 : 0)) / 6
+      : max === g ? ((b - r) / d + 2) / 6 : ((r - g) / d + 4) / 6;
+    return [h, s, l];
+  };
+  const hslToRgb = ([h, s, l]) => {
+    const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h * 6) % 2 - 1)), m = l - c / 2;
+    const hi = Math.floor(h * 6) % 6;
+    const [r, g, b] = hi === 0 ? [c, x, 0] : hi === 1 ? [x, c, 0] : hi === 2 ? [0, c, x]
+      : hi === 3 ? [0, x, c] : hi === 4 ? [x, 0, c] : [c, 0, x];
+    return [r + m, g + m, b + m].map(v => clampC(v * 255));
+  };
+  const darken = (rgb, f) => { const [h, s, l] = rgbToHsl(rgb); return hslToRgb([h, s, clamp01(l * f)]); };
+  const lighten = (rgb, b) => { const [h, s, l] = rgbToHsl(rgb); return hslToRgb([h, s, clamp01(l + (1 - l) * b)]); };
+  const cssRgb = rgb => `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+
+  function applyTheme(hex) {
+    const c = hexRgb(hex), r = document.documentElement.style;
+    r.setProperty("--bg", cssRgb(darken(c, .70)));
+    r.setProperty("--bg1", cssRgb(darken(c, .80)));
+    r.setProperty("--grid-bg", cssRgb(darken(c, .35)));
+    r.setProperty("--content-bg", cssRgb(darken(c, .55)));
+    r.setProperty("--panel-bg", cssRgb(darken(c, .40)));
+    r.setProperty("--bg2", cssRgb(darken(c, .95)));
+    r.setProperty("--nav-bg", cssRgb(darken(c, .85)));
+    // Control factors measured across all 27 themes in the Equipment Box —
+    // see the long note there. .42 is the contrast ceiling for a white label.
+    r.setProperty("--control-bg", cssRgb(darken(c, .34)));
+    r.setProperty("--control-bg-hover", cssRgb(darken(c, .42)));
+    r.setProperty("--control-active", cssRgb(darken(c, .24)));
+    r.setProperty("--accent", cssRgb(darken(c, .7)));
+    r.setProperty("--accent-hover", cssRgb(lighten(c, .4)));
+    try { localStorage.setItem(THEME_KEY, hex); } catch (e) {}
+    document.querySelectorAll(".swatch").forEach(s => s.classList.toggle("sel", s.dataset.hex === hex));
+    // The title icon follows the theme — the monster the colour is named after.
+    const titleIcon = document.querySelector(".title-icon");
+    if (titleIcon) {
+      const name = COLORS_HEX[hex.toUpperCase()];
+      titleIcon.src = name ? monsterIcon(COLORS_ICON[name] || name) : FALLBACK_ICON;
+    }
+  }
+  function buildSwatches() {
+    const wrap = $("swatches");
+    wrap.innerHTML = "";
+    for (const [name, hex, iconOverride] of THEME_COLORS) {
+      const d = document.createElement("div");
+      d.className = "swatch";
+      d.dataset.hex = hex;
+      d.style.background = hex;
+      d.title = name;
+      d.innerHTML = `<img class="swatch-icon" src="${monsterIcon(iconOverride || name)}" alt=""><span>${name}</span>`;
+      d.addEventListener("click", () => applyTheme(hex));
+      wrap.appendChild(d);
+    }
+  }
+
   // ── Weapon data (lazy per class) ───────────────────────────────────────
   const weaponCache = new Map();
   function weaponData(cls) {
@@ -372,6 +460,10 @@
   // ── Startup ────────────────────────────────────────────────────────────
   Pickers.init();
   wireHeader();
+  buildSwatches();
+  let savedTheme = "#1E2025";
+  try { savedTheme = localStorage.getItem(THEME_KEY) || savedTheme; } catch (e) {}
+  applyTheme(savedTheme);
   const stored = readStored(AUTOSAVE_KEY);
   if (stored && stored[SETS_KEY]) applySave(stored, { adopt: false });
   else { renderSetSelect(); render(); }
