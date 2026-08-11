@@ -224,9 +224,25 @@ window.SBUI = (function () {
     const next = ladder.find(s => s[0] > pts);
     return next ? `${next[0] - pts} to ${next[1]}` : "";
   }
-  function renderResults(result) {
+  function renderResults(result, set) {
     const panel = $("resultsPanel");
     if (!result) { panel.innerHTML = `<div class="results-empty">Pick equipment to see totals.</div>`; return; }
+    // Every socketed decoration, in wear order, with where it sits.
+    const decoLines = [];
+    const holders = [["Weapon", set && set.weapon]]
+      .concat(SLOTS.map(s => [SLOT_LABEL[s], set && set.pieces[s]]))
+      .concat([["Talisman", set && set.talisman]]);
+    for (const [label, holder] of holders) {
+      for (const id of (holder && holder.decos) || []) {
+        const d = window.SB_DECOS[id];
+        if (!d) continue;
+        decoLines.push(`<div class="deco-line">
+          <span class="dn">${esc(d.n)} <span class="dcost">[${d.slots}]</span></span>
+          <span class="dsk">${d.sk.map(([t, p]) => `${esc(treeName(t))} ${p > 0 ? "+" + p : p}`).join(", ")}</span>
+          <span class="dsrc">${label}</span>
+        </div>`);
+      }
+    }
     const r = result;
     const slotTotals = Object.values(r.slots).reduce((a, s) => [a[0] + s.used, a[1] + s.total], [0, 0]);
     const soulsByParent = {};
@@ -266,7 +282,8 @@ window.SBUI = (function () {
       <div class="res-title">Activated skills</div>
       ${activeHtml || `<div class="results-empty">Nothing activates yet.</div>`}
       <div class="res-title">Skill points</div>
-      ${treeRows || `<div class="results-empty">No skill points yet.</div>`}`;
+      ${treeRows || `<div class="results-empty">No skill points yet.</div>`}
+      ${decoLines.length ? `<div class="res-title">Decorations (${decoLines.length})</div>${decoLines.join("")}` : ""}`;
   }
 
   function renderCards(set, resolved, api) {

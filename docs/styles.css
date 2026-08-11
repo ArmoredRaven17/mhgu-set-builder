@@ -261,6 +261,15 @@ input,select,button,textarea{font-family:inherit}
 .tree-row.hit .tn,.tree-row.hit .tp{color:var(--positive)}
 .tree-row.hit.neg-hit .tn,.tree-row.hit.neg-hit .tp{color:var(--negative)}
 
+.deco-line{
+  display:flex;align-items:baseline;gap:8px;padding:3px 2px;font-size:12.5px;
+  border-bottom:1px solid #ffffff0a
+}
+.deco-line .dn{flex-shrink:0}
+.deco-line .dcost{font-size:10px;opacity:.55}
+.deco-line .dsk{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;opacity:.65}
+.deco-line .dsrc{margin-left:auto;flex-shrink:0;font-size:10.5px;opacity:.55}
+
 .problem-list{margin:6px 0 0;padding:0 0 0 18px;color:var(--negative);font-size:12px}
 .results-empty{opacity:.5;font-style:italic;font-size:13px;margin-top:8px}
 .slot-summary{font-size:12px;opacity:.8;font-variant-numeric:tabular-nums}

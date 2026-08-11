@@ -400,7 +400,7 @@
     }
     UI.renderCards(set, resolved, api);
     const build = { weapon, pieces: set.pieces, talisman: set.talisman };
-    UI.renderResults(Engine.compute(build, DATA));
+    UI.renderResults(Engine.compute(build, DATA), set);
   }
 
   // ── Set management ─────────────────────────────────────────────────────
