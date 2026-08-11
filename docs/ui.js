@@ -232,10 +232,12 @@ window.SBUI = (function () {
     const holders = [["Weapon", set && set.weapon]]
       .concat(SLOTS.map(s => [SLOT_LABEL[s], set && set.pieces[s]]))
       .concat([["Talisman", set && set.talisman]]);
+    const decoCounts = new Map();   // id -> count across all equipment
     for (const [label, holder] of holders) {
       for (const id of (holder && holder.decos) || []) {
         const d = window.SB_DECOS[id];
         if (!d) continue;
+        decoCounts.set(id, (decoCounts.get(id) || 0) + 1);
         decoLines.push(`<div class="deco-line">
           <span class="dn">${esc(d.n)} <span class="dcost">[${d.slots}]</span></span>
           <span class="dsk">${d.sk.map(([t, p]) => `${esc(treeName(t))} ${p > 0 ? "+" + p : p}`).join(", ")}</span>
@@ -243,6 +245,14 @@ window.SBUI = (function () {
         </div>`);
       }
     }
+    // Totals: one line per distinct jewel with its count and summed skills.
+    const decoTotals = [...decoCounts.entries()]
+      .map(([id, n]) => [window.SB_DECOS[id], n])
+      .sort((a, b) => b[1] - a[1] || a[0].n.localeCompare(b[0].n))
+      .map(([d, n]) => `<div class="deco-line total">
+        <span class="dn">${esc(d.n)} <span class="dcount">×${n}</span></span>
+        <span class="dsk">${d.sk.map(([t, p]) => `${esc(treeName(t))} ${p * n > 0 ? "+" + p * n : p * n}`).join(", ")}</span>
+      </div>`);
     const r = result;
     const slotTotals = Object.values(r.slots).reduce((a, s) => [a[0] + s.used, a[1] + s.total], [0, 0]);
     const soulsByParent = {};
@@ -283,7 +293,8 @@ window.SBUI = (function () {
       ${activeHtml || `<div class="results-empty">Nothing activates yet.</div>`}
       <div class="res-title">Skill points</div>
       ${treeRows || `<div class="results-empty">No skill points yet.</div>`}
-      ${decoLines.length ? `<div class="res-title">Decorations (${decoLines.length})</div>${decoLines.join("")}` : ""}`;
+      ${decoLines.length ? `<div class="res-title">Decorations (${decoLines.length})</div>${decoLines.join("")}
+        <div class="deco-totals-head">Totals</div>${decoTotals.join("")}` : ""}`;
   }
 
   function renderCards(set, resolved, api) {
