@@ -266,17 +266,20 @@ window.SBUI = (function () {
     const activeHtml = r.active.map(a =>
       skillRow(a) + (soulsByParent[a.tree] || []).map(s => skillRow(s, " soul-grant")).join("")
     ).join("");
-    const treeChips = Object.entries(r.treePoints)
+    const treeCells = Object.entries(r.treePoints)
       .map(([t, p]) => [Number(t), p])
       .filter(([t, p]) => p !== 0 && t !== window.SBEngine.TORSO_UP)
       .sort((a, b) => b[1] - a[1])
       .map(([t, p]) => {
         const hit = r.active.find(a => a.tree === t);
-        const tip = hit ? hit.name : nextThresholdHint(t, p);
-        return `<span class="tree-chip${hit ? " hit" : ""}${hit && hit.negative ? " neg-hit" : ""}${p < 0 ? " neg" : ""}"
-          ${tip ? ` title="${esc(tip)}"` : ""}>${esc(treeName(t))} <b>${p > 0 ? "+" + p : p}</b></span>`;
+        const cls = `${hit ? " hit" : ""}${hit && hit.negative ? " neg-hit" : ""}${p < 0 ? " neg" : ""}`;
+        return `<span class="tt-name${cls}">${esc(treeName(t))}</span>
+          <span class="tt-pts${cls}">${p > 0 ? "+" + p : p}</span>
+          <span class="tt-info${cls}">${esc(hit ? hit.name : nextThresholdHint(t, p))}</span>`;
       }).join("");
-    const treeRows = treeChips ? `<div class="tree-chips">${treeChips}</div>` : "";
+    const treeRows = treeCells ? `<div class="tree-table">
+      <span class="tt-head">Skill</span><span class="tt-head tt-pts">Points</span><span class="tt-head">Activates</span>
+      ${treeCells}</div>` : "";
     panel.innerHTML = `
       <div class="res-title">Totals${r.torsoUpCount ? `<span class="torso-badge">Torso Up ×${r.torsoUpCount + 1}</span>` : ""}</div>
       <div class="totals-row">
