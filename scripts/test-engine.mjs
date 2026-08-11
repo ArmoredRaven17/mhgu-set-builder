@@ -143,20 +143,24 @@ console.log("real data: Redhelm XR set (true soul):");
     check(r.active.some(a => a.name === n) || r.soulGrants.some(s => s.name === n), `soul grants ${n}`);
 }
 
-console.log("real data: talisman validation:");
+console.log("real data: talisman validation (rarity model):");
 {
   const poison = treeId("Poison");
-  const v = (tier, slots, sk) => E.validateTalisman({ tier, slots, sk }, charm, data.skills);
-  check(v("mystery", 0, [[poison, 3]]).length === 0, "mystery Poison +3 accepted");
-  check(v("mystery", 0, [[poison, 9]]).length === 1, "mystery Poison +9 rejected (rolls 1-5)");
-  check(v("mystery", 4, [[poison, 3]]).length === 1, "4 slots rejected");
-  check(v("mystery", 0, [[poison, 3], [poison, 1]]).length >= 1, "duplicate skill rejected");
-  check(v("bogus", 0, [[poison, 3]]).length === 1, "unknown tier rejected");
-  // A tier that can't roll some tree as skill 1: find one with s1 range zero but present in another tier.
-  const enduring = charm.enduring, mystery = charm.mystery;
+  const v = (rar, slots, sk) => E.validateTalisman({ rar, slots, sk }, charm, data.skills);
+  check(Object.keys(charm.names).length === 10 && charm.names[1] === "Pawn Talisman", "10 talisman names shipped");
+  check(E.TAL_TIER[1] === "mystery" && E.TAL_TIER[4] === "shining" && E.TAL_TIER[7] === "timeworn" && E.TAL_TIER[10] === "enduring",
+    "rarity-to-tier mapping matches the editor");
+  check(v(1, 0, [[poison, 3]]).length === 0, "Pawn (mystery) Poison +3 accepted");
+  check(v(2, 0, [[poison, 9]]).length === 1, "Bishop (mystery) Poison +9 rejected (rolls 1-5)");
+  check(v(1, 4, [[poison, 3]]).length === 1, "4 slots rejected");
+  check(v(1, 0, [[poison, 3], [poison, 1]]).length >= 1, "duplicate skill rejected");
+  check(v(0, 0, [[poison, 3]]).length === 1, "rarity 0 rejected");
+  check(v(11, 0, [[poison, 3]]).length === 1, "rarity 11 rejected");
+  // A tier that can't roll some tree as skill 1: present on enduring, absent on mystery.
+  const enduring = charm.tiers.enduring, mystery = charm.tiers.mystery;
   const onlyEnduring = Object.keys(enduring).find(t => !(t in mystery));
   if (onlyEnduring)
-    check(v("mystery", 0, [[Number(onlyEnduring), 1]]).length === 1, `tree ${onlyEnduring} not rollable on mystery`);
+    check(v(1, 0, [[Number(onlyEnduring), 1]]).length === 1, `tree ${onlyEnduring} not rollable on a Pawn (mystery)`);
 }
 
 console.log("real data: known classic set (Attack Up via decos):");

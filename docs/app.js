@@ -225,11 +225,17 @@
       }
     }
     const t = raw.talisman;
-    if (t && typeof t === "object" && window.SB_CHARM[t.tier]) {
-      const sk = (Array.isArray(t.sk) ? t.sk : []).slice(0, 2)
-        .filter(e => Array.isArray(e) && window.SB_SKILLS.trees[e[0]] && Number.isInteger(e[1]))
-        .map(e => [Number(e[0]), Number(e[1])]);
-      if (sk.length) s.talisman = { tier: t.tier, slots: Math.min(Math.max(Number(t.slots) || 0, 0), 3), sk, decos: decoList(t.decos) };
+    if (t && typeof t === "object") {
+      // Saves from before the rarity model stored a tier name; map those to a
+      // representative rarity of the same tier.
+      const LEGACY_TIER_RAR = { mystery: 1, shining: 3, timeworn: 5, enduring: 8 };
+      const rar = Number.isInteger(t.rar) ? t.rar : LEGACY_TIER_RAR[t.tier];
+      if (rar >= 1 && rar <= 10) {
+        const sk = (Array.isArray(t.sk) ? t.sk : []).slice(0, 2)
+          .filter(e => Array.isArray(e) && window.SB_SKILLS.trees[e[0]] && Number.isInteger(e[1]))
+          .map(e => [Number(e[0]), Number(e[1])]);
+        if (sk.length) s.talisman = { rar, slots: Math.min(Math.max(Number(t.slots) || 0, 0), 3), sk, decos: decoList(t.decos) };
+      }
     }
     return s;
   }
@@ -332,12 +338,12 @@
     }),
     clearWeapon: () => update(s => { s.weapon = null; }),
     setWeaponLevel: lv => update(s => { if (s.weapon) { s.weapon.lv = lv; s.weapon.decos = []; } }),
-    setTalismanTier: tier => update(s => {
-      if (!tier) { s.talisman = null; return; }
+    setTalismanRarity: rar => update(s => {
+      if (!rar) { s.talisman = null; return; }
       const old = s.talisman;
-      s.talisman = { tier, slots: old ? old.slots : 0, sk: [], decos: old ? old.decos : [] };
-      // Keep the old skills where the new tier can roll them, clamped to range.
-      const table = window.SB_CHARM[tier];
+      s.talisman = { rar, slots: old ? old.slots : 0, sk: [], decos: old ? old.decos : [] };
+      // Keep the old skills where the new rarity's tier can roll them, clamped.
+      const table = window.SB_CHARM.tiers[Engine.TAL_TIER[rar]];
       const keep = [];
       for (let i = 0; i < (old ? old.sk.length : 0); i++) {
         const [tree, pts] = old.sk[i];
@@ -353,7 +359,7 @@
     }),
     setTalismanSkill: (i, tree) => update(s => {
       const t = s.talisman; if (!t) return;
-      const table = window.SB_CHARM[t.tier];
+      const table = window.SB_CHARM.tiers[Engine.TAL_TIER[t.rar]];
       if (tree == null) { t.sk = t.sk.slice(0, 1); return; }
       const row = table[tree] || [0, 0, 0, 0];
       const [lo, hi] = i === 0 ? [row[0], row[1]] : [row[2], row[3]];
@@ -361,7 +367,7 @@
     }),
     setTalismanPoints: (i, pts) => update(s => {
       const t = s.talisman; if (!t || !t.sk[i]) return;
-      const row = window.SB_CHARM[t.tier][t.sk[i][0]] || [0, 0, 0, 0];
+      const row = window.SB_CHARM.tiers[Engine.TAL_TIER[t.rar]][t.sk[i][0]] || [0, 0, 0, 0];
       const [lo, hi] = i === 0 ? [row[0], row[1]] : [row[2], row[3]];
       t.sk[i][1] = Math.min(Math.max(pts, lo), hi);
     }),

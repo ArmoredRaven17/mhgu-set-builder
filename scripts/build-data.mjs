@@ -116,7 +116,7 @@ for (const r of decoRows) {
 // all-zero rows mean the tier can't roll that tree at all.
 const charmSrc = J(join(EDITOR, "src", "assets", "talisman_charm_table.json"));
 const TIERS = ["mystery", "shining", "timeworn", "enduring"];
-const charm = {};
+const charm = { tiers: {}, names: J(join(EDITOR, "src", "assets", "talisman.json")) };
 for (const tier of TIERS) {
   const arr = charmSrc[tier];
   assert(Array.isArray(arr) && arr.length === 206, `${tier} charm table is [206]`);
@@ -127,10 +127,12 @@ for (const tier of TIERS) {
     assert(trees[treeId], `charm ${tier} tree ${treeId} exists`);
     t[treeId] = row;
   }
-  charm[tier] = t;
+  charm.tiers[tier] = t;
 }
-assert(charm.mystery[1] && charm.mystery[1][0] === 1 && charm.mystery[1][1] === 5,
+assert(charm.tiers.mystery[1] && charm.tiers.mystery[1][0] === 1 && charm.tiers.mystery[1][1] === 5,
   "mystery Poison rolls 1-5 as skill 1");
+assert(Object.keys(charm.names).length === 10 && charm.names[1] === "Pawn Talisman"
+  && charm.names[10] === "Creator Talisman", "10 talisman names, Pawn to Creator");
 
 // ── Armor ────────────────────────────────────────────────────────────────
 // Stats (romfs-derived, authoritative) joined with the catalog (names, gender,

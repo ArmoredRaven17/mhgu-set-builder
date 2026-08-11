@@ -120,12 +120,20 @@
     };
   }
 
-  // Talisman entry validation against the per-tier charm roll table.
-  // tal = { tier, slots, sk: [[treeId, pts], ...] } — returns problem strings.
+  // A talisman's equip id IS its rarity (1-10); each maps to one of four roll
+  // tiers whose table bounds the legal skills and points. Same convention as
+  // the save editor and the Equipment Box.
+  const TAL_TIER = [null, "mystery", "mystery", "shining", "shining",
+    "timeworn", "timeworn", "timeworn", "enduring", "enduring", "enduring"];
+
+  // Talisman entry validation. tal = { rar: 1-10, slots, sk: [[treeId, pts], ...] }
+  // — returns problem strings; empty means legal.
   function validateTalisman(tal, charm, skills) {
     const problems = [];
-    const table = charm[tal.tier];
-    if (!table) return [`Unknown talisman tier "${tal.tier}".`];
+    if (!Number.isInteger(tal.rar) || tal.rar < 1 || tal.rar > 10)
+      return ["Talisman rarity must be 1-10."];
+    const table = charm.tiers[TAL_TIER[tal.rar]];
+    if (!table) return [`No roll table for rarity ${tal.rar}.`];
     if (!Number.isInteger(tal.slots) || tal.slots < 0 || tal.slots > 3)
       problems.push("Slots must be 0-3.");
     const sk = tal.sk || [];
@@ -152,5 +160,5 @@
     return problems;
   }
 
-  g.SBEngine = { compute, validateTalisman, decoCost, TORSO_UP };
+  g.SBEngine = { compute, validateTalisman, decoCost, TORSO_UP, TAL_TIER };
 })(typeof window !== "undefined" ? window : globalThis);

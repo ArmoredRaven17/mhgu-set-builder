@@ -10,7 +10,6 @@ window.SBUI = (function () {
   const SLOT_ICON = { head: "armor_head", chest: "armor_body", arms: "armor_arms", waist: "armor_waist", legs: "armor_legs" };
   const ELEMENTS = ["Fire", "Water", "Thunder", "Ice", "Dragon"];
   const SHARP_COLORS = ["#d1312d", "#d8623b", "#d9c440", "#7ac74f", "#4f9bd9", "#eeeef4", "#b78fe8"];
-  const TIERS = [["mystery", "Mystery"], ["shining", "Shining"], ["timeworn", "Timeworn"], ["enduring", "Enduring"]];
   const treeName = t => window.SB_SKILLS.trees[t] || `#${t}`;
 
   function toast(msg, ms = 2600) {
@@ -163,11 +162,11 @@ window.SBUI = (function () {
     const card = $("card-talisman");
     const t = set.talisman;
     const charm = window.SB_CHARM;
-    const tierOptions = `<option value="">None</option>` + TIERS.map(([k, label]) =>
-      `<option value="${k}"${t && t.tier === k ? " selected" : ""}>${label}</option>`).join("");
+    const talOptions = `<option value="">None</option>` + Object.entries(charm.names).map(([id, name]) =>
+      `<option value="${id}"${t && t.rar === Number(id) ? " selected" : ""}>${esc(name)} (R${id})</option>`).join("");
     let form = "";
     if (t) {
-      const table = charm[t.tier] || {};
+      const table = charm.tiers[window.SBEngine.TAL_TIER[t.rar]] || {};
       const s1Trees = Object.keys(table).filter(tr => table[tr][0] !== 0 || table[tr][1] !== 0)
         .map(Number).sort((a, b) => treeName(a).localeCompare(treeName(b)));
       const s2Trees = Object.keys(table).filter(tr => table[tr][2] !== 0 || table[tr][3] !== 0)
@@ -195,18 +194,17 @@ window.SBUI = (function () {
       if (problems.length) form += `<div class="tal-problems">${problems.map(p => `<div>${esc(p)}</div>`).join("")}</div>`;
       form += decoRowHtml({ kind: "talisman" }, t.decos, t.slots);
     }
-    const summary = t
-      ? `${TIERS.find(([k]) => k === t.tier)[1]} talisman`
-      : "No talisman";
+    const summary = t ? `${charm.names[t.rar]}` : "No talisman";
     card.innerHTML = `<div class="card-head">
-      <img class="card-icon" src="assets/icons/icon_talisman${t ? "_r" + ({ mystery: 3, shining: 5, timeworn: 7, enduring: 9 }[t.tier] || 1) : ""}.png" alt="">
+      <img class="card-icon" src="assets/icons/icon_talisman${t ? "_r" + t.rar : ""}.png" alt="">
       <span class="card-kind">Talisman</span>
-      <span class="card-name${t ? "" : " empty"}">${summary}</span>
+      <span class="card-name${t ? "" : " empty"}">${esc(summary)}</span>
       <span class="card-buttons">
-        <select class="mini-select" data-act="tier">${tierOptions}</select>
+        <select class="mini-select" data-act="tier">${talOptions}</select>
       </span>
     </div>${form}`;
-    card.querySelector("[data-act=tier]").addEventListener("change", e => api.setTalismanTier(e.target.value || null));
+    card.querySelector("[data-act=tier]").addEventListener("change", e =>
+      api.setTalismanRarity(e.target.value ? Number(e.target.value) : null));
     if (t) {
       card.querySelector("[data-act=sk1]").addEventListener("change", e => api.setTalismanSkill(0, Number(e.target.value)));
       card.querySelector("[data-act=pts1]").addEventListener("change", e => api.setTalismanPoints(0, Number(e.target.value)));
