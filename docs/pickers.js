@@ -54,7 +54,11 @@ window.SBPickers = (function () {
     const all = Object.entries(armor).map(([id, a]) => ({ id: Number(id), a }));
     all.sort((x, y) => (x.a.ord || 0) - (y.a.ord || 0));
 
-    const filters = { text: "", gender: "all", cls: "all" };
+    // The selected weapon decides Blademaster vs Gunner for every slot but the
+    // head — Helms serve Gunners and Caps serve Blademasters, so that choice
+    // stays with the user. The preset is a default, not a lock.
+    const autoCls = slot !== "head" && api.weaponArmorClass ? api.weaponArmorClass() : null;
+    const filters = { text: "", gender: "all", cls: autoCls || "all" };
     const bar = $("pickerFilters");
     bar.innerHTML = `
       <input type="text" id="pkSearch" placeholder="Search name, set or skill…">
@@ -64,6 +68,7 @@ window.SBPickers = (function () {
       <select id="pkClass" class="mini-select">
         <option value="all">Any class</option><option value="B">Blademaster</option><option value="G">Gunner</option>
       </select>`;
+    if (autoCls) $("pkClass").value = autoCls;
     const apply = () => {
       const t = filters.text.toLowerCase();
       const items = all.filter(({ a }) => {

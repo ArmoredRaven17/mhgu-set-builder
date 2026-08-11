@@ -313,8 +313,16 @@
     target.kind === "weapon" ? set.weapon.decos :
     target.kind === "talisman" ? set.talisman.decos :
     set.pieces[target.slot].decos;
+  // Which armor class the selected weapon implies: "G" for the three gunner
+  // weapons, "B" for the rest, null with no weapon.
+  const GUNNER_CLASSES = new Set(["bow", "light_bowgun", "heavy_bowgun"]);
+  const weaponArmorClass = () => {
+    const w = currentSet().weapon;
+    return w ? (GUNNER_CLASSES.has(w.cls) ? "G" : "B") : null;
+  };
   const api = {
     freeSlots,
+    weaponArmorClass,
     setPiece: (slot, id) => update(s => { s.pieces[slot] = { id, lv: 0, decos: [] }; }),
     clearPiece: slot => update(s => { s.pieces[slot] = null; }),
     setPieceLevel: (slot, lv) => update(s => { if (s.pieces[slot]) s.pieces[slot].lv = lv; }),
