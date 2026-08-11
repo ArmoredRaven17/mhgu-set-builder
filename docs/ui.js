@@ -266,18 +266,17 @@ window.SBUI = (function () {
     const activeHtml = r.active.map(a =>
       skillRow(a) + (soulsByParent[a.tree] || []).map(s => skillRow(s, " soul-grant")).join("")
     ).join("");
-    const treeRows = Object.entries(r.treePoints)
+    const treeChips = Object.entries(r.treePoints)
       .map(([t, p]) => [Number(t), p])
       .filter(([t, p]) => p !== 0 && t !== window.SBEngine.TORSO_UP)
       .sort((a, b) => b[1] - a[1])
       .map(([t, p]) => {
         const hit = r.active.find(a => a.tree === t);
-        return `<div class="tree-row${hit ? " hit" : ""}${hit && hit.negative ? " neg-hit" : ""}">
-          <span class="tn">${esc(treeName(t))}</span>
-          <span class="tp${p < 0 ? " neg" : ""}">${p > 0 ? "+" + p : p}</span>
-          <span class="tnext">${hit ? esc(hit.name) : esc(nextThresholdHint(t, p))}</span>
-        </div>`;
+        const tip = hit ? hit.name : nextThresholdHint(t, p);
+        return `<span class="tree-chip${hit ? " hit" : ""}${hit && hit.negative ? " neg-hit" : ""}${p < 0 ? " neg" : ""}"
+          ${tip ? ` title="${esc(tip)}"` : ""}>${esc(treeName(t))} <b>${p > 0 ? "+" + p : p}</b></span>`;
       }).join("");
+    const treeRows = treeChips ? `<div class="tree-chips">${treeChips}</div>` : "";
     panel.innerHTML = `
       <div class="res-title">Totals${r.torsoUpCount ? `<span class="torso-badge">Torso Up ×${r.torsoUpCount + 1}</span>` : ""}</div>
       <div class="totals-row">
