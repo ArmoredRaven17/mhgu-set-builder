@@ -240,7 +240,13 @@
           return v;
         };
         const def = ({ a }) => a.lv[Math.min(a.maxLv, a.lv.length) - 1];
-        const relevant = pool.filter(({ a }) =>
+        // A piece earns its place by serving a requested skill, by carrying
+        // one of the trees that can deliver a skill on its own, by Torso Up,
+        // or by tying the best slot count in its slot — a piece with fewer
+        // slots and nothing wanted is dominated by that one. Sound for whether
+        // a set is POSSIBLE; `noRelevanceFilter` exists so a test can prove
+        // that rather than take it on trust.
+        const relevant = query.noRelevanceFilter ? pool : pool.filter(({ a }) =>
           a.sk.some(([tr, p]) => need[tr] && p > 0) ||
           a.sk.some(([tr, p]) => extra.includes(tr) && p > 0) ||
           a.sk.some(([tr]) => tr === TORSO_UP) ||
@@ -391,10 +397,14 @@
     const acc = dims.map(() => 0);
     let explored = 0, leaves = 0, truncated = false, cancelled = false, timedOut = false;
     let nodes = 0, fills = 0;   // diagnostics
+    let reported = 0;           // results already streamed to the caller
     const chosen = new Array(order.length).fill(null);
     // Both are relaxed for the Soul passes below, which run on their own
     // allowance so they neither get crowded out nor slow ordinary searches.
-    const SOUL_EXTRA = 60, SOUL_BUDGET_MS = 500;
+    // Overridable so a test can prove whether these allowances, rather than
+    // the algorithm, are what hides a set.
+    const SOUL_EXTRA = query.soulExtra == null ? 60 : query.soulExtra;
+    const SOUL_BUDGET_MS = query.soulBudgetMs == null ? 500 : query.soulBudgetMs;
     let capNow = maxResults;
     let dl = query.timeBudgetMs ? Date.now() + query.timeBudgetMs : Infinity;
 
@@ -417,7 +427,13 @@
       if (k === order.length) {
         finalize();
         if (++leaves % PROGRESS_EVERY === 0) {
-          if (hooks.progress) hooks.progress({ explored, found: results.length });
+          // Hand over what has been found since the last report, so a long
+          // search can show its work and a cancel keeps everything it reached
+          // instead of throwing it away.
+          if (hooks.progress) {
+            hooks.progress({ explored, found: results.length, fresh: results.slice(reported) });
+            reported = results.length;
+          }
           if (hooks.cancelled && hooks.cancelled()) cancelled = true;
           if (Date.now() > dl) timedOut = true;
         }
@@ -635,7 +651,7 @@
         const bins = tal && tal.slots
           ? armorBins.concat([{ key: "talisman", cap: tal.slots, mult: talMult }])
           : armorBins;
-        const fill = fitGems(residual, bins, treesSub, gems);
+        const fill = (query.exactFill ? exactFit : fitGems)(residual, bins, treesSub, gems);
         tried.set(key, fill);
         return fill;
       }
@@ -694,6 +710,56 @@
   // slips through simply is not offered, and every set that IS offered is
   // verified by the engine afterwards, so nothing wrong is ever shown.
   const FILL_MODES = 3;
+  // Exhaustive counterpart to fitGems, for testing only: tries every way of
+  // packing every bin, so it finds an arrangement whenever one exists. Far
+  // too slow for the live search — it is here so a differential test can say
+  // whether the greedy fill is losing sets, rather than leaving that to
+  // guesswork.
+  function exactFit(residual, bins, treesSub, gems) {
+    const idx = [];
+    for (let j = 0; j < residual.length; j++) if (residual[j] > 0) idx.push(j);
+    if (!idx.length) return {};
+    const dead = new Set();
+    const place = {};
+    // Every packing of one bin, as the points it delivers.
+    const loadouts = bin => {
+      const out = [];
+      const cur = treesSub.map(() => 0), ids = [];
+      const step = (capLeft, startJ) => {
+        out.push({ ids: ids.slice(), pts: cur.slice() });
+        for (let j = startJ; j < treesSub.length; j++) {
+          const sizes = gems[treesSub[j]];
+          for (const sizeStr in sizes) {
+            const size = +sizeStr;
+            if (size > capLeft) continue;
+            const gm = sizes[sizeStr];
+            ids.push(gm.id); cur[j] += gm.pts * bin.mult;
+            step(capLeft - size, j);
+            cur[j] -= gm.pts * bin.mult; ids.pop();
+          }
+        }
+      };
+      step(bin.cap, 0);
+      return out;
+    };
+    const dfs = (i, left) => {
+      let done = true;
+      for (const j of idx) if (left[j] > 0) { done = false; break; }
+      if (done) return true;
+      if (i === bins.length) return false;
+      const key = i + "|" + left.join(",");
+      if (dead.has(key)) return false;
+      for (const opt of loadouts(bins[i])) {
+        const next = left.slice();
+        for (const j of idx) { const v = next[j] - opt.pts[j]; next[j] = v > 0 ? v : 0; }
+        if (dfs(i + 1, next)) { if (opt.ids.length) place[bins[i].key] = opt.ids; return true; }
+      }
+      dead.add(key);
+      return false;
+    };
+    return dfs(0, residual.slice()) ? place : null;
+  }
+
   function fitGems(residual, bins, treesSub, gems) {
     for (let mode = 0; mode < FILL_MODES; mode++) {
       const left = residual.slice();

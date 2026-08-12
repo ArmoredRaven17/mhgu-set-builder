@@ -28,7 +28,11 @@ self.onmessage = function (e) {
     if (!data) { self.postMessage({ type: "error", message: "worker not initialized" }); return; }
     try {
       const res = self.SBSearch.search(msg.query, data, {
-        progress: s => self.postMessage({ type: "progress", explored: s.explored, found: s.found }),
+        // Sets are sent over as they are found, so the page has something to
+        // show during a long search and keeps it if the search is cancelled.
+        progress: s => self.postMessage({
+          type: "progress", explored: s.explored, found: s.found, fresh: s.fresh,
+        }),
       });
       self.postMessage({ type: "done", res: res });
     } catch (err) {

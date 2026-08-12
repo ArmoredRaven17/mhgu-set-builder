@@ -17,6 +17,7 @@ window.SBSearchUI = (function () {
   let viewResults = [];      // what the sort/filter controls currently show
   let lastTargets = [];      // the skills asked for, to tell bonuses apart
   let worker = null, workerReady = false, running = false;
+  let lastLiveRender = 0;    // throttles redrawing while a search streams in
   const RES_NAMES = ["Fire", "Water", "Thunder", "Ice", "Dragon"];
 
   // Every positive activated skill, for the typeahead.
@@ -137,14 +138,30 @@ window.SBSearchUI = (function () {
   function startWorker() {
     if (worker || typeof Worker === "undefined") return;
     try {
-      worker = new Worker("search-worker.js?v=1");
+      worker = new Worker("search-worker.js?v=2");
       workerReady = false;
       worker.onmessage = e => {
         const m = e.data || {};
         if (m.type === "ready") { workerReady = true; return; }
         if (m.type === "progress") {
-          if (running) $("searchStatus").textContent =
-            `Searching… ${m.found} found, ${m.explored.toLocaleString()} sets checked.`;
+          if (!running) return;
+          // Keep what has been found so far, so it survives a cancel and can
+          // be looked at while the rest of the search runs.
+          if (m.fresh && m.fresh.length) {
+            lastResults = lastResults.concat(m.fresh);
+            if (!lastTargets.length) lastTargets = targets.map(t => [t.tree, t.pts]);
+            // Redrawing on every report would thrash a long search; once a
+            // second is enough to watch it fill up.
+            const now = performance.now();
+            if (now - lastLiveRender > 1000) {
+              lastLiveRender = now;
+              $("searchResultTools").classList.remove("hidden");
+              buildFilterOptions();
+              applyView();
+            }
+          }
+          $("searchStatus").textContent =
+            `Searching… ${m.found} found, ${m.explored.toLocaleString()} sets checked. Cancel keeps what it has.`;
           return;
         }
         if (m.type === "done") { finishSearch(m.res); return; }
@@ -167,18 +184,22 @@ window.SBSearchUI = (function () {
       $("searchAddHint").textContent = "";
     // Up to 1000 results — enough variety without chasing full exhaustiveness,
     // which for an easy query could mean thousands of near-duplicate sets for
-    // no benefit. Most queries reach that cap in well under a second. The
-    // 2-minute budget exists for genuinely hard-but-solvable queries and for
-    // PROVING a combination impossible with the current options (an exhaustive
-    // negative proof costs real time, even though it always terminates well
-    // short of this) — either way it returns whatever it found rather than
-    // grinding forever, with a wide margin below anything a user would wait
-    // out for.
-    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 1000, timeBudgetMs: 120000, ...opts };
+    // no benefit. Most queries reach that cap in well under a second.
+    //
+    // The five-minute ceiling is a backstop against a search that would never
+    // end, not the expected wait: hard queries stream their sets out as they
+    // are found and Cancel keeps them, so nobody has to sit and watch a bar to
+    // get an answer.
+    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 1000, timeBudgetMs: 300000, ...opts };
     running = true;
     searchStart = performance.now();
+    lastResults = [];
+    viewResults = [];
+    lastTargets = targets.map(t => [t.tree, t.pts]);
+    lastLiveRender = 0;
     $("searchRun").disabled = true;
     $("searchCancel").classList.remove("hidden");
+    $("searchResultTools").classList.add("hidden");
     $("searchResults").innerHTML = "";
     $("searchStatus").textContent = "Searching…";
     startWorker();
@@ -196,13 +217,26 @@ window.SBSearchUI = (function () {
     skills: window.SB_SKILLS, souls: window.SB_SOULS,
     decos: window.SB_DECOS, armor: window.SB_ARMOR,
   });
+  // Cancelling keeps everything the search had reached. The worker is torn
+  // down rather than asked to stop — a synchronous search cannot answer
+  // messages while it runs — which is why results are streamed out as they
+  // are found rather than handed over at the end.
   function cancel() {
     if (!running) return;
     killWorker();
     running = false;
     $("searchRun").disabled = false;
     $("searchCancel").classList.add("hidden");
-    $("searchStatus").textContent = "Cancelled.";
+    const ms = Math.round(performance.now() - searchStart);
+    if (lastResults.length) {
+      $("searchResultTools").classList.remove("hidden");
+      buildFilterOptions();
+      applyView();
+      $("searchStatus").textContent =
+        `Stopped after ${(ms / 1000).toFixed(1)} s — keeping the ${lastResults.length} set(s) found so far.`;
+    } else {
+      $("searchStatus").textContent = `Stopped after ${(ms / 1000).toFixed(1)} s — nothing found yet.`;
+    }
   }
   function finishSearch(res, err) {
     running = false;
