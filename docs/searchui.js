@@ -593,22 +593,35 @@ window.SBSearchUI = (function () {
     $("talModal").classList.remove("hidden");
   }
 
-  // Class and weapon slots are the player's to set, not the app's to guess: an
-  // "Auto" that quietly means nought slots reads as a search that cannot find
-  // sets which plainly exist. Opening the modal seeds both from the equipped
-  // weapon so the starting point is still sensible — but as a value shown in
-  // the control, which can be seen and changed, rather than a hidden decision.
-  let seeded = false;
-  function seedFromWeapon() {
-    if (seeded) return;
-    seeded = true;
-    const cls = api.weaponArmorClass();
-    if (cls === "B" || cls === "G") $("searchClass").value = cls;
-    $("searchWSlots").value = String(api.currentWeaponSlots());
+  // Class and weapon slots are the player's to set, and nothing else touches
+  // them. They were briefly seeded from the equipped weapon — which, with no
+  // weapon on the current set, quietly meant Blademaster and nought slots, so
+  // a gunner set needing one slot came back empty and looked like a broken
+  // search. Guessing at these while claiming not to is worse than not
+  // guessing: whatever is in the controls is what gets searched.
+  //
+  // The choices are remembered, so a reload does not silently undo them.
+  const OPTS_KEY = "mhgu-set-builder-search-opts";
+  const OPT_IDS = ["searchGender", "searchClass", "searchWSlots", "searchTalMode",
+    "searchVillage", "searchHub"];
+  function loadOptions() {
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(OPTS_KEY) || "null"); } catch (e) {}
+    if (!saved) return;
+    for (const id of OPT_IDS) {
+      const el = $(id);
+      if (!el || saved[id] == null) continue;
+      // Only accept a value the control still offers.
+      if ([...el.options].some(o => o.value === String(saved[id]))) el.value = String(saved[id]);
+    }
+  }
+  function saveOptions() {
+    const out = {};
+    for (const id of OPT_IDS) { const el = $(id); if (el) out[id] = el.value; }
+    try { localStorage.setItem(OPTS_KEY, JSON.stringify(out)); } catch (e) {}
   }
 
   function open() {
-    seedFromWeapon();
     syncOptionLabels();
     renderTargets();
     $("searchModal").classList.remove("hidden");
@@ -621,6 +634,9 @@ window.SBSearchUI = (function () {
     api = appApi;
     fillRaritySelects();
     fillProgressionSelects();
+    loadOptions();          // after the selects are populated, before first use
+    for (const id of OPT_IDS)
+      $(id).addEventListener("change", saveOptions);
     wireAddBox();
     $("findSetsBtn").addEventListener("click", open);
     $("searchClose").addEventListener("click", close);

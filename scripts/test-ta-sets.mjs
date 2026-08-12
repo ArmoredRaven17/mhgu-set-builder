@@ -37,10 +37,16 @@ const charm = load("charm.js");
 const corpus = JSON.parse(readFileSync(join(ROOT, "scripts", "ta-sets.json"), "utf8"));
 
 // First activation of each skill name — the archive names a skill, not a tree.
+// Matched loosely on purpose: the archive is hand-written, so case, spacing
+// and punctuation drift ("Attack Up S" for "Attack Up (S)"). Anything that
+// still cannot be resolved is counted and reported rather than passed off as
+// a set the search failed to find.
+const norm = s => String(s).toLowerCase().replace(/[^a-z0-9+]/g, "");
 const byName = new Map();
 for (const [tree, ladder] of Object.entries(data.skills.active))
   for (const [pts, name] of ladder)
-    if (pts > 0 && !byName.has(name)) byName.set(name, [Number(tree), pts]);
+    if (pts > 0 && !byName.has(norm(name))) byName.set(norm(name), [Number(tree), pts]);
+const lookup = n => byName.get(norm(n));
 
 const GUNNER = new Set(["LBG", "HBG", "Bow"]);
 const MODE = (process.argv[2] || "both").toLowerCase();
@@ -50,11 +56,16 @@ const BUDGET = Number(process.argv[4] || 0) || 20000;
 function runPass(twoSkill) {
   const label = twoSkill ? "two-skill" : "one-skill";
   let found = 0, missing = 0, unmapped = 0, slowest = 0;
+  const unmappedNames = new Set();
   const misses = [];
   const t00 = Date.now();
   for (const c of corpus.sets.slice(0, LIMIT)) {
-    const targets = c.skills.map(n => byName.get(n)).filter(Boolean);
-    if (targets.length !== c.skills.length) { unmapped++; continue; }
+    const targets = c.skills.map(lookup).filter(Boolean);
+    if (targets.length !== c.skills.length) {
+      unmapped++;
+      for (const n of c.skills) if (!lookup(n)) unmappedNames.add(n);
+      continue;
+    }
     const cls = GUNNER.has(c.sheet) ? "G" : "B";
     const talismans = S.generateTalismans(targets.map(t => t[0]), charm, { twoSkill });
     // The archive records neither gender nor the weapon's slots, so a set
@@ -78,6 +89,8 @@ function runPass(twoSkill) {
   console.log(`${label}: ${found} found, ${missing} not found`
     + (unmapped ? `, ${unmapped} unmappable` : "")
     + ` — ${secs}s, slowest set ${(slowest / 1000).toFixed(1)}s`);
+  if (unmappedNames.size)
+    console.log(`  names with no match here: ${[...unmappedNames].join(", ")}`);
   if (misses.length) {
     console.log(`  not found (${misses.length}):`);
     for (const m of misses) console.log(`    ${m}`);
