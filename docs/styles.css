@@ -284,7 +284,9 @@ input,select,button,textarea{font-family:inherit}
 
 /* ── Find Sets ───────────────────────────────────────────────────────── */
 .search-card{display:flex;flex-direction:column;max-height:88vh}
-.search-targets{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;min-height:28px}
+.search-addrow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.search-addrow input:disabled{opacity:.45}
+.search-targets{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;min-height:24px}
 .target-chip{cursor:pointer;padding:3px 10px;font-size:12px}
 .target-chip:hover{border-color:var(--negative)}
 .tc-sub{opacity:.55;font-size:10px}
@@ -310,6 +312,19 @@ input,select,button,textarea{font-family:inherit}
 .search-results{flex:1;min-height:120px}
 .search-result .pr-sub{white-space:normal}
 .sr-stat{font-size:11px;opacity:.7;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sr-neg{color:var(--negative)}
+.sr-tal{opacity:.75;font-style:italic}
+
+/* My Talismans */
+.tal-list{max-height:230px;margin-bottom:10px}
+.tal-add{border-top:1px solid var(--line);padding-top:10px}
+.tal-add-row{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end}
+.tal-add-row label{display:flex;flex-direction:column;gap:3px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
+.mini-input{
+  background:var(--control-bg);color:var(--text);border:1px solid var(--line);border-radius:4px;
+  padding:3px 6px;font-size:11px;width:62px;font-variant-numeric:tabular-nums
+}
+.mini-input:disabled{opacity:.45}
 
 /* ── Modals ──────────────────────────────────────────────────────────── */
 .modal{

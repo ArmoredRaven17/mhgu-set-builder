@@ -37,7 +37,7 @@ console.log("single target: Attack Up (M), male blademaster:");
 {
   const targets = [[treeId("Attack"), 15]];
   const t0 = Date.now();
-  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 3, talisman: null, maxResults: 50 }, data);
+  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 3, talismans: [], maxResults: 50 }, data);
   console.log(`  (${Date.now() - t0} ms, ${res.explored} finalized, ${res.results.length} results)`);
   check(res.results.length > 0, "finds sets");
   check(verifyAll(res, targets), "every result re-verifies through the engine");
@@ -52,9 +52,9 @@ console.log("single target: Attack Up (M), male blademaster:");
 console.log("double target: Earplugs + Attack Up (S), with a real talisman:");
 {
   const targets = [[treeId("Hearing"), 10], [treeId("Attack"), 10]];
-  const tal = { slots: 3, sk: [[treeId("Attack"), 5]] };
+  const tal = { rar: 7, slots: 3, sk: [[treeId("Attack"), 5]] };
   const t0 = Date.now();
-  const res = S.search({ targets, gender: 1, cls: "G", maxRar: 11, weaponSlots: 0, talisman: tal, maxResults: 50 }, data);
+  const res = S.search({ targets, gender: 1, cls: "G", maxRar: 11, weaponSlots: 0, talismans: [tal], allowNoTalisman: false, maxResults: 50 }, data);
   console.log(`  (${Date.now() - t0} ms, ${res.explored} finalized, ${res.results.length} results)`);
   check(res.results.length > 0, "finds sets");
   check(verifyAll(res, targets), "every result re-verifies through the engine");
@@ -65,7 +65,7 @@ console.log("triple target, tight: HG Earplugs + Attack Up (L) + Weakness Exploi
 {
   const targets = [[treeId("Hearing"), 15], [treeId("Attack"), 20], [treeId("Tenderizer"), 10]];
   const t0 = Date.now();
-  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 3, talisman: { slots: 0, sk: [[treeId("Attack"), 10]] }, maxResults: 30 }, data);
+  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 3, talismans: [{ rar: 10, slots: 0, sk: [[treeId("Attack"), 10]] }], maxResults: 30 }, data);
   console.log(`  (${Date.now() - t0} ms, ${res.explored} finalized, ${res.results.length} results)`);
   check(res.results.length > 0, "finds sets (this combo is known possible in MHGU)");
   check(verifyAll(res, targets), "every result re-verifies through the engine");
@@ -74,14 +74,14 @@ console.log("triple target, tight: HG Earplugs + Attack Up (L) + Weakness Exploi
 console.log("impossible: Skill +2 without Neset-tier rarity:");
 {
   const targets = [[treeId("Secret Arts"), 10]];
-  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 5, weaponSlots: 3, talisman: null, maxResults: 10 }, data);
+  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 5, weaponSlots: 3, talismans: [], maxResults: 10 }, data);
   check(res.results.length === 0 && res.complete, "no results, search terminates");
 }
 
 console.log("neset cascade found by search: Skill +2 + Double Talisman:");
 {
   const targets = [[treeId("Secret Arts"), 10], [treeId("Talisman Boost"), 10]];
-  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 0, talisman: null, maxResults: 10 }, data);
+  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 0, talismans: [], maxResults: 10 }, data);
   check(res.results.length > 0, "full Neset emerges from the search");
   check(res.results.every(({ engine }) => engine.skillPlus2 && engine.talismanDoubled),
     "results activate both via the cascade");
@@ -93,7 +93,7 @@ console.log("bound soundness: pruned search equals unbounded search on a small s
   // noBound disables the branch-and-bound but shares every other code path,
   // so any difference in the result sets is the bound wrongly pruning.
   const targets = [[treeId("Attack"), 10], [treeId("Hearing"), 10]];
-  const q = { targets, gender: 0, cls: "B", maxRar: 3, weaponSlots: 3, talisman: null, maxResults: 100000 };
+  const q = { targets, gender: 0, cls: "B", maxRar: 3, weaponSlots: 3, talismans: [], maxResults: 100000 };
   const key = ({ set }) => ["head", "chest", "arms", "waist", "legs"].map(s => set.pieces[s].id).join("/");
   const t0 = Date.now();
   const pruned = S.search(q, data);
@@ -104,6 +104,63 @@ console.log("bound soundness: pruned search equals unbounded search on a small s
   check(pk.size === pruned.results.length, "no duplicate sets in results");
   check(nk.size === pk.size && [...nk].every(k => pk.has(k)), "identical result sets with and without the bound");
   check(pruned.explored <= naive.explored, "the bound reduces work");
+}
+
+console.log("generated talisman candidates:");
+{
+  const charm = load("charm.js");
+  const atk = treeId("Attack"), hear = treeId("Hearing");
+  const one = S.generateTalismans([atk, hear], charm, { maxRar: 10, twoSkill: false });
+  const two = S.generateTalismans([atk, hear], charm, { maxRar: 10, twoSkill: true });
+  check(one.every(t => t.sk.length === 1), "one-skill mode yields only single-skill talismans");
+  check(two.some(t => t.sk.length === 2), "two-skill mode yields paired talismans");
+  check(one.every(t => t.slots >= 0 && t.slots <= 3), "slot counts stay legal");
+  check(one.every(t => E.validateTalisman(t, charm, data.skills).length === 0),
+    "every generated one-skill talisman passes the engine's legality check");
+  check(two.every(t => E.validateTalisman(t, charm, data.skills).length === 0),
+    "every generated two-skill talisman passes the engine's legality check");
+  // The tiers roll different skills in each position, so the sweep must cover
+  // every rarity up to the cap: Attack rolls as a Pawn's FIRST skill but on a
+  // Creator only as a second one, so a one-skill Attack talisman exists only
+  // at low rarity. Generating at the cap alone would lose it.
+  const capOnly = charm.tiers[E.TAL_TIER[10]];
+  check(!capOnly[atk] || (capOnly[atk][0] === 0 && capOnly[atk][1] === 0),
+    "Attack indeed cannot be a Creator talisman's first skill (data check)");
+  const oneAtk = S.generateTalismans([atk], charm, { maxRar: 10, twoSkill: false });
+  check(oneAtk.some(t => t.sk[0][0] === atk), "the rarity sweep still offers a one-skill Attack talisman");
+  check(oneAtk.every(t => E.validateTalisman(t, charm, data.skills).length === 0),
+    "and each is legal at the rarity it claims");
+  check(oneAtk.every(t => t.rar <= 10), "no candidate exceeds the rarity cap");
+  const pawnCapped = S.generateTalismans([atk, hear], charm, { maxRar: 2, twoSkill: false });
+  check(pawnCapped.every(t => t.rar <= 2), "a low cap keeps every candidate at or below it");
+  // Only requested trees appear.
+  check(one.every(t => t.sk.every(([tr]) => tr === atk || tr === hear)), "only targeted skills are generated");
+}
+
+console.log("search with generated talismans (Any mode):");
+{
+  const charm = load("charm.js");
+  const targets = [[treeId("Hearing"), 15], [treeId("Attack"), 20], [treeId("Tenderizer"), 10]];
+  const talismans = S.generateTalismans(targets.map(t => t[0]), charm, { maxRar: 10, twoSkill: false });
+  const t0 = Date.now();
+  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 3, talismans, maxResults: 30 }, data);
+  console.log(`  (${Date.now() - t0} ms, ${res.results.length} results, ${talismans.length} candidates)`);
+  check(res.results.length > 0, "finds sets using a generated talisman");
+  check(verifyAll(res, targets), "every result re-verifies through the engine");
+  check(res.results.every(({ set }) => !set.talisman || E.validateTalisman(set.talisman, charm, data.skills).length === 0),
+    "the talisman each result asks for is actually obtainable");
+  check(res.results.every((r, i, arr) => i === 0 || arr[i - 1].talCost <= r.talCost),
+    "results are ordered by how modest the talisman is");
+}
+
+console.log("progress and cancellation hooks:");
+{
+  const targets = [[treeId("Attack"), 10]];
+  let ticks = 0;
+  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 0, talismans: [], maxResults: 100000 },
+    data, { progress: () => { ticks++; }, cancelled: () => ticks >= 2 });
+  check(ticks > 0, "progress hook fires during a long search");
+  check(res.cancelled === true && res.complete === false, "cancellation stops the search and is reported");
 }
 
 console.log(failed ? `\n${failed} FAILURE(S)` : "\nall search tests passed");

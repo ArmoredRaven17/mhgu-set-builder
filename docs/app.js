@@ -33,7 +33,9 @@
     pieces: { head: null, chest: null, arms: null, waist: null, legs: null },
     talisman: null,                   // { tier, slots, sk: [[tree,pts],...], decos: [] }
   });
-  let sets = { version: 1, active: 0, list: [newSet("Set 1")] };
+  // `talismans` is the user's own charm collection, used by the search's
+  // "My talismans" mode. It travels with the sets in the shared save.
+  let sets = { version: 1, active: 0, list: [newSet("Set 1")], talismans: [] };
   let host = null;          // tracker-file envelope (minus `sets`) when hosted
   let fileHandle = null;
   let dirty = false;
@@ -185,7 +187,7 @@
   }
 
   // ── Save / load ────────────────────────────────────────────────────────
-  const sectionPayload = () => ({ version: sets.version, active: sets.active, list: sets.list });
+  const sectionPayload = () => ({ version: sets.version, active: sets.active, list: sets.list, talismans: sets.talismans });
   function serializeSave() {
     if (host) {
       const out = Object.assign({}, host);
@@ -246,10 +248,15 @@
       else host = null;
     }
     const list = section && Array.isArray(section.list) ? section.list.map(sanitizeSet).filter(Boolean) : [];
+    const stored = section && Array.isArray(section.talismans) ? section.talismans : [];
     sets = {
       version: 1,
       active: section && Number.isInteger(section.active) ? section.active : 0,
       list: list.length ? list : [newSet("Set 1")],
+      // Only talismans the game could actually roll are kept, so a hand-edited
+      // file can't feed the search impossible charms.
+      talismans: stored.filter(t => t && typeof t === "object" && Array.isArray(t.sk) &&
+        !Engine.validateTalisman(t, window.SB_CHARM, window.SB_SKILLS).length),
     };
     if (sets.active < 0 || sets.active >= sets.list.length) sets.active = 0;
     renderSetSelect();
@@ -363,6 +370,15 @@
     currentWeaponSlots,
     currentTalisman,
     applyFoundSet,
+    getTalismans: () => sets.talismans,
+    addTalisman: t => {
+      const key = x => x.rar + "|" + x.slots + "|" + x.sk.map(e => e.join(":")).join(",");
+      if (sets.talismans.some(x => key(x) === key(t))) { UI.toast("You already have that one."); return; }
+      sets.talismans.push(t);
+      markDirty();
+      UI.toast("Talisman stored.");
+    },
+    removeTalisman: i => { sets.talismans.splice(i, 1); markDirty(); },
     setPiece: (slot, id) => update(s => { s.pieces[slot] = { id, lv: 0, decos: [] }; }),
     clearPiece: slot => update(s => { s.pieces[slot] = null; }),
     setPieceLevel: (slot, lv) => update(s => { if (s.pieces[slot]) s.pieces[slot].lv = lv; }),

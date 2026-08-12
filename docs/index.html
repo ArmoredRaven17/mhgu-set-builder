@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MHGU Set Builder</title>
 <link rel="icon" type="image/png" href="assets/icons/icon_armor_body_r7.png">
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
 <div id="app">
@@ -65,6 +65,13 @@
     <h2>Find Sets</h2>
     <p class="muted">Pick up to five skills; the search finds full armor sets that reach them,
       gems included. Results use the same math as the builder itself.</p>
+    <div class="search-addrow">
+      <span class="name-search search-add">
+        <input type="text" id="searchAdd" placeholder="Add a skill…" autocomplete="off">
+        <ul id="searchAddList" class="name-search-list hidden"></ul>
+      </span>
+      <span id="searchAddHint" class="search-status"></span>
+    </div>
     <div id="searchTargets" class="search-targets"></div>
     <div class="search-opts">
       <label>Gender
@@ -87,18 +94,52 @@
           <option value="auto">Auto</option><option value="0">0</option><option value="1">1</option>
           <option value="2">2</option><option value="3">3</option>
         </select></label>
-      <label>Talisman
-        <select id="searchTal" class="mini-select">
-          <option value="none">None</option><option value="current">Current</option>
+      <label>Talismans
+        <select id="searchTalMode" class="mini-select">
+          <option value="one">Any — one skill</option>
+          <option value="two">Any — two skills</option>
+          <option value="mine">My talismans</option>
         </select></label>
+      <label id="searchTalRarWrap">Talisman rarity
+        <select id="searchTalRar" class="mini-select"></select></label>
+      <label id="searchTalMineWrap" class="hidden">&nbsp;
+        <button id="manageTalBtn" class="nav-btn">Manage my talismans…</button></label>
     </div>
     <div class="row gap search-runrow">
       <button id="searchRun" class="btn">Search</button>
+      <button id="searchCancel" class="btn hidden">Cancel</button>
       <span id="searchStatus" class="search-status"></span>
     </div>
     <div id="searchResults" class="picker-list search-results"></div>
     <div class="row end gap modal-actions">
       <button id="searchClose" class="btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- My Talismans -->
+<div id="talModal" class="modal hidden">
+  <div class="modal-card wide">
+    <h2>My Talismans</h2>
+    <p class="muted">The talismans you actually own. Entries are checked against the game's
+      roll tables, so an impossible talisman can't be stored. They are saved with your sets.</p>
+    <div id="talList" class="picker-list tal-list"></div>
+    <div class="tal-add">
+      <div class="tal-add-row">
+        <label>Talisman<select id="talAddRar" class="mini-select"></select></label>
+        <label>Skill 1<select id="talAddSk1" class="mini-select"></select></label>
+        <label>Points<input type="number" id="talAddPts1" class="mini-input"></label>
+        <label>Skill 2<select id="talAddSk2" class="mini-select"></select></label>
+        <label>Points<input type="number" id="talAddPts2" class="mini-input"></label>
+        <label>Slots<select id="talAddSlots" class="mini-select">
+          <option>0</option><option>1</option><option>2</option><option>3</option></select></label>
+        <button id="talAddBtn" class="btn tiny">Add</button>
+      </div>
+      <div id="talAddProblems" class="tal-problems"></div>
+    </div>
+    <div class="row end gap modal-actions">
+      <button id="talFromCurrent" class="btn tiny">Add the one on this set</button>
+      <button id="talClose" class="btn">Close</button>
     </div>
   </div>
 </div>
@@ -226,10 +267,10 @@
 <script src="data/armor.js?v=1"></script>
 <script src="data/weapons.js?v=1"></script>
 <script src="engine.js?v=3"></script>
-<script src="search.js?v=1"></script>
+<script src="search.js?v=2"></script>
 <script src="pickers.js?v=2"></script>
 <script src="ui.js?v=6"></script>
-<script src="searchui.js?v=1"></script>
-<script src="app.js?v=6"></script>
+<script src="searchui.js?v=2"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>
