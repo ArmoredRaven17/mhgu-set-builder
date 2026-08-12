@@ -99,17 +99,11 @@ window.SBSearchUI = (function () {
     $("talAddRar").value = "10";
   }
   function syncOptionLabels() {
-    const auto = api.weaponArmorClass();
-    $("searchClass").options[0].text = `Auto (${auto === "G" ? "Gunner" : auto === "B" ? "Blademaster" : "no weapon → Blademaster"})`;
-    $("searchWSlots").options[0].text = `Auto (${api.currentWeaponSlots()})`;
     const mine = $("searchTalMode").value === "mine";
     $("searchTalMineWrap").classList.toggle("hidden", !mine);
     $("manageTalBtn").textContent = `Manage my talismans… (${api.getTalismans().length})`;
   }
   function currentOptions() {
-    const auto = api.weaponArmorClass();
-    const clsSel = $("searchClass").value;
-    const slotSel = $("searchWSlots").value;
     const mode = $("searchTalMode").value;
     const trees = targets.map(t => t.tree);
     const talismans = mode === "mine"
@@ -117,9 +111,9 @@ window.SBSearchUI = (function () {
       : window.SBSearch.generateTalismans(trees, window.SB_CHARM, { twoSkill: mode === "two" });
     return {
       gender: Number($("searchGender").value),
-      cls: clsSel === "auto" ? (auto || "B") : clsSel,
+      cls: $("searchClass").value,
       maxRar: Number($("searchRar").value),
-      weaponSlots: slotSel === "auto" ? api.currentWeaponSlots() : Number(slotSel),
+      weaponSlots: Number($("searchWSlots").value),
       villageStar: Number($("searchVillage").value),
       hubStar: Number($("searchHub").value),
       talismans,
@@ -178,18 +172,11 @@ window.SBSearchUI = (function () {
           return;
         }
         if (m.type === "done") {
-          if (tracing) { finishTrace(m.res); return; }
           if (probing) { finishProbe(m.res); return; }
           finishSearch(m.res);
           return;
         }
         if (m.type === "error") {
-          if (tracing) {
-            tracing = false; running = false;
-            $("searchRun").disabled = false; $("searchWhy").disabled = false;
-            $("searchStatus").textContent = `Trace failed: ${m.message}.`;
-            return;
-          }
           if (probing) { probing = false; return; }
           finishSearch(null, m.message);
           return;
@@ -201,55 +188,6 @@ window.SBSearchUI = (function () {
   }
   function killWorker() {
     if (worker) { worker.terminate(); worker = null; workerReady = false; }
-  }
-
-  // ── "Why is the set I built not in the results?" ───────────────────────
-  // A set the player already owns is the most useful bug report there is, so
-  // instead of leaving them to guess, the search runs once more following that
-  // exact armor and says which stage rejected it.
-  let tracing = false;
-  function explain() {
-    if (running) return;
-    if (!targets.length) { $("searchStatus").textContent = "Add at least one skill first."; return; }
-    const pieces = api.currentPieces();
-    if (Object.keys(pieces).length < 5) {
-      $("searchStatus").textContent = "Build all five armor pieces on the page first, then ask again.";
-      return;
-    }
-    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 1000,
-      timeBudgetMs: 300000, trace: { pieces }, ...currentOptions() };
-    tracing = true; running = true;
-    $("searchRun").disabled = true;
-    $("searchWhy").disabled = true;
-    document.querySelectorAll(".search-suggest").forEach(n => n.remove());
-    $("searchStatus").textContent = "Following that set through the search…";
-    startWorker();
-    if (worker) worker.postMessage({ type: "search", query });
-    else setTimeout(() => {
-      try { finishTrace(window.SBSearch.search(query, dataBundle())); }
-      catch (e) {
-        tracing = false; running = false;
-        $("searchRun").disabled = false; $("searchWhy").disabled = false;
-        $("searchStatus").textContent = `Trace failed: ${e && e.message || e}.`;
-      }
-    }, 30);
-  }
-  function finishTrace(res) {
-    tracing = false; running = false;
-    $("searchRun").disabled = false;
-    $("searchWhy").disabled = false;
-    document.querySelectorAll(".search-suggest").forEach(n => n.remove());
-    const tr = res && res.trace;
-    if (!tr) { $("searchStatus").textContent = "No trace came back."; return; }
-    const note = document.createElement("div");
-    note.className = "search-suggest";
-    note.innerHTML = tr.reached && tr.reached.found
-      ? "<p><strong>That set is in the results.</strong> Narrow the list with the filters "
-        + "above rather than scrolling for it.</p>"
-      : `<p><strong>That set was rejected at ${esc(tr.stage || "an unknown stage")}.</strong></p>`
-        + `<ul class="trace-list">${tr.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>`;
-    $("searchStatus").textContent = "";
-    $("searchStatus").parentNode.after(note);
   }
 
   let searchStart = 0;
@@ -656,7 +594,22 @@ window.SBSearchUI = (function () {
     $("talModal").classList.remove("hidden");
   }
 
+  // Class and weapon slots are the player's to set, not the app's to guess: an
+  // "Auto" that quietly means nought slots reads as a search that cannot find
+  // sets which plainly exist. Opening the modal seeds both from the equipped
+  // weapon so the starting point is still sensible — but as a value shown in
+  // the control, which can be seen and changed, rather than a hidden decision.
+  let seeded = false;
+  function seedFromWeapon() {
+    if (seeded) return;
+    seeded = true;
+    const cls = api.weaponArmorClass();
+    if (cls === "B" || cls === "G") $("searchClass").value = cls;
+    $("searchWSlots").value = String(api.currentWeaponSlots());
+  }
+
   function open() {
+    seedFromWeapon();
     syncOptionLabels();
     renderTargets();
     $("searchModal").classList.remove("hidden");
@@ -673,7 +626,6 @@ window.SBSearchUI = (function () {
     $("findSetsBtn").addEventListener("click", open);
     $("searchClose").addEventListener("click", close);
     $("searchRun").addEventListener("click", run);
-    $("searchWhy").addEventListener("click", explain);
     $("searchCancel").addEventListener("click", cancel);
     $("searchTalMode").addEventListener("change", syncOptionLabels);
     // Sorting and filtering only ever re-arrange results already in hand —
