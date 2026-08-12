@@ -237,6 +237,32 @@
           reachable(a, vil, hub));
     }
 
+    // ── Trace: why is THIS set not in the results? ────────────────────────
+    // A set a player already owns is the best bug report there is, but only
+    // if it can be followed through the search. Given that set, every stage
+    // records whether it survived, so the answer is the name of the stage
+    // that dropped it rather than a guess. It costs nothing when unused.
+    const trace = query.trace ? { notes: [], reached: {} } : null;
+    const tracedId = slot => (trace && query.trace.pieces && query.trace.pieces[slot] != null
+      ? Number(query.trace.pieces[slot]) : null);
+    if (trace) {
+      for (const slot of SLOTS) {
+        const id = tracedId(slot);
+        const a = id == null ? null : data.armor[slot][id];
+        if (!a) { trace.notes.push(`${slot}: no such piece`); continue; }
+        if (!(a.gender === 2 || a.gender === query.gender))
+          trace.notes.push(`${slot}: ${a.n} is ${a.gender === 0 ? "male" : "female"} only`);
+        else if (!(a.cls === "A" || a.cls === query.cls))
+          trace.notes.push(`${slot}: ${a.n} is ${a.cls === "B" ? "blademaster" : "gunner"} only`);
+        else if (a.rar > query.maxRar)
+          trace.notes.push(`${slot}: ${a.n} is rarity ${a.rar}, above the cap of ${query.maxRar}`);
+        else if (!reachable(a, vil, hub))
+          trace.notes.push(`${slot}: ${a.n} is not craftable at village ${vil} / hub ${hub}`);
+        else trace.reached.legal = true;
+      }
+      if (trace.notes.length) trace.stage = "the wearer, rarity or progression filters";
+    }
+
     // Candidates for one pass. `soulTree` is the Soul this pass cares about,
     // or 0 for the main pass.
     //
@@ -279,11 +305,30 @@
           a.sk.some(([tr]) => tr === TORSO_UP) ||
           a.slots >= maxSlots);
         const withVec = relevant.map(c => ({ ...c, v: vec(c), def: def(c) }));
-        const kept = withVec.filter(c => !withVec.some(o =>
+        // `noDominance` keeps every piece, however plainly outclassed. Far too
+        // slow to search with, but it is the only way to ask whether dropping
+        // a piece as "outclassed" is what lost a set, rather than assume it.
+        const kept = query.noDominance ? withVec : withVec.filter(c => !withVec.some(o =>
           o !== c &&
           o.v.every((x, i) => x >= c.v[i]) &&
           (o.v.some((x, i) => x > c.v[i]) ||
            o.def > c.def || (o.def === c.def && o.id < c.id))));   // keep the sturdiest of equals
+        if (trace && !soulTree) {
+          const id = tracedId(slot);
+          if (id != null && pool.some(c => c.id === id)) {
+            if (!relevant.some(c => c.id === id)) {
+              trace.notes.push(`${slot}: ${data.armor[slot][id].n} was set aside as holding `
+                + "nothing the query asked for and fewer slots than the best piece");
+              trace.stage = trace.stage || "the relevance filter";
+            } else if (!kept.some(c => c.id === id)) {
+              const me = withVec.find(c => c.id === id);
+              const by = withVec.find(o => o !== me && o.v.every((x, i) => x >= me.v[i]));
+              trace.notes.push(`${slot}: ${data.armor[slot][id].n} was dropped as outclassed`
+                + (by ? ` by ${by.a.n}` : ""));
+              trace.stage = trace.stage || "the dominance filter";
+            }
+          }
+        }
         // Dense per-candidate vectors: the hot loops must never search a
         // piece's skill list, and the bound must never rebuild a running total.
         out[slot] = kept.map(c => ({
@@ -461,6 +506,13 @@
     let passSoulFor = trees.map(() => []);
     let passRequire = -1;
 
+    // Is the branch chosen so far the traced set, as far as it goes?
+    const onTrace = k => {
+      if (!trace) return false;
+      for (let i = 0; i <= k; i++)
+        if (!chosen[i] || chosen[i].id !== tracedId(order[i])) return false;
+      return true;
+    };
     const stop = () => cancelled || timedOut || results.length >= capNow;
     const dfs = (k, accSlots) => {
       if (stop()) { truncated = truncated || results.length >= capNow; return; }
@@ -524,6 +576,11 @@
           // through them — this catches it, and it is what makes a demanding
           // query with no weapon slots finish instead of grinding.
           if (ok && totalGap > slotsOpt * OPTIMISTIC_TORSO * bestDensity + 2 * shortTrees) ok = false;
+        }
+        if (trace && !ok && onTrace(k)) {
+          trace.notes.push(`the branch was cut at ${order[k]} (${c.a.n}): the bound judged the `
+            + "remaining slots could not close the gap");
+          trace.stage = trace.stage || "the branch-and-bound cut-off";
         }
         if (ok) dfs(k + 1, slotsNow);
         for (let ti = 0; ti < acc.length; ti++) acc[ti] -= c.pts[ti] * m;
@@ -622,13 +679,30 @@
         else gapArr[passRequire] = gapOf(soulTree, passRequire);
       }
 
+      const traced = trace && onTrace(order.length - 1);
+      if (traced) {
+        trace.reached.leaf = true;
+        trace.notes.push("the armor combination was reached; still short: "
+          + (dims.map((t, i) => (gapArr[i] > 0
+            ? `${(data.skills.trees || {})[t] || `tree ${t}`} by ${gapArr[i]}` : null))
+            .filter(Boolean).join(", ") || "nothing"));
+      }
+
       // Hopeless leaves are skipped without touching the fill solver: not even
       // the strongest candidate plus every slot filled with the densest gem
       // could close the gap.
       const slotCeiling = armorSlots + query.weaponSlots + talMaxSlots;
       let totalGap = 0, bestDensity = 0, shortTrees = 0;
       for (let ti = 0; ti < dims.length; ti++) {
-        if (gapArr[ti] > talBestArr[ti] + slotCeiling * (1 + torsoCount) * densityArr[ti]) return;
+        if (!query.noBound
+          && gapArr[ti] > talBestArr[ti] + slotCeiling * (1 + torsoCount) * densityArr[ti]) {
+          if (traced) {
+            trace.notes.push(`no talisman and no arrangement of ${slotCeiling} slots could supply `
+              + `${gapArr[ti]} more points of ${(data.skills.trees || {})[dims[ti]] || dims[ti]}`);
+            trace.stage = trace.stage || "the per-skill leaf check";
+          }
+          return;
+        }
         if (gapArr[ti] > 0) {
           totalGap += gapArr[ti];
           shortTrees++;
@@ -640,7 +714,15 @@
       // most generous talisman could supply, no arrangement exists, and the
       // coverage front is never built. Most leaves of a demanding query die
       // here, which is what keeps them cheap.
-      if (totalGap > slotCeiling * (1 + torsoCount) * bestDensity + talBestSum * talMult + 2 * shortTrees) return;
+      if (!query.noBound
+        && totalGap > slotCeiling * (1 + torsoCount) * bestDensity + talBestSum * talMult + 2 * shortTrees) {
+        if (traced) {
+          trace.notes.push(`${totalGap} points are missing across ${shortTrees} skills, more than `
+            + `${slotCeiling} shared slots and the best talisman could cover`);
+          trace.stage = trace.stage || "the shared-slot leaf check";
+        }
+        return;
+      }
 
       // Candidates whose *effective* help is identical are the same problem, so
       // each distinct (clamped contribution, slots) is solved once. With the
@@ -682,7 +764,7 @@
         const tal = talCands[ci];
         const contrib = talContrib[ci];
         let possible = true;
-        for (let j = 0; j < act.length; j++) {
+        for (let j = 0; !query.noBound && j < act.length; j++) {
           const ti = act[j];
           if (contrib[ti] * talMult + baseCap[j] + talSlots[ci] * talMult * densityArr[ti] < gapArr[ti]) {
             possible = false; break;
@@ -706,6 +788,8 @@
         tried.set(key, fill);
         return fill;
       }
+
+      if (traced) trace.reached.fillAttempted = true;
 
       // Pass A: probe only the strongest candidate per group. A group whose
       // probe can't be filled is dead — nothing weaker in it needs testing.
@@ -734,7 +818,15 @@
         // outright. Checking points alone rejected sets that genuinely work.
         let good = !r.problems.length;
         for (const t of trees) if (!satisfied(r, t, need[t])) good = false;
-        if (!good) continue;   // engine disagrees with the plan: try the next talisman
+        if (!good) {
+          if (traced && !trace.reached.engineNote) {
+            trace.reached.engineNote = true;
+            trace.notes.push("a gem arrangement was found, but the engine then disagreed that the "
+              + "set reaches every skill" + (r.problems.length ? `: ${r.problems[0]}` : ""));
+            trace.stage = trace.stage || "the engine's own verification";
+          }
+          continue;   // engine disagrees with the plan: try the next talisman
+        }
         const spare = Object.values(r.slots).reduce((a, s) => a + (s.total - s.used), 0);
         // The Soul passes revisit armor the main pass already cleared, so a
         // combination is only ever reported once.
@@ -742,12 +834,21 @@
         if (seen.has(key)) return;
         seen.add(key);
         results.push({ set, engine: r, spare, defense: r.defense, talCost: talCost(tal) });
+        if (traced) { trace.reached.found = true; trace.notes.push("this armor combination IS in the results"); }
         return;
       }
     }
 
     results.sort((a, b) => a.talCost - b.talCost || b.spare - a.spare || b.defense - a.defense);
-    return { results, complete: !truncated && !cancelled && !timedOut, soulTruncated, cancelled, timedOut, explored, stats: { nodes, fills } };
+    if (trace && !trace.reached.found) {
+      if (!trace.reached.leaf && !trace.stage) trace.stage = "the search never reached this combination";
+      else if (trace.reached.fillAttempted && !trace.stage) {
+        trace.stage = "the gem fill";
+        trace.notes.push("no talisman in the pool, with any arrangement the fill tried, "
+          + "covered what was still missing");
+      }
+    }
+    return { results, complete: !truncated && !cancelled && !timedOut, soulTruncated, cancelled, timedOut, explored, trace, stats: { nodes, fills } };
   }
 
   // Fit gems into the bins to cover `residual` (indexed by position in `act`,

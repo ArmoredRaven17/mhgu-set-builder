@@ -438,3 +438,6 @@ input,select,button,textarea{font-family:inherit}
   .equip-column{overflow:visible}
   .results-panel{flex:none;max-width:none;min-width:0;border-left:none;border-top:1px solid var(--line)}
 }
+
+.trace-list { margin: .4rem 0 0; padding-left: 1.1rem; }
+.trace-list li { margin: .2rem 0; }

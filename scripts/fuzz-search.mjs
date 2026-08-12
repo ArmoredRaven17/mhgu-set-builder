@@ -46,6 +46,19 @@ const decos = Object.entries(data.decos).map(([id, d]) => ({ id: Number(id), slo
 // Trees worth building a set around: something can actually raise them.
 const TREES = [...new Set(decos.flatMap(d => d.sk.filter(([, p]) => p > 0).map(([t]) => t)))]
   .filter(t => data.skills.active[t]);
+// Real queries are not drawn evenly from the tree list: players ask for the
+// combat skills that armor is actually built around, at demanding thresholds,
+// and those are the queries where pruning has the most room to go wrong. Trees
+// are weighted by how much armor carries them, so the generated queries look
+// like the ones people type instead of a spread of cooking and town skills.
+const WEIGHTED = [];
+for (const t of TREES) {
+  let n = 0;
+  for (const slot of SLOTS)
+    for (const a of Object.values(data.armor[slot]))
+      if (a.sk.some(([tr, p]) => tr === t && p > 0)) n++;
+  for (let k = 0; k < Math.min(12, 1 + Math.floor(n / 12)); k++) WEIGHTED.push(t);
+}
 const ptsIn = (sk, want) => sk.reduce((n, [t, p]) => n + (want.includes(t) ? p : 0), 0);
 
 // Gem a slot toward whichever wanted tree is furthest behind. Assembling gear
@@ -77,7 +90,9 @@ function randomTalisman(want) {
   const [t1, r1] = pick(first);
   const lo1 = Math.max(1, r1[0]);
   const sk = [[Number(t1), lo1 + int(Math.max(1, r1[1] - lo1 + 1))]];
-  if (rnd() < 0.5) {
+  // A one-skill pool can never match a two-skill charm, so in that mode the
+  // witness wears a one-skill charm too and the trial is not wasted.
+  if (MODE !== "one" && rnd() < 0.5) {
     const second = Object.entries(table).filter(([t, r]) => r[3] > 0 && Number(t) !== Number(t1));
     if (second.length) {
       const [t2, r2] = pick(second);
@@ -90,18 +105,35 @@ function randomTalisman(want) {
 }
 
 const TRIALS = Number(process.argv[3] || 200);
+// How the search is given talismans, matching the app's own three modes.
+//   own  — hand it the witness's charm (tests the armor and gem search alone)
+//   one  — "Any — one skill", two — "Any — two skills" (tests what the app
+//          actually generates, which is where a set can go missing even though
+//          the armor search is sound)
+const MODE = (process.argv[4] || "own").toLowerCase();
 const name = t => data.skills.trees[t];
-let ran = 0, miss = 0, thin = 0, slowest = 0;
+let ran = 0, miss = 0, thin = 0, slowest = 0, unreachable = 0;
 
 for (let i = 0; i < TRIALS * 12 && ran < TRIALS; i++) {
   const gender = int(2), cls = rnd() < 0.5 ? "B" : "G", ws = int(4);
   const want = [];
-  while (want.length < 3 + int(3)) { const t = pick(TREES); if (!want.includes(t)) want.push(t); }
+  while (want.length < 4 + int(3)) { const t = pick(WEIGHTED); if (!want.includes(t)) want.push(t); }
+
+  // Real sets lean on Torso Up constantly, and a piece carrying it holds none
+  // of the skills being chased — so ranking pieces by how much they serve the
+  // query would almost never pick one. Some witnesses are pushed into it.
+  const torsoSlots = rnd() < 0.4
+    ? ["head", "arms", "waist", "legs"].filter(() => rnd() < 0.5)
+    : [];
 
   const pieces = {}, running = {};
   for (const s of SLOTS) {
-    const pool = Object.entries(data.armor[s]).map(([id, a]) => ({ id: Number(id), a }))
+    let pool = Object.entries(data.armor[s]).map(([id, a]) => ({ id: Number(id), a }))
       .filter(({ a }) => (a.gender === 2 || a.gender === gender) && (a.cls === "A" || a.cls === cls));
+    if (torsoSlots.includes(s)) {
+      const up = pool.filter(({ a }) => a.sk.some(([t]) => t === E.TORSO_UP));
+      if (up.length) pool = up;
+    }
     const ranked = pool.map(c => ({ c, k: ptsIn(c.a.sk, want) + c.a.slots }))
       .sort((x, y) => y.k - x.k).slice(0, 40).map(x => x.c);
     const c = pick(ranked.length ? ranked : pool);
@@ -122,13 +154,41 @@ for (let i = 0; i < TRIALS * 12 && ran < TRIALS; i++) {
   const all = [...byTree.entries()];
   if (all.length < 3) { thin++; continue; }
   const bag = all.slice(), targets = [];
-  for (let k = 0, n = Math.min(all.length, 3 + int(4)); k < n && bag.length; k++)
-    targets.push(...bag.splice(int(bag.length), 1));
+  // In a generated mode the pool is built from the requested skills alone, so
+  // a query that leaves the witness's charm skill out can never be served by
+  // it and the trial is wasted. Ask for that skill first.
+  if (MODE !== "own")
+    for (const [ct] of tal.sk) {
+      const at = bag.findIndex(([t]) => t === ct);
+      if (at >= 0) targets.push(...bag.splice(at, 1));
+    }
+  // Prefer the demanding skills the witness reached over its incidental ones:
+  // a query of five real thresholds strains the pruning, a query of three
+  // town skills does not.
+  bag.sort((x, y) => y[1] - x[1]);
+  for (let n = Math.min(all.length, 4 + int(4)); targets.length < n && bag.length;)
+    targets.push(...bag.splice(rnd() < 0.7 ? 0 : int(bag.length), 1));
+
+  // In a generated mode the search is only obliged to find something if the
+  // pool it generates actually contains a charm as good as the witness's. To
+  // keep that judgement honest the witness's charm must sit entirely inside
+  // the requested skills — otherwise it might be helping in some way the
+  // comparison cannot see, and a miss would not prove anything.
+  let talismans = [tal];
+  if (MODE !== "own") {
+    const treeIds = targets.map(([t]) => t);
+    if (!tal.sk.every(([t]) => treeIds.includes(t))) { unreachable++; continue; }
+    const pool = S.generateTalismans(treeIds, charm, { twoSkill: MODE === "two" });
+    const ptsFor = (c, t) => c.sk.reduce((n, [tt, p]) => n + (tt === t ? p : 0), 0);
+    const covered = pool.some(c => c.slots >= tal.slots && treeIds.every(t => ptsFor(c, t) >= ptsFor(tal, t)));
+    if (!covered) { unreachable++; continue; }
+    talismans = pool;
+  }
 
   ran++;
   const t0 = Date.now();
   const res = S.search({ targets, gender, cls, maxRar: 11, weaponSlots: ws,
-    talismans: [tal], maxResults: 3, timeBudgetMs: 60000 }, data);
+    talismans, maxResults: 3, timeBudgetMs: 60000 }, data);
   const ms = Date.now() - t0;
   if (ms > slowest) slowest = ms;
   if (res.results.length) continue;
@@ -141,6 +201,7 @@ for (let i = 0; i < TRIALS * 12 && ran < TRIALS; i++) {
   console.error("   repro:    ", JSON.stringify({ gender, cls, ws, targets, tal, pieces }));
 }
 
-console.log(`${ran} trials, ${miss} miss(es), slowest ${slowest} ms `
-  + `(${thin} witnesses activated too few skills to make a query)`);
+console.log(`mode ${MODE}: ${ran} trials, ${miss} miss(es), slowest ${slowest} ms `
+  + `(${thin} witnesses activated too few skills to make a query`
+  + (unreachable ? `, ${unreachable} whose charm the pool could not match` : "") + ")");
 process.exit(miss ? 1 : 0);

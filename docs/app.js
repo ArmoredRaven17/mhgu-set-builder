@@ -367,6 +367,14 @@
     currentWeaponSlots,
     applyFoundSet,
     getTalismans: () => sets.talismans,
+    // The set on the page, for "why is this one not in the results?".
+    currentPieces: () => {
+      const cur = currentSet();
+      const out = {};
+      for (const slot of ["head", "chest", "arms", "waist", "legs"])
+        if (cur.pieces[slot]) out[slot] = cur.pieces[slot].id;
+      return out;
+    },
     addTalisman: t => {
       const key = x => x.rar + "|" + x.slots + "|" + x.sk.map(e => e.join(":")).join(",");
       if (sets.talismans.some(x => key(x) === key(t))) { UI.toast("You already have that one."); return; }
