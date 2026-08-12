@@ -18,6 +18,7 @@ window.SBSearchUI = (function () {
   let lastTargets = [];      // the skills asked for, to tell bonuses apart
   let worker = null, workerReady = false, running = false;
   let lastLiveRender = 0;    // throttles redrawing while a search streams in
+  let probing = false;       // a follow-up "would another talisman work?" check
   const RES_NAMES = ["Fire", "Water", "Thunder", "Ice", "Dragon"];
 
   // Every positive activated skill, for the typeahead.
@@ -53,12 +54,24 @@ window.SBSearchUI = (function () {
   }
   function wireAddBox() {
     const inp = $("searchAdd"), list = $("searchAddList");
+    // Matching is deliberately forgiving. The community spells several of
+    // these differently from the data ("Sheathe Control" for Sheath Control),
+    // and a skill you cannot type is a skill you cannot search for. Every word
+    // must match somewhere, but a word counts if either side merely starts the
+    // other — so "sheathe" finds "Sheath", and "crit" finds "Critical".
+    const matches = (o, words) => {
+      const hay = (o.name + " " + treeName(o.tree)).toLowerCase();
+      if (hay.includes(words.join(" "))) return true;
+      const parts = hay.split(/[^a-z0-9+]+/).filter(Boolean);
+      return words.every(w =>
+        parts.some(p => p.startsWith(w) || w.startsWith(p)) || hay.includes(w));
+    };
     const refresh = () => {
       const q = inp.value.trim().toLowerCase();
       if (!q) { list.classList.add("hidden"); return; }
+      const words = q.split(/\s+/).filter(Boolean);
       const hits = OPTIONS.filter(o =>
-        !targets.some(t => t.tree === o.tree) &&
-        (o.name.toLowerCase().includes(q) || treeName(o.tree).toLowerCase().includes(q))).slice(0, 12);
+        !targets.some(t => t.tree === o.tree) && matches(o, words)).slice(0, 12);
       list.innerHTML = hits.map((o, i) =>
         `<li data-i="${i}">${esc(o.name)} <span class="tc-sub">(${esc(treeName(o.tree))} ${o.pts})</span></li>`).join("")
         || `<li class="ns-overflow">No match.</li>`;
@@ -144,7 +157,7 @@ window.SBSearchUI = (function () {
         const m = e.data || {};
         if (m.type === "ready") { workerReady = true; return; }
         if (m.type === "progress") {
-          if (!running) return;
+          if (probing || !running) return;
           // Keep what has been found so far, so it survives a cancel and can
           // be looked at while the rest of the search runs.
           if (m.fresh && m.fresh.length) {
@@ -164,8 +177,16 @@ window.SBSearchUI = (function () {
             `Searching… ${m.found} found, ${m.explored.toLocaleString()} sets checked. Cancel keeps what it has.`;
           return;
         }
-        if (m.type === "done") { finishSearch(m.res); return; }
-        if (m.type === "error") { finishSearch(null, m.message); return; }
+        if (m.type === "done") {
+          if (probing) { finishProbe(m.res); return; }
+          finishSearch(m.res);
+          return;
+        }
+        if (m.type === "error") {
+          if (probing) { probing = false; return; }
+          finishSearch(null, m.message);
+          return;
+        }
       };
       worker.onerror = () => { killWorker(); finishSearch(null, "worker failed"); };
       worker.postMessage({ type: "init", scripts: workerScripts() });
@@ -201,6 +222,7 @@ window.SBSearchUI = (function () {
     $("searchCancel").classList.remove("hidden");
     $("searchResultTools").classList.add("hidden");
     $("searchResults").innerHTML = "";
+    document.querySelectorAll(".search-suggest").forEach(n => n.remove());
     $("searchStatus").textContent = "Searching…";
     startWorker();
     if (worker) {
@@ -267,8 +289,48 @@ window.SBSearchUI = (function () {
         ? `No sets found before stopping at ${(ms / 1000).toFixed(1)} s — these skills are demanding. Try fewer, or allow weapon slots.${hint}`
         // Only claim everything was checked when it actually was: the Soul
         // passes run on a short allowance and may have been cut short.
-        : `No possible set reaches those skills this way — ${res.soulTruncated ? "nearly every" : "every"} combination with ${talMode === "mine" ? "your stored talismans" : talMode === "one" ? "a one-skill talisman (or none)" : "a two-skill talisman (or none)"} was checked. Try ${otherModes}, or relax gender/class/rarity/weapon slots.${hint}`;
+        : `No possible set reaches those skills this way — ${res.soulTruncated ? "nearly every" : "every"} combination with ${talMode === "mine" ? "your stored talismans" : talMode === "one" ? "a one-skill talisman (or none)" : "a two-skill talisman (or none)"} was checked.${hint}`;
     applyView();
+    // Finding nothing is usually not the end of the story — a two-skill
+    // talisman often reaches what a one-skill one cannot. Rather than tell
+    // people to go and try it, go and try it: this asks for a single set, so
+    // it answers in a fraction of the time a full search takes.
+    if (!res.results.length && talMode !== "two") probeOtherTalismans();
+  }
+
+  // "Nothing found" with a one-skill talisman rarely means nothing exists —
+  // every set tested so far for five or six skills needed a two-skill charm.
+  // Asking for a single set answers that in a fraction of a full search, and
+  // the offer to re-run is one click.
+  function probeOtherTalismans() {
+    if (!worker) return;
+    probing = true;
+    const opts = currentOptions();
+    const trees = targets.map(t => t.tree);
+    worker.postMessage({ type: "search", query: {
+      ...opts,
+      targets: targets.map(t => [t.tree, t.pts]),
+      talismans: window.SBSearch.generateTalismans(trees, window.SB_CHARM, { twoSkill: true }),
+      maxResults: 1, timeBudgetMs: 20000, soulBudgetMs: 2000,
+    } });
+  }
+  function finishProbe(res) {
+    probing = false;
+    document.querySelectorAll(".search-suggest").forEach(n => n.remove());
+    if (!res || !res.results.length) return;
+    const tal = res.results[0].set.talisman;
+    const note = document.createElement("div");
+    note.className = "search-suggest";
+    note.innerHTML = `A two-skill talisman can reach these skills — for example `
+      + `<b>${esc(tal ? talLabel(tal) : "one you already have")}</b>. `
+      + `<button id="searchSwitchTwo" class="nav-btn">Search with two-skill talismans</button>`;
+    $("searchStatus").parentNode.after(note);
+    $("searchSwitchTwo").addEventListener("click", () => {
+      $("searchTalMode").value = "two";
+      syncOptionLabels();
+      note.remove();
+      run();
+    });
   }
 
   // With up to 1000 results, a rich row-per-result with a listener-per-button

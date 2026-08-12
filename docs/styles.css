@@ -326,6 +326,14 @@ input,select,button,textarea{font-family:inherit}
 .sr-neg{color:var(--negative)}
 .srl-more{display:block;width:100%;margin-top:6px;padding:8px;text-align:center}
 
+/* Offered when a search comes up empty but another talisman option would not. */
+.search-suggest{
+  margin:0 0 10px;padding:8px 12px;font-size:12px;line-height:1.5;
+  border:1px solid var(--line);border-left:3px solid var(--accent-hover);
+  border-radius:6px;background:#ffffff0c
+}
+.search-suggest .nav-btn{margin-left:8px}
+
 /* Sort/filter bar — these only re-arrange results already found. */
 .search-tools{
   display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;
