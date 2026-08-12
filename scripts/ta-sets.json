@@ -1,0 +1,3801 @@
+{
+ "source": "MHXX_GU Speedrun Archive.xlsx (community TA archive)",
+ "note": "skill names normalised to this project's in-game names; see scripts/test-ta-sets.mjs",
+ "sets": [
+  {
+   "sheet": "GS",
+   "monster": "Arzuros",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "Sharpness +1"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Barroth",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Critical Draw",
+    "Sheath Control",
+    "Blightproof",
+    "Challenge Sheath",
+    "Knockout King"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Sharpness +2",
+    "Critical Draw",
+    "Quick Sheath",
+    "Critical Boost",
+    "Focus"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Congalala",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +1",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Focus"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Critical Eye +2",
+    "Sharpness +1",
+    "Quick Sheath",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Focus"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Khezu (ML)",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Focus"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Lagombi",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Critical Draw",
+    "Sheath Control",
+    "Blightproof",
+    "Challenge Sheath"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Lavasioth",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Punishing Draw",
+    "Challenger +2",
+    "Weakness Exploit"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Weakness Exploit",
+    "Critical Eye +2",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Earplugs",
+    "Critical Boost",
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "Critical Draw",
+    "Critical Boost",
+    "Sharpness +2",
+    "HG Earplugs"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Plesioth (DF)",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Critical Draw",
+    "Quick Sheath",
+    "Sharpness +1"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Critical Draw",
+    "Sheath Control",
+    "Blightproof",
+    "Weakness Exploit"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Critical Draw",
+    "Sheath Control",
+    "Blightproof",
+    "Challenge Sheath"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Critical Draw",
+    "Sharpness +1",
+    "Challenge Sheath",
+    "Quick Sheath"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Volvidon (RP)",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Critical Draw",
+    "Sharpness +1",
+    "Challenge Sheath",
+    "Quick Sheath"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Giadrome + Bulldrome",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "Sharpness +1"
+   ]
+  },
+  {
+   "sheet": "GS",
+   "monster": "Rathian + Rathalos",
+   "skills": [
+    "Focus",
+    "Critical Boost",
+    "Weakness Exploit",
+    "Earplugs",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Arzuros",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Barroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Tropic Hunter"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Weakness Exploit",
+    "Elemental Crit",
+    "Critical Eye +3",
+    "Repeat Offender",
+    "Dragon Atk +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Congalala",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Repeat Offender",
+    "Attack Up L"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Gypceros (AS)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Resentment"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Khezu (AR)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Khezu (ML)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Challenger +2",
+    "Polar Hunter"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Lavasioth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Resentment"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Challenger +2",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Najarala (VH)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "HG Earplugs"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Nerscylla",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Plesioth (DF)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Sharpness +1"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Seltas (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Volvidon (RP)",
+   "skills": [
+    "Critical Eye +3",
+    "Critical Boost",
+    "Repeat Offender",
+    "Challenger +2",
+    "Challenge Sheath",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Yian Kut Ku (VH)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "Zamtrios",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Critical Eye +2",
+    "Polar Hunter"
+   ]
+  },
+  {
+   "sheet": "LS",
+   "monster": "G2 Minion's Devotion",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Arzuros",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Razor Sharp",
+    "Sharpness +2",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Arzuros (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Razor Sharp",
+    "Sharpness +2",
+    "Critical Eye +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Barroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "Challenger +1",
+    "Sharpness +2",
+    "Tropic Hunter"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Critical Eye +3",
+    "Dragon Atk +2",
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Blangonga",
+   "skills": [
+    "Sharpness +2",
+    "Challenger +2",
+    "Polar Hunter",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Blangonga (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Elemental Crit",
+    "Sharpness +2",
+    "Challenger +1"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Congalala",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Tremor Res"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Thunder Atk +2",
+    "Critical Eye +2",
+    "Element Atk Up",
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Gypceros (AS)",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Repeat Offender",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Gypceros (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Sharpness +2",
+    "Fire Atk +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Lavasioth",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Razor Sharp",
+    "Sharpness +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Elemental Crit",
+    "Repeat Offender",
+    "Sharpness +1"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Elemental Crit",
+    "Challenger +2",
+    "Thunder Atk +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "Sharpness +2",
+    "Critical Eye +1",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Critical Eye +2",
+    "Elemental Crit"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Rathian (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +2",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Elemental Crit",
+    "Sharpness +2",
+    "Fire Atk +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Elemental Crit",
+    "Sharpness +2",
+    "Fire Atk +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Seltas (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Elemental Crit",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Elemental Crit",
+    "Repeat Offender",
+    "Thunder Atk +1"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Sharpness +2",
+    "Critical Eye +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Volvidon (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Sharpness +2",
+    "Challenger +2",
+    "Water Atk +2"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Sharpness +2",
+    "Challenger +2",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SnS",
+   "monster": "Zamtrios",
+   "skills": [
+    "Critical Eye +3",
+    "Thunder Atk +2",
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Arzuros",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Barroth",
+   "skills": [
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Eye +1",
+    "Razor Sharp",
+    "Sharpness +2",
+    "Fire Atk +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2",
+    "Water Atk +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Blangonga",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Tremor Res",
+    "Skill +2",
+    "Double Talisman"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Congalala",
+   "skills": [
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Eye +1",
+    "Razor Sharp",
+    "Tremor Res",
+    "Fire Atk +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Critical Eye +3",
+    "Thunder Atk +2",
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Gypceros (AS)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Gypceros (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Kecha Wacha (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Lagombi",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Lavasioth",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Elemental Crit",
+    "Challenger +2",
+    "Thunder Atk +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "HG Earplugs",
+    "Razor Sharp",
+    "Critical Eye +1",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Elemental Crit",
+    "Critical Eye +3",
+    "Fire Atk +2",
+    "Razor Sharp",
+    "Element Atk Up"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Elemental Crit",
+    "Repeat Offender",
+    "Sharpness +2",
+    "Fire Atk +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Repeat Offender",
+    "Critical Eye +2",
+    "Thunder Atk +2",
+    "Elemental Crit",
+    "Element Atk Up"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Shogun Ceanataur (VF)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Thunder Atk +2",
+    "Elemental Crit",
+    "Stam Recov Up"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Volvidon (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Zamtrios",
+   "skills": [
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Eye +1",
+    "Razor Sharp",
+    "Thunder Atk +2"
+   ]
+  },
+  {
+   "sheet": "DB",
+   "monster": "Giadrome + Bulldrome",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Arzuros",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Sharpness +2",
+    "Critical Eye +3"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Barroth",
+   "skills": [
+    "Challenger +2",
+    "Earplugs",
+    "Weakness Exploit",
+    "Repeat Offender",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Congalala",
+   "skills": [
+    "Attack Up L",
+    "Critical Eye +3",
+    "Critical Boost",
+    "Tremor Res",
+    "Weakness Exploit"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Airborne"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Gypceros (AS)",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Gypceros (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Sharpness +2",
+    "Critical Eye +2"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Sharpness +2",
+    "Critical Eye +1",
+    "Weakness Exploit",
+    "Repeat Offender",
+    "Critical Boost",
+    "Challenger +1"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Lagombi",
+   "skills": [
+    "Critical Eye +3",
+    "Critical Boost",
+    "Polar Hunter",
+    "Attack Up S",
+    "Weakness Exploit"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Challenger +2",
+    "Earplugs",
+    "Weakness Exploit",
+    "Repeat Offender",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Earplugs"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Sharpness +2",
+    "Critical Eye +2"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "Challenger +2",
+    "HG Earplugs"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Nerscylla",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Challenger +2",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Sharpness +2",
+    "Challenger +2",
+    "Earplugs",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Rathian (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Earplugs"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Seltas (Double)",
+   "skills": [
+    "Critical Eye +3",
+    "Challenger +2",
+    "Weakness Exploit",
+    "Attack Up S",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Attack UpS"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Earplugs"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Challenger +2",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "Hammer",
+   "monster": "Giadrome + Bulldrome",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Sharpness +2",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Blangonga",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Bludgeoner",
+    "Tremor Res"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Gypceros (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Flying Pub Soul"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Lagombi",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Polar Hunter"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Lavasioth",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Tropic Hunter",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Attack Up L",
+    "Critical Eye +3",
+    "Critical Boost",
+    "Sharpness +1",
+    "Weakness Exploit"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Sharpness +1",
+    "Challenger +1",
+    "HG Earplugs"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "HH",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Arzuros",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Barroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Congalala",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Tremor Res",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Lagombi",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Repeat Offender",
+    "Polar Hunter"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Challenger +2",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Nibelsnarf (DF)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "Challenger +1",
+    "Repeat Offender",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Volvidon (RP)",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Repeat Offender",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "Lance",
+   "monster": "Zamtrios",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Blangonga",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Congalala",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Artillery Expert",
+    "Razor Sharp",
+    "Load Up",
+    "Guard +1",
+    "Trump Card"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Artillery Expert",
+    "Razor Sharp",
+    "Load Up",
+    "Guard +1",
+    "Sharpness +1",
+    "Trump Card"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Artillery Expert",
+    "Razor Sharp",
+    "Load Up",
+    "Guard +2",
+    "Trump Card",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "GL",
+   "monster": "Zamtrios",
+   "skills": [
+    "Critical Eye +2",
+    "Sharpness +1",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Guard Up"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Arzuros",
+   "skills": [
+    "Sharpness +2",
+    "Status Atk +1",
+    "Critical Eye +1",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Composed"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Barroth",
+   "skills": [
+    "Razor Sharp",
+    "Critical Boost",
+    "Bind Res",
+    "Critical Eye +1",
+    "Repeat Offender",
+    "Evade Extender",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Blangonga",
+   "skills": [
+    "Sharpness +2",
+    "Evasion +2",
+    "Challenger +2",
+    "Razor Sharp",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Congalala",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Trump Card"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Gypceros (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Trump Card"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Lagombi",
+   "skills": [
+    "Critical Eye +3",
+    "Challenger +2",
+    "Bludgeoner",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Evasion +1"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Nibelsnarf (DF)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Earplugs",
+    "Repeat Offender",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Rathian (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Attack Up S",
+    "Repeat Offender",
+    "Earplugs"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Rathian (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "Challenger +1",
+    "Repeat Offender",
+    "Peak Performance"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Trump Card"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Volvidon (RP)",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Repeat Offender",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "SwAxe",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Razor Sharp",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Arzuros",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +3",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Barroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Sharpness +1"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Dragon Atk +2",
+    "Element Atk Up",
+    "Partbreaker",
+    "HG Earplugs",
+    "Mind's Eye"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Blangonga",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Critical Eye +2",
+    "Razor Sharp",
+    "Sharpness +1",
+    "Tremor Res"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Congalala",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Gypceros (AS)",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Bludgeoner",
+    "Razor Sharp",
+    "Challenger +1"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Gypceros (RP)",
+   "skills": [
+    "Artillery Novice",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +2",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Razor Sharp",
+    "Challenger +2",
+    "Critical Eye +3"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Lavasioth",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Repeat Offender",
+    "Critical Boost",
+    "Challenger +1",
+    "Knockout King"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Malfestio (RP)",
+   "skills": [
+    "Artillery Novice",
+    "Load Up",
+    "Sharpness +2",
+    "Bitter Affinity",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Artillery Novice",
+    "Challenger +2",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Razor Sharp",
+    "Weakness Exploit"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "Artillery Expert",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Bludgeoner",
+    "HG Earplugs",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Dragon Atk +2",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Challenger +1",
+    "Earplugs"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Rathian (JU)",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Sharpness +2",
+    "Critical Boost",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Rathian (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Fire Atk +2",
+    "Element Atk Up",
+    "Sharpness +1",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Fire Atk +2",
+    "Element Atk Up",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Sharpness +1",
+    "Razor Sharp",
+    "Bludgeoner",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Artillery Novice"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Bludgeoner",
+    "Critical Boost",
+    "Attack Up S",
+    "Earplugs"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +3"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Yian Kut Ku (VH)",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Bludgeoner",
+    "Critical Boost",
+    "Load Up",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Zamtrios",
+   "skills": [
+    "Thunder Atk +2",
+    "Razor Sharp",
+    "Sharpness +1",
+    "Element Atk Up",
+    "HG Earplugs"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Malfestio + Nercsylla",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Load Up",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "CB",
+   "monster": "Lavasioth + Rathalos",
+   "skills": [
+    "Artillery Novice",
+    "Weakness Exploit",
+    "Load Up",
+    "Critical Eye +1",
+    "Sharpness +2",
+    "Airborne"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Arzuros",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Barroth",
+   "skills": [
+    "Critical Eye +3",
+    "Critical Boost",
+    "Challenger +2",
+    "Razor Sharp",
+    "Tropic Hunter"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Blangonga",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Polar Hunter"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Congalala",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Thunder Atk +2",
+    "Critical Eye +2",
+    "Element Atk Up",
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Gypceros (AS)",
+   "skills": [
+    "Fire Atk +2",
+    "Critical Eye +2",
+    "Sharpness +1",
+    "Repeat Offender",
+    "Elemental Crit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Gypceros (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Lavasioth",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Repeat Offender",
+    "Critical Boost",
+    "Bombardier"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "HG Earplugs",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Nerscylla",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Sharpness +2",
+    "Challenger +2",
+    "Fire Atk +1"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Razor Sharp",
+    "Challenger +2",
+    "Sharpness +2"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp",
+    "Repeat Offender",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Repeat Offender"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Zamtrios",
+   "skills": [
+    "HG Earplugs",
+    "Sharpness +2",
+    "Critical Eye +2",
+    "Critical Boost",
+    "Weakness Exploit"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "G1 Surprise!",
+   "skills": [
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Sharpness +2",
+    "Razor Sharp"
+   ]
+  },
+  {
+   "sheet": "IG",
+   "monster": "Giadrome + Bulldrome",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Sharpness +2",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Arzuros",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Challenger +2",
+    "Attack Up S"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Barroth",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Water Atk +2",
+    "True Shot Up",
+    "Load Up",
+    "HG Earplugs",
+    "Heat Cancel"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Congalala",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Critical Eye +2",
+    "Ammo Saver"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Critical Eye +2",
+    "Challenger +1"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Challenger +2",
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Critical Eye +1"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Challenger +2",
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Challenger +1",
+    "Ammo Saver"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Plesioth (DF)",
+   "skills": [
+    "Thunder Atk +2",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Eye +2",
+    "Elemental Crit"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Challenger +2",
+    "Critical Eye +1"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Rathian (JU)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Challenger +1",
+    "Ammo Saver"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Rathian (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Challenger +2",
+    "Attack Up S"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Fire Atk +2",
+    "True Shot Up",
+    "Elemental Crit",
+    "Critical Eye +3",
+    "Repeat Offender",
+    "Quick Sheath"
+   ]
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Critical Eye +2",
+    "Ammo Saver"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Seltas (Double)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Challenger +2",
+    "Attack Up S"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Critical Eye +2",
+    "Challenger +1"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Load Up",
+    "Critical Eye +2"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Challenger +2",
+    "Critical Eye +1"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Zamtrios",
+   "skills": [
+    "Thunder Atk +2",
+    "Elemental Crit",
+    "Critical Eye +2",
+    "True Shot Up",
+    "Element Atk Up"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "LBG",
+   "monster": "Giadrome + Bulldrome",
+   "skills": [
+    "Weakness Exploit",
+    "Critical Boost",
+    "True Shot Up",
+    "Challenger +2",
+    "Critical Eye +1"
+   ],
+   "partial": true
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Arzuros",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "True Shot Up"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Arzuros (Double)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "True Shot Up"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Barroth",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Repeat Offender"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Basarios (VF)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "HG Earplugs",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Blangonga",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Blangonga (Double)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Congalala",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Tremor Res"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Congalala (Double)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Tremor Res"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Critical Eye +3",
+    "Thunder Atk +2",
+    "Element Atk Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Elemental Crit"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Gypceros (AS)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Gypceros (RP)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Kecha Wacha (Double)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Khezu (AR)",
+   "skills": [
+    "Normal/Rapid Up",
+    "Weakness Exploit",
+    "Challenger +2",
+    "Critical Boost",
+    "HG Earplugs"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Khezu (ML)",
+   "skills": [
+    "Normal/Rapid Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "HG Earplugs",
+    "Combination Pro"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Lagombi",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Lavasioth",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Malfestio (RP)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Critical Eye +3",
+    "Attack Up S",
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Fleet Feet"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Najarala (ML)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Najarala (VH)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "True Shot Up",
+    "Fleet Feet"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Nerscylla",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "True Shot Up",
+    "Fleet Feet"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Nibelsnarf (D4)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Nibelsnarf (DF)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Plesioth (DF)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Recoil Down +2",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Plesioth (MP)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Repeat Offender",
+    "Recoil Down +2",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Rathian (JU)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "True Shot Up"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Rathian (RP)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "True Shot Up"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "True Shot Up"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "True Shot Up"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Seltas (Double)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Critical Eye +3",
+    "Thunder Atk +2",
+    "Element Atk Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Elemental Crit"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Shogun Ceanataur (VF)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Shot Booster",
+    "Tropic Hunter"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +2",
+    "Shot Booster",
+    "Earplugs"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Volvidon (DF)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Volvidon (RP)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Yian Kut Ku (VH)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Fleet Feet",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Zamtrios",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Giadrome + Bulldrome",
+   "skills": [
+    "Thunder Atk +2",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Elemental Crit",
+    "Critical Eye +3",
+    "Ammo Saver"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Malfestio + Nerscylla",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "Rathian + Rathalos",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Combination Pro",
+    "Fleet Feet"
+   ]
+  },
+  {
+   "sheet": "HBG",
+   "monster": "G2 Minion's Devotion",
+   "skills": [
+    "Pierce/Pierce Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Shot Booster"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Arzuros",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Barroth",
+   "skills": [
+    "Normal/Rapid Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Ammo Saver"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Basarios (ML)",
+   "skills": [
+    "Power Phial (All)",
+    "Normal/Rapid Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Load Up",
+    "Quick Sheath"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Basarios (VF)",
+   "skills": [
+    "Water Atk +2",
+    "Elemental Crit",
+    "Normal/Rapid Up",
+    "Load Up",
+    "True Shot Up",
+    "Weakness Exploit"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Congalala",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Daimyo Hermitaur",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Kecha Wacha",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Khezu (AR)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "HG Earplugs",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Malfestio (DI)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Nargacuga (MP)",
+   "skills": [
+    "Normal/Rapid Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Ammo Saver"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Nargacuga (JU)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Najarala (VH)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "HG Earplugs",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Nerscylla",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Nibelsnarf (DF)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Repeat Offender",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Plesioth (DF)",
+   "skills": [
+    "Pierce/Pierce Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "Evade Extender"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Rathian (AS)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Royal Ludroth",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Royal Ludroth (Double)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Seltas (Double)",
+   "skills": [
+    "Normal/Rapid Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +1",
+    "Bladescale Hone"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Shogun Ceanataur (RP)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Tetsucabra",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Yian Kut Ku (RP)",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "Zamtrios",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Eye +3",
+    "HG Earplugs",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "G1 Surprise!",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Bow",
+   "monster": "G2 Minion's Devotion",
+   "skills": [
+    "Heavy/Heavy Up",
+    "True Shot Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2",
+    "Critical Eye +1"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "Gore Magala (RP)",
+   "skills": [
+    "Dragonheart",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Sharpness +2",
+    "Challenger +1"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "Gammoth",
+   "skills": [
+    "Dragonheart",
+    "Normal/Rapid Up",
+    "True Shot Up",
+    "Load Up",
+    "Resuscitate",
+    "Tremor Res"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "Rathalos",
+   "skills": [
+    "Dragonheart",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Resuscitate",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "Shagaru Magala",
+   "skills": [
+    "Dragonheart",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Sharpness +2",
+    "Critical Eye +2"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "Kirin",
+   "skills": [
+    "Dragonheart",
+    "Weakness Exploit",
+    "Artillery Novice",
+    "Attack Up S",
+    "Razor Sharp",
+    "Resuscitate"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "Hyper Silver Rathalos",
+   "skills": [
+    "Dragonheart",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Critical Eye +3",
+    "Challenger +1",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "G2 Boltreaver Astalos",
+   "skills": [
+    "Dragonheart",
+    "Quick Sheath",
+    "Critical Boost",
+    "Critical Draw",
+    "Resuscitate",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Boltreaver Astalos",
+   "skills": [
+    "Dragonheart",
+    "Quick Sheath",
+    "Critical Boost",
+    "Critical Draw",
+    "Resuscitate",
+    "Attack Up S"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Boltreaver Astalos",
+   "skills": [
+    "Dragonheart",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Sharpness +2",
+    "Critical Eye +2"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "Ex Nightcloak Malfestio",
+   "skills": [
+    "Dragonheart",
+    "Critical Eye +3",
+    "Weakness Exploit",
+    "Critical Boost"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Elderfrost Gammoth",
+   "skills": [
+    "Dragonheart",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Sharpness +2",
+    "Critical Eye +2"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Soulseer Mizutsune",
+   "skills": [
+    "Dragonheart",
+    "Normal/Rapid Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Soulseer Mizutsune",
+   "skills": [
+    "Dragonheart",
+    "Normal/Rapid Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Resuscitate"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Grimclaw Tigrex",
+   "skills": [
+    "Dragonheart",
+    "Critical Draw",
+    "Critical Boost",
+    "Punishing Draw",
+    "Challenger +2",
+    "Challenge Sheath"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Snowbaron Lagombi (Pic)",
+   "skills": [
+    "Dragonheart",
+    "Critical Eye +3",
+    "Critical Boost",
+    "Razor Sharp",
+    "Challenger +1"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Crystalbeard Uragaan (Pic)",
+   "skills": [
+    "Dragonheart",
+    "Critical Eye +2",
+    "Artillery Novice",
+    "Attack Up S",
+    "Razor Sharp",
+    "Resuscitate"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Soulseer Mizutsune (Pic)",
+   "skills": [
+    "Dragonheart",
+    "Normal/Rapid Up",
+    "Weakness Exploit",
+    "Critical Boost",
+    "Challenger +2"
+   ]
+  },
+  {
+   "sheet": "Dragonheart TA",
+   "monster": "EX Crystalbeard Uragaan (Pic)",
+   "skills": [
+    "Dragonheart",
+    "Pierce/Pierce Up",
+    "Recoil Down +1",
+    "Bitter Affinity",
+    "Shot Booster",
+    "Double Talisman",
+    "Skill +2"
+   ]
+  }
+ ]
+}
