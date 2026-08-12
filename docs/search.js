@@ -173,7 +173,6 @@
             out.push([Number(treeStr), Number(thr)]);
       return out;
     });
-    const soulMayGive = soulFor.map(list => list.length > 0);
     // Soul trees are carried as extra dimensions alongside the requested
     // skills, so the bound can ask "could this branch still reach the Soul?"
     // instead of simply giving up on pruning that skill — which cost four
@@ -198,6 +197,28 @@
         if (!cur || sk[1] > cur.pts) gems[t][d.slots] = { id: Number(id), pts: sk[1] };
       }
       density[t] = Math.max(0, ...Object.entries(gems[t]).map(([s, gm]) => gm.pts / Number(s)));
+    }
+
+    // Three jewels in four carry a malus, and 182 of them dock a skill that
+    // other jewels exist to raise — an Earplug Jwl buys Hearing at the cost of
+    // Protection. Fitting gems by their headline skill alone quietly proposes
+    // loadouts whose side effects knock another requested skill back under its
+    // threshold; the engine then rejects the set, and an arrangement that
+    // would have worked is never tried. So a jewel is carried as its FULL
+    // effect on the requested skills, maluses included.
+    //
+    // Measured over `dims`, not just the requested skills: a Soul can be
+    // bought with jewels (five Yukumo Jwls activate Soul of Yukumo, which hands
+    // over Honey Hunter and Water Res +15 outright), so the fill has to be able
+    // to aim at a Soul's own tree the same way it aims at a requested one.
+    const jewels = [];
+    for (const [id, d] of Object.entries(data.decos)) {
+      const eff = dims.map(t => {
+        let v = 0;
+        for (const [tr, p] of d.sk) if (tr === t) v += p;
+        return v;
+      });
+      if (eff.some(v => v > 0)) jewels.push({ id: Number(id), slots: d.slots, eff });
     }
 
     // ── Candidates per slot: relevance filter, then true dominance ────────
@@ -232,7 +253,13 @@
       const extra = [SECRET_ARTS, TALISMAN_BOOST].concat(soulTree ? [soulTree] : []);
       for (const slot of SLOTS) {
         const pool = pools[slot];
-        const maxSlots = Math.max(0, ...pool.map(({ a }) => a.slots));
+        // The stand-in for "a piece with nothing wanted on it" is whichever
+        // piece carries the most slots — but it only stands in if it costs
+        // nothing, and a piece that DOCKS a requested skill does not stand in
+        // for one that leaves it alone. Measuring the bar on those pieces too
+        // threw away clean, smaller-slotted pieces that nothing replaced.
+        const harmless = ({ a }) => !a.sk.some(([tr, p]) => p < 0 && (need[tr] || extra.includes(tr)));
+        const maxSlots = Math.max(0, ...pool.filter(harmless).map(({ a }) => a.slots));
         const vec = ({ a }) => {
           const v = trees.map(t => { const s = a.sk.find(([tr]) => tr === t); return s ? s[1] : 0; });
           for (const t of extra) { const s = a.sk.find(([tr]) => tr === t); v.push(s ? s[1] : 0); }
@@ -288,24 +315,37 @@
       // the main pass's candidates: that pass compares pieces without regard
       // to Souls, so the Deviant gear needed here has usually been dominated
       // out of it, and asking it would rule out every Soul.
-      let best = 0;
-      for (const slot of SLOTS)
+      // Counted the way the set could actually be built: the best armor points,
+      // plus every slot in play filled with the densest jewel for that tree,
+      // plus the most a talisman could give, plus Secret Arts. A Soul is often
+      // gemmed rather than worn — Soul of Yukumo off five Yukumo Jwls — and
+      // weighing armor alone here switched those passes off before they ran.
+      let best = 0, slotsOpt = query.weaponSlots;
+      for (const slot of SLOTS) {
         best += Math.max(0, ...pools[slot].map(({ a }) => {
           const s = a.sk.find(([tr]) => tr === st);
           return s ? s[1] : 0;
         }));
+        slotsOpt += Math.max(0, ...pools[slot].map(({ a }) => a.slots));
+      }
+      let talPts = 0, talSlotsMax = 0;
+      for (const tal of talCands) {
+        if (!tal) continue;
+        if (tal.slots > talSlotsMax) talSlotsMax = tal.slots;
+        for (const [t, p] of tal.sk) if (t === st && p * 2 > talPts) talPts = p * 2;
+      }
+      best += talPts + (slotsOpt + talSlotsMax) * OPTIMISTIC_TORSO * (density[st] || 0) + 2;
       if (best < dimNeed[di])
         for (const list of soulDimsFor) {
           const at = list.indexOf(di);
           if (at >= 0) list.splice(at, 1);
         }
     }
-    for (let ti = 0; ti < trees.length; ti++) soulMayGive[ti] = soulDimsFor[ti].length > 0;
 
     // Optimistic talisman help, for the bound only: the best any candidate
     // could give per tree (doubled, in case Talisman Boost is up) and the most
     // slots any of them carries.
-    const talBest = Object.fromEntries(trees.map(t => [t, 0]));
+    const talBest = Object.fromEntries(dims.map(t => [t, 0]));
     let talMaxSlots = 0;
     for (const tal of talCands) {
       if (!tal) continue;
@@ -316,7 +356,7 @@
     // Dense per-candidate vectors, so the per-leaf scan never walks a skill
     // list: contribution per target tree, and slot count.
     const talContrib = talCands.map(tal =>
-      trees.map(t => {
+      dims.map(t => {
         let p = 0;
         if (tal) for (const [tt, pp] of tal.sk) if (tt === t) p += pp;
         return p;
@@ -562,20 +602,32 @@
       // settled exactly rather than assumed: a skill it hands over needs no
       // points and no gems, and asking for them would waste slots the rest of
       // the set needs.
-      const gapArr = trees.map((t, ti) => {
-        if (passSoulFor[ti].some(di => {
-          const pts = armorBase[dims[di]] || 0;
-          return pts > 0 && pts + (skillPlus2 ? 2 : 0) >= needArr[di];
-        })) return 0;
-        return needArr[ti] - ((armorBase[t] || 0) + (skillPlus2 ? 2 : 0));
-      });
+      //
+      // A Soul pass insists on its Soul, so a skill that Soul grants is taken
+      // as delivered and asks for nothing — while the Soul's OWN tree becomes
+      // a requirement the gems must meet. Judging the Soul on `armorBase`
+      // alone, as this did, meant a Soul bought with jewels was invisible:
+      // five Yukumo Jwls activate Soul of Yukumo and hand over Honey Hunter
+      // and Water Res +15, and no such set could ever be found.
+      const gapOf = (t, di) => needArr[di] - ((armorBase[t] || 0) + (skillPlus2 ? 2 : 0));
+      const gapArr = dims.map(() => 0);
+      for (let ti = 0; ti < trees.length; ti++)
+        gapArr[ti] = passSoulFor[ti].length ? 0 : gapOf(trees[ti], ti);
+      if (passRequire >= 0) {
+        const soulTree = dims[passRequire];
+        // The Soul's tree can also be a requested skill in its own right; then
+        // it is one requirement at the higher of the two thresholds, not two.
+        const dup = trees.indexOf(soulTree);
+        if (dup >= 0) gapArr[dup] = Math.max(gapArr[dup], gapOf(soulTree, passRequire));
+        else gapArr[passRequire] = gapOf(soulTree, passRequire);
+      }
 
       // Hopeless leaves are skipped without touching the fill solver: not even
       // the strongest candidate plus every slot filled with the densest gem
       // could close the gap.
       const slotCeiling = armorSlots + query.weaponSlots + talMaxSlots;
       let totalGap = 0, bestDensity = 0, shortTrees = 0;
-      for (let ti = 0; ti < trees.length; ti++) {
+      for (let ti = 0; ti < dims.length; ti++) {
         if (gapArr[ti] > talBestArr[ti] + slotCeiling * (1 + torsoCount) * densityArr[ti]) return;
         if (gapArr[ti] > 0) {
           totalGap += gapArr[ti];
@@ -611,8 +663,7 @@
       // clamping to a negative number would make every vector fail the test.
       // Only skills that are actually SHORT need covering.
       const act = [];
-      for (let ti = 0; ti < trees.length; ti++) if (gapArr[ti] > 0) act.push(ti);
-      const treesSub = act.map(ti => trees[ti]);
+      for (let ti = 0; ti < dims.length; ti++) if (gapArr[ti] > 0) act.push(ti);
 
       // What the armor and weapon slots could contribute per short skill if
       // every slot served that one skill — the ceiling a talisman has to make
@@ -651,7 +702,7 @@
         const bins = tal && tal.slots
           ? armorBins.concat([{ key: "talisman", cap: tal.slots, mult: talMult }])
           : armorBins;
-        const fill = (query.exactFill ? exactFit : fitGems)(residual, bins, treesSub, gems);
+        const fill = (query.exactFill ? exactFit : fitGems)(residual, bins, act, jewels);
         tried.set(key, fill);
         return fill;
       }
@@ -699,7 +750,9 @@
     return { results, complete: !truncated && !cancelled && !timedOut, soulTruncated, cancelled, timedOut, explored, stats: { nodes, fills } };
   }
 
-  // Fit gems into the bins to cover `residual` (indexed like treesSub).
+  // Fit gems into the bins to cover `residual` (indexed by position in `act`,
+  // which holds the dimensions still short — requested skills and, in a Soul
+  // pass, the Soul's own tree).
   //
   // This is the hot path — it runs once per armor combination per talisman, so
   // it has to cost microseconds, not milliseconds. It is a greedy fill, like
@@ -715,43 +768,37 @@
   // too slow for the live search — it is here so a differential test can say
   // whether the greedy fill is losing sets, rather than leaving that to
   // guesswork.
-  function exactFit(residual, bins, treesSub, gems) {
-    const idx = [];
-    for (let j = 0; j < residual.length; j++) if (residual[j] > 0) idx.push(j);
-    if (!idx.length) return {};
+  function exactFit(residual, bins, act, jewels) {
     const dead = new Set();
     const place = {};
-    // Every packing of one bin, as the points it delivers.
+    const done = left => { for (const v of left) if (v > 0) return false; return true; };
+    // Every packing of one bin, as its net effect on the requested skills.
     const loadouts = bin => {
       const out = [];
-      const cur = treesSub.map(() => 0), ids = [];
-      const step = (capLeft, startJ) => {
-        out.push({ ids: ids.slice(), pts: cur.slice() });
-        for (let j = startJ; j < treesSub.length; j++) {
-          const sizes = gems[treesSub[j]];
-          for (const sizeStr in sizes) {
-            const size = +sizeStr;
-            if (size > capLeft) continue;
-            const gm = sizes[sizeStr];
-            ids.push(gm.id); cur[j] += gm.pts * bin.mult;
-            step(capLeft - size, j);
-            cur[j] -= gm.pts * bin.mult; ids.pop();
-          }
+      const cur = act.map(() => 0), ids = [];
+      const step = (capLeft, start) => {
+        out.push({ ids: ids.slice(), eff: cur.slice() });
+        for (let i = start; i < jewels.length; i++) {
+          const jw = jewels[i];
+          if (jw.slots > capLeft) continue;
+          ids.push(jw.id);
+          for (let j = 0; j < act.length; j++) cur[j] += jw.eff[act[j]] * bin.mult;
+          step(capLeft - jw.slots, i);
+          for (let j = 0; j < act.length; j++) cur[j] -= jw.eff[act[j]] * bin.mult;
+          ids.pop();
         }
       };
       step(bin.cap, 0);
       return out;
     };
     const dfs = (i, left) => {
-      let done = true;
-      for (const j of idx) if (left[j] > 0) { done = false; break; }
-      if (done) return true;
+      if (done(left)) return true;
       if (i === bins.length) return false;
       const key = i + "|" + left.join(",");
       if (dead.has(key)) return false;
       for (const opt of loadouts(bins[i])) {
         const next = left.slice();
-        for (const j of idx) { const v = next[j] - opt.pts[j]; next[j] = v > 0 ? v : 0; }
+        for (let j = 0; j < act.length; j++) next[j] -= opt.eff[j];
         if (dfs(i + 1, next)) { if (opt.ids.length) place[bins[i].key] = opt.ids; return true; }
       }
       dead.add(key);
@@ -760,11 +807,14 @@
     return dfs(0, residual.slice()) ? place : null;
   }
 
-  function fitGems(residual, bins, treesSub, gems) {
+  function fitGems(residual, bins, act, jewels) {
     for (let mode = 0; mode < FILL_MODES; mode++) {
+      // `left` is what each requested skill is still short by, and it is NOT
+      // clamped at zero: a jewel's malus can push a skill that was already
+      // covered back under, and the fill has to see that happen.
       const left = residual.slice();
-      let outstanding = 0;
-      for (const r of left) if (r > 0) outstanding += r;
+      const short = () => { let n = 0; for (const v of left) if (v > 0) n += v; return n; };
+      let outstanding = short();
       if (!outstanding) return {};
       const placement = {};
       // mode 0: biggest bins first (keeps 3-slot jewels usable)
@@ -777,25 +827,28 @@
       for (const bin of order) {
         let cap = bin.cap;
         while (cap > 0 && outstanding > 0) {
-          let bestJ = -1, bestSize = 0, bestId = 0, bestGain = 0, bestScore = 0;
-          for (let j = 0; j < treesSub.length; j++) {
-            if (left[j] <= 0) continue;
-            const sizes = gems[treesSub[j]];
-            for (const sizeStr in sizes) {
-              const size = +sizeStr;
-              if (size > cap) continue;
-              const gm = sizes[sizeStr];
-              const pts = gm.pts * bin.mult;
-              const gain = pts < left[j] ? pts : left[j];   // points that actually count
-              const score = gain / size;
-              if (score > bestScore) { bestScore = score; bestJ = j; bestSize = size; bestId = gm.id; bestGain = gain; }
+          let best = null, bestScore = 0;
+          for (const jw of jewels) {
+            if (jw.slots > cap) continue;
+            // Net progress this jewel makes, counting what its malus undoes.
+            let gain = 0;
+            for (let j = 0; j < act.length; j++) {
+              const e = jw.eff[act[j]];
+              if (!e) continue;
+              const v = e * bin.mult;
+              const before = left[j] > 0 ? left[j] : 0;
+              const after = left[j] - v > 0 ? left[j] - v : 0;
+              gain += before - after;
             }
+            if (gain <= 0) continue;
+            const score = gain / jw.slots;
+            if (score > bestScore) { bestScore = score; best = jw; }
           }
-          if (bestJ < 0) break;
-          left[bestJ] -= bestGain;
-          outstanding -= bestGain;
-          cap -= bestSize;
-          (placement[bin.key] || (placement[bin.key] = [])).push(bestId);
+          if (!best) break;
+          for (let j = 0; j < act.length; j++) left[j] -= best.eff[act[j]] * bin.mult;
+          outstanding = short();
+          cap -= best.slots;
+          (placement[bin.key] || (placement[bin.key] = [])).push(best.id);
         }
         if (!outstanding) break;
       }

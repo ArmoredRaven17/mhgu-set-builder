@@ -415,5 +415,37 @@ console.log("the exact reported bug: My Talismans mode, 2 stored charms:");
   check(ms < 3000, `  answers in under 3s (took ${ms} ms)`);
 }
 
+console.log("a Soul bought with jewels rather than worn:");
+{
+  // Soul of Yukumo activates off five Yukumo Jwls and hands over Honey Hunter
+  // and Water Res +15 outright. Every part of the search that judged a Soul on
+  // the armor alone was blind to that: the pass for the Soul was switched off
+  // before it ran, and the leaf that did reach it still demanded points in
+  // Honey and Water Res that no piece was ever going to supply.
+  const yukumo = treeId("Yukumo"), honey = treeId("Honey"), waterRes = treeId("Water Res");
+  const grants = data.souls[yukumo] && data.souls[yukumo][10];
+  check(!!grants && grants.some(([t, p]) => t === honey && p >= 10)
+    && grants.some(([t, p]) => t === waterRes && p >= 10),
+    "Soul of Yukumo grants Honey Hunter and Water Res +15");
+  check(Object.values(data.decos).some(d => d.sk.some(([t, p]) => t === yukumo && p > 0)),
+    "and a Yukumo jewel exists to buy it with");
+
+  const targets = [[honey, 10], [waterRes, 10]];
+  const tal = { rar: 7, slots: 1, sk: [[treeId("Sharpness"), 3]] };
+  const res = S.search({ targets, gender: 1, cls: "B", maxRar: 11, weaponSlots: 0,
+    talismans: [tal], maxResults: 20, timeBudgetMs: 60000 }, data);
+  check(res.results.length > 0, "the search finds sets for skills only the Soul can give");
+  check(verifyAll(res, targets), "and every one of them really has both skills");
+  const viaSoul = res.results.some(({ set }) => {
+    const r = E.compute({ weapon: set.weapon, pieces: set.pieces, talisman: set.talisman }, data);
+    return (r.treePoints[honey] || 0) < 10 && r.soulGrants.some(gr => gr.tree === honey);
+  });
+  check(viaSoul, "at least one owes Honey Hunter to the Soul, not to points");
+  const gemmed = res.results.some(({ set }) =>
+    Object.entries(set.pieces).reduce((n, [slot, p]) =>
+      n + ((data.armor[slot][p.id].sk.find(([t]) => t === yukumo) || [0, 0])[1]), 0) < 10);
+  check(gemmed, "and one reaches the Soul with jewels rather than with armor points");
+}
+
 console.log(failed ? `\n${failed} FAILURE(S)` : "\nall search tests passed");
 process.exit(failed ? 1 : 0);
