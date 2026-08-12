@@ -302,32 +302,53 @@ window.SBSearchUI = (function () {
   // every set tested so far for five or six skills needed a two-skill charm.
   // Asking for a single set answers that in a fraction of a full search, and
   // the offer to re-run is one click.
+  // What to try, in order of how easy it is to actually do. Spending weapon
+  // slots comes first: a decorable weapon is a choice, while a two-skill charm
+  // is a hunt. This matters — Sheath Control has no jewel at all and no piece
+  // gives more than 2, so that set lives or dies on where its slots come from.
+  let probeQueue = [];
   function probeOtherTalismans() {
     if (!worker) return;
-    probing = true;
     const opts = currentOptions();
     const trees = targets.map(t => t.tree);
-    worker.postMessage({ type: "search", query: {
-      ...opts,
-      targets: targets.map(t => [t.tree, t.pts]),
-      talismans: window.SBSearch.generateTalismans(trees, window.SB_CHARM, { twoSkill: true }),
-      maxResults: 1, timeBudgetMs: 20000, soulBudgetMs: 2000,
-    } });
+    const base = { ...opts, targets: targets.map(t => [t.tree, t.pts]),
+      maxResults: 1, timeBudgetMs: 20000, soulBudgetMs: 2000 };
+    probeQueue = [];
+    if (opts.weaponSlots < 3) probeQueue.push({
+      query: { ...base, weaponSlots: 3 },
+      describe: () => `A weapon with 3 slots would reach these skills with the talismans you are already asking for.`,
+      apply: () => { $("searchWSlots").value = "3"; },
+      button: "Search with a 3-slot weapon",
+    });
+    if ($("searchTalMode").value !== "two") probeQueue.push({
+      query: { ...base, talismans: window.SBSearch.generateTalismans(trees, window.SB_CHARM, { twoSkill: true }) },
+      describe: r => {
+        const tal = r.set.talisman;
+        return `A two-skill talisman can reach these skills — for example <b>${esc(tal ? talLabel(tal) : "one you have")}</b>.`;
+      },
+      apply: () => { $("searchTalMode").value = "two"; syncOptionLabels(); },
+      button: "Search with two-skill talismans",
+    });
+    nextProbe();
+  }
+  function nextProbe() {
+    if (!probeQueue.length || !worker) { probing = false; return; }
+    probing = true;
+    worker.postMessage({ type: "search", query: probeQueue[0].query });
   }
   function finishProbe(res) {
+    const step = probeQueue.shift();
+    if (!res || !res.results.length) { nextProbe(); return; }   // try the next relaxation
     probing = false;
+    probeQueue = [];
     document.querySelectorAll(".search-suggest").forEach(n => n.remove());
-    if (!res || !res.results.length) return;
-    const tal = res.results[0].set.talisman;
     const note = document.createElement("div");
     note.className = "search-suggest";
-    note.innerHTML = `A two-skill talisman can reach these skills — for example `
-      + `<b>${esc(tal ? talLabel(tal) : "one you already have")}</b>. `
-      + `<button id="searchSwitchTwo" class="nav-btn">Search with two-skill talismans</button>`;
+    note.innerHTML = `${step.describe(res.results[0])} `
+      + `<button id="searchProbeApply" class="nav-btn">${esc(step.button)}</button>`;
     $("searchStatus").parentNode.after(note);
-    $("searchSwitchTwo").addEventListener("click", () => {
-      $("searchTalMode").value = "two";
-      syncOptionLabels();
+    $("searchProbeApply").addEventListener("click", () => {
+      step.apply();
       note.remove();
       run();
     });
