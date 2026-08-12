@@ -233,7 +233,10 @@
         .filter(({ a }) =>
           (a.gender === 2 || a.gender === query.gender) &&
           (a.cls === "A" || a.cls === query.cls) &&
-          a.rar <= query.maxRar &&
+          // A rarity cap is not something a player reasons in: what you can
+          // craft is decided by how far you have got, and the progression
+          // filters already say that. Omitting it means no cap.
+          (query.maxRar == null || a.rar <= query.maxRar) &&
           reachable(a, vil, hub));
     }
 

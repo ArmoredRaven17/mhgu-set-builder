@@ -112,7 +112,6 @@ window.SBSearchUI = (function () {
     return {
       gender: Number($("searchGender").value),
       cls: $("searchClass").value,
-      maxRar: Number($("searchRar").value),
       weaponSlots: Number($("searchWSlots").value),
       villageStar: Number($("searchVillage").value),
       hubStar: Number($("searchHub").value),
