@@ -23,9 +23,14 @@ window.SBSearchUI = (function () {
     for (const [pts, name] of ladder) if (pts > 0) OPTIONS.push({ tree: Number(treeStr), pts, name });
   OPTIONS.sort((a, b) => a.name.localeCompare(b.name));
 
+  // A talisman is points and slots; where it drops is not something to plan a
+  // set around. Stored ones keep their name because that is how they were
+  // entered; generated ones are described by what they must roll.
   const talLabel = t => {
     const skills = t.sk.map(([tr, p]) => `${treeName(tr)} ${p > 0 ? "+" + p : p}`).join(", ");
-    return `${window.SB_CHARM.names[t.rar] || "Talisman"} — ${skills}, ${t.slots} slot${t.slots === 1 ? "" : "s"}`;
+    const slots = `${t.slots} slot${t.slots === 1 ? "" : "s"}`;
+    return t.gen ? `${skills}, ${slots}`
+      : `${window.SB_CHARM.names[t.rar] || "Talisman"} — ${skills}, ${slots}`;
   };
 
   // ── Targets: a stationary add box, chips collect below it ──────────────
@@ -69,11 +74,10 @@ window.SBSearchUI = (function () {
 
   // ── Options ────────────────────────────────────────────────────────────
   function fillRaritySelects() {
-    const opts = Object.entries(window.SB_CHARM.names)
+    // Only the My Talismans form needs a rarity: it is how a real talisman's
+    // legal skills and ranges are checked. The search itself never asks.
+    $("talAddRar").innerHTML = Object.entries(window.SB_CHARM.names)
       .map(([id, n]) => `<option value="${id}">${esc(n)} (R${id})</option>`).join("");
-    $("searchTalRar").innerHTML = opts;
-    $("searchTalRar").value = "10";
-    $("talAddRar").innerHTML = opts;
     $("talAddRar").value = "10";
   }
   function syncOptionLabels() {
@@ -81,7 +85,6 @@ window.SBSearchUI = (function () {
     $("searchClass").options[0].text = `Auto (${auto === "G" ? "Gunner" : auto === "B" ? "Blademaster" : "no weapon → Blademaster"})`;
     $("searchWSlots").options[0].text = `Auto (${api.currentWeaponSlots()})`;
     const mine = $("searchTalMode").value === "mine";
-    $("searchTalRarWrap").classList.toggle("hidden", mine);
     $("searchTalMineWrap").classList.toggle("hidden", !mine);
     $("manageTalBtn").textContent = `Manage my talismans… (${api.getTalismans().length})`;
   }
@@ -93,8 +96,7 @@ window.SBSearchUI = (function () {
     const trees = targets.map(t => t.tree);
     const talismans = mode === "mine"
       ? api.getTalismans()
-      : window.SBSearch.generateTalismans(trees, window.SB_CHARM,
-          { maxRar: Number($("searchTalRar").value), twoSkill: mode === "two" });
+      : window.SBSearch.generateTalismans(trees, window.SB_CHARM, { twoSkill: mode === "two" });
     return {
       gender: Number($("searchGender").value),
       cls: clsSel === "auto" ? (auto || "B") : clsSel,
@@ -144,7 +146,11 @@ window.SBSearchUI = (function () {
     const opts = currentOptions();
     if ($("searchTalMode").value === "mine" && !opts.talismans.length)
       $("searchAddHint").textContent = "";
-    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 50, ...opts };
+    // Normal queries land in tens of milliseconds. A demanding one — several
+    // skills with few slots to spend — has genuinely few answers, and proving
+    // that means walking most of the space, so it returns the first sets it
+    // finds and says it stopped rather than grinding on.
+    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 30, timeBudgetMs: 4000, ...opts };
     running = true;
     searchStart = performance.now();
     $("searchRun").disabled = true;
@@ -185,9 +191,13 @@ window.SBSearchUI = (function () {
     const hint = talMode === "mine" && !api.getTalismans().length
       ? " No talismans stored yet — only talisman-free sets were considered."
       : "";
+    const partial = !res.complete;
     $("searchStatus").textContent = res.results.length
-      ? `${res.results.length}${res.complete ? "" : "+"} set(s) in ${ms} ms.${hint}`
-      : `Nothing reaches those skills with these options (${ms} ms).${hint}`;
+      ? `${res.results.length} set(s) in ${ms} ms.${partial
+          ? " Stopped early — there are more; narrow the skills or allow weapon slots." : ""}${hint}`
+      : partial
+        ? `No sets found before stopping at ${(ms / 1000).toFixed(1)} s — these skills are demanding. Try fewer, or allow weapon slots.${hint}`
+        : `Nothing reaches those skills with these options (${ms} ms).${hint}`;
     renderResults();
   }
 

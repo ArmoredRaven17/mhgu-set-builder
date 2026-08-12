@@ -123,16 +123,20 @@ console.log("generated talisman candidates:");
   // every rarity up to the cap: Attack rolls as a Pawn's FIRST skill but on a
   // Creator only as a second one, so a one-skill Attack talisman exists only
   // at low rarity. Generating at the cap alone would lose it.
-  const capOnly = charm.tiers[E.TAL_TIER[10]];
-  check(!capOnly[atk] || (capOnly[atk][0] === 0 && capOnly[atk][1] === 0),
+  const top = charm.tiers[E.TAL_TIER[10]];
+  check(!top[atk] || (top[atk][0] === 0 && top[atk][1] === 0),
     "Attack indeed cannot be a Creator talisman's first skill (data check)");
-  const oneAtk = S.generateTalismans([atk], charm, { maxRar: 10, twoSkill: false });
-  check(oneAtk.some(t => t.sk[0][0] === atk), "the rarity sweep still offers a one-skill Attack talisman");
+  const oneAtk = S.generateTalismans([atk], charm, { twoSkill: false });
+  check(oneAtk.some(t => t.sk[0][0] === atk), "the tier sweep still offers a one-skill Attack talisman");
   check(oneAtk.every(t => E.validateTalisman(t, charm, data.skills).length === 0),
-    "and each is legal at the rarity it claims");
-  check(oneAtk.every(t => t.rar <= 10), "no candidate exceeds the rarity cap");
-  const pawnCapped = S.generateTalismans([atk, hear], charm, { maxRar: 2, twoSkill: false });
-  check(pawnCapped.every(t => t.rar <= 2), "a low cap keeps every candidate at or below it");
+    "and each is legal at the rarity it is attributed to");
+  // Points and slots drive everything: the ladder must be complete, so the
+  // search can report the smallest talisman that works rather than the biggest.
+  const atkPts = [...new Set(oneAtk.filter(t => t.sk[0][0] === atk).map(t => t.sk[0][1]))].sort((a, b) => a - b);
+  check(atkPts.length > 1 && atkPts[0] === 1, `every point value is offered, not just the maximum (${atkPts.join(",")})`);
+  check(oneAtk.filter(t => t.sk[0][0] === atk && t.sk[0][1] === atkPts[0])
+    .map(t => t.slots).sort().join(",") === "0,1,2,3", "each point value is offered at every slot count");
+  check(oneAtk.every(t => t.rar >= 1 && t.rar <= 10), "each candidate carries the rarity that can roll it");
   // Only requested trees appear.
   check(one.every(t => t.sk.every(([tr]) => tr === atk || tr === hear)), "only targeted skills are generated");
 }
