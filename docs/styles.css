@@ -326,6 +326,31 @@ input,select,button,textarea{font-family:inherit}
 .sr-neg{color:var(--negative)}
 .srl-more{display:block;width:100%;margin-top:6px;padding:8px;text-align:center}
 
+/* Sort/filter bar — these only re-arrange results already found. */
+.search-tools{
+  display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;
+  margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line)
+}
+.search-tools label{
+  display:flex;flex-direction:column;gap:3px;
+  font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.8
+}
+.search-tools .mini-select{max-width:190px}
+.mini-input.wide{width:150px}
+.search-tools .search-status{margin-left:auto;align-self:center}
+
+/* A piece links through to its materials in the Collection Tracker. */
+.srl-piece{color:inherit;text-decoration:none;border-bottom:1px dotted #ffffff40}
+.srl-piece:hover{color:var(--accent-hover);border-bottom-color:var(--accent-hover)}
+/* Skills the set grants beyond what was asked for, and ones a spare slot
+   could still reach. */
+.srl-bonus{color:var(--positive);opacity:.85}
+.srl-reach{opacity:.6;font-style:italic}
+.srl-resgroup{display:inline-flex;gap:4px;margin:0 8px}
+.srl-res{font-variant-numeric:tabular-nums;opacity:.6}
+.srl-res.pos{color:var(--positive);opacity:.9}
+.srl-res.neg{color:var(--negative);opacity:.9}
+
 /* My Talismans */
 .tal-list{max-height:230px;margin-bottom:10px}
 .tal-add{border-top:1px solid var(--line);padding-top:10px}

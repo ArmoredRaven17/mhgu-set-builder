@@ -96,9 +96,23 @@
   // first, so a set that needs less is found and ranked first.
   const talCost = tal => (tal ? tal.sk.reduce((n, [, p]) => n + Math.abs(p), 0) + tal.slots * 2 : 0);
 
+  // Is a piece craftable at this progression? Athena's table records the
+  // Gathering-Hall (hub) star and Village star at which it unlocks, with 99
+  // meaning "never from that source" and a flag saying whether BOTH conditions
+  // are required or either will do. A piece with no recorded availability
+  // (event/collab gear that never matched the table) is always allowed rather
+  // than silently withheld.
+  function reachable(a, vil, hub) {
+    if (a.hub === undefined) return true;
+    const byHub = a.hub !== 99 && hub >= a.hub;
+    const byVil = a.vil !== 99 && vil >= a.vil;
+    return a.andF ? byHub && byVil : byHub || byVil;
+  }
+
   // query = {
   //   targets: [[treeId, points], ...],       activation thresholds to reach
   //   gender: 0|1, cls: "B"|"G", maxRar: 1..11, weaponSlots: 0..3,
+  //   villageStar: 1..10, hubStar: 1..13,     progression (default: everything)
   //   talismans: [{rar, slots, sk}, ...],     candidates (see generateTalismans)
   //   allowNoTalisman: bool (default true),   include "no talisman" candidate
   //   maxResults: cap (default 50),
@@ -132,6 +146,10 @@
     }
 
     // ── Candidates per slot: relevance filter, then true dominance ────────
+    // Progression defaults to endgame, so an unset query searches everything
+    // exactly as before.
+    const vil = query.villageStar == null ? 99 : query.villageStar;
+    const hub = query.hubStar == null ? 99 : query.hubStar;
     const cands = {};
     for (const slot of SLOTS) {
       const pool = Object.entries(data.armor[slot])
@@ -139,7 +157,8 @@
         .filter(({ a }) =>
           (a.gender === 2 || a.gender === query.gender) &&
           (a.cls === "A" || a.cls === query.cls) &&
-          a.rar <= query.maxRar);
+          a.rar <= query.maxRar &&
+          reachable(a, vil, hub));
       const maxSlots = Math.max(0, ...pool.map(({ a }) => a.slots));
       // Dominance is judged on what decides whether a set WORKS: points in the
       // targeted trees, decoration slots, and Torso Up. Defense is deliberately

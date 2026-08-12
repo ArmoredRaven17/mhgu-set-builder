@@ -144,11 +144,60 @@ const catalog = JGlobal(join(TRACKER, "docs", "data", "catalog.js"));
 const armorLevels = JGlobal(join(TRACKER, "docs", "data", "armor_levels.js"));
 const SLOTS = ["head", "chest", "arms", "waist", "legs"];
 const isDummy = n => /\(DUMMY\)/i.test(n);
+
+// ── When a piece becomes craftable (Athena's availability table) ─────────
+// The game's own tables don't record this and mhgu.db can't supply it — its
+// item_to_quest is all but empty (88 rows), and deriving a rank from crafting
+// materials over-estimates (Hunter's Helm computes as village 2, truly 1).
+// Athena's transcription is the only reliable source, and its rarity/slots/
+// defense agree with the romfs data we already trust.
+//
+// Per row: [5] Gathering-Hall (hub/HR) star, [6] Village star, 99 = never
+// obtainable from that source, [7] 0 = either condition suffices, 1 = both
+// required. Names come from the line-parallel English list, where English
+// line N corresponds to data line N+1 (the data file carries a # header).
+const ATHENA_SLOT_FILE = { head: "head", chest: "body", arms: "arms", waist: "waist", legs: "legs" };
+function loadAvailability() {
+  if (!ATHENA) return null;
+  const bySlot = {};
+  for (const slot of SLOTS) {
+    const base = ATHENA_SLOT_FILE[slot];
+    const rows = readFileSync(join(ATHENA, "Data", `${base}.txt`), "utf8").split(/\r?\n/);
+    const names = readFileSync(join(ATHENA, "Data", "Languages", "English", `${base}.txt`), "utf8")
+      .replace(/^﻿/, "").split(/\r?\n/);
+    const map = new Map();
+    let dupes = 0;
+    for (let i = 1; i < rows.length; i++) {
+      if (!rows[i].trim()) continue;
+      const raw = (names[i - 1] || "").trim();
+      if (!raw) continue;
+      // Deviant gear is listed once per upgrade stage ("Redhelm Helm LV1/LV6/
+      // LV14"); the LV1 row is when the piece first becomes craftable, and it
+      // comes first, so first-match-wins lands on it naturally.
+      const name = raw.replace(/\s+LV\d+$/i, "");
+      const c = rows[i].split(",");
+      const hub = Number(c[5]), vil = Number(c[6]), andF = Number(c[7]) === 1;
+      if (!Number.isFinite(hub) || !Number.isFinite(vil)) continue;
+      if (map.has(name)) { dupes++; continue; }
+      map.set(name, { hub, vil, andF });
+    }
+    bySlot[slot] = { map, dupes };
+  }
+  return bySlot;
+}
+const availability = loadAvailability();
+if (!availability)
+  console.log("WARNING: no --athena path given; armor will carry no progression data "
+    + "and the search's Village/Hub filters will match everything.");
+
 const armor = {};
 const dropped = { statsOnly: 0, catalogOnly: 0, dummy: 0 };
+const availStats = { matched: 0, unmatched: 0, dupes: 0 };
 let torsoUpPieces = 0;
 for (const slot of SLOTS) {
   const stats = J(join(TRACKER, "docs", "data", "stats", `armor_${slot}.json`)).byId;
+  const avail = availability ? availability[slot] : null;
+  if (avail) availStats.dupes += avail.dupes;
   const out = {};
   for (const e of catalog.armor[slot].entries) {
     const [id, name, , , setName, gender, pairId, , ord] = e;
@@ -167,6 +216,14 @@ for (const slot of SLOTS) {
       maxLv: armorLevels[slot][id] || (s.lv ? s.lv.length : 1),
       ord, set: setName || 0,
     };
+    // A piece we can't place stays ungated rather than hidden: guessing it
+    // away would silently rob the search of real options.
+    const av = avail && avail.map.get(name);
+    if (av) {
+      out[id].hub = av.hub; out[id].vil = av.vil;
+      if (av.andF) out[id].andF = 1;
+      availStats.matched++;
+    } else if (avail) availStats.unmatched++;
   }
   for (const id of Object.keys(stats))
     if (!out[id]) dropped.statsOnly++;   // includes the dummies dropped above
@@ -182,6 +239,21 @@ assert(torsoUpPieces === 25, `25 Torso Up pieces across slots (got ${torsoUpPiec
 }
 console.log(`armor: ${SLOTS.map(s => `${s} ${Object.keys(armor[s]).length}`).join(", ")}`
   + ` | dropped: ${dropped.dummy} dummy, ${dropped.catalogOnly} catalog-only, ${dropped.statsOnly} stats-only`);
+if (availability) {
+  console.log(`availability: ${availStats.matched} pieces gated, ${availStats.unmatched} left ungated`
+    + ` (no name match), ${availStats.dupes} duplicate Athena rows skipped`);
+  // Spot checks against the table read by hand.
+  assert(armor.head[1].hub === 1 && armor.head[1].vil === 1, "Leather Headgear is village 1 / hub 1");
+  assert(armor.head[4].hub === 99 && armor.head[4].vil === 2,
+    `Hunting Helm is village-only at 2 (got hub ${armor.head[4].hub}, vil ${armor.head[4].vil})`);
+  // Deviant gear must resolve to its LV1 row, not LV6/LV14.
+  const redhelm = Object.values(armor.head).find(a => a.n === "Redhelm Helm");
+  assert(redhelm && redhelm.hub === 2 && redhelm.vil === 2 && redhelm.andF === 1,
+    `Redhelm Helm takes its LV1 unlock (got ${JSON.stringify(redhelm && [redhelm.hub, redhelm.vil, redhelm.andF])})`);
+  // The vast majority must match, or the name join has drifted.
+  const ratio = availStats.matched / (availStats.matched + availStats.unmatched);
+  assert(ratio > 0.9, `over 90% of pieces matched Athena's table (got ${(ratio * 100).toFixed(1)}%)`);
+}
 
 // ── Weapons ──────────────────────────────────────────────────────────────
 // Index (sync, small) + one lazy-fetched detail file per class with the deco

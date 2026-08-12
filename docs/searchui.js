@@ -13,8 +13,11 @@ window.SBSearchUI = (function () {
 
   let api = null;
   let targets = [];          // [{tree, pts, name}] — no arbitrary limit on how many
-  let lastResults = [];
+  let lastResults = [];      // everything the search returned
+  let viewResults = [];      // what the sort/filter controls currently show
+  let lastTargets = [];      // the skills asked for, to tell bonuses apart
   let worker = null, workerReady = false, running = false;
+  const RES_NAMES = ["Fire", "Water", "Thunder", "Ice", "Dragon"];
 
   // Every positive activated skill, for the typeahead.
   const OPTIONS = [];
@@ -103,8 +106,23 @@ window.SBSearchUI = (function () {
       cls: clsSel === "auto" ? (auto || "B") : clsSel,
       maxRar: Number($("searchRar").value),
       weaponSlots: slotSel === "auto" ? api.currentWeaponSlots() : Number(slotSel),
+      villageStar: Number($("searchVillage").value),
+      hubStar: Number($("searchHub").value),
       talismans,
     };
+  }
+  // Village runs to 10 stars, the Gathering Hall to 13. Both default to the
+  // end of the game so an untouched search covers everything.
+  function fillProgressionSelects() {
+    const opts = (n, label) => {
+      let h = "";
+      for (let i = n; i >= 1; i--) h += `<option value="${i}">${i}★${i === n ? " (all)" : ""}</option>`;
+      return h;
+    };
+    $("searchVillage").innerHTML = opts(10);
+    $("searchHub").innerHTML = opts(13);
+    $("searchVillage").value = "10";
+    $("searchHub").value = "13";
   }
 
   // ── Worker plumbing ────────────────────────────────────────────────────
@@ -149,11 +167,14 @@ window.SBSearchUI = (function () {
       $("searchAddHint").textContent = "";
     // Up to 1000 results — enough variety without chasing full exhaustiveness,
     // which for an easy query could mean thousands of near-duplicate sets for
-    // no benefit. Most queries reach that cap in well under a second; a
-    // demanding one (several skills, few slots to spend) has genuinely sparse
-    // answers; either way the time budget is the real speed guarantee — it
-    // returns whatever it found and says it stopped rather than grinding on.
-    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 1000, timeBudgetMs: 4000, ...opts };
+    // no benefit. Most queries reach that cap in well under a second. The
+    // 2-minute budget exists for genuinely hard-but-solvable queries and for
+    // PROVING a combination impossible with the current options (an exhaustive
+    // negative proof costs real time, even though it always terminates well
+    // short of this) — either way it returns whatever it found rather than
+    // grinding forever, with a wide margin below anything a user would wait
+    // out for.
+    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 1000, timeBudgetMs: 120000, ...opts };
     running = true;
     searchStart = performance.now();
     $("searchRun").disabled = true;
@@ -190,18 +211,28 @@ window.SBSearchUI = (function () {
     const ms = Math.round(performance.now() - searchStart);
     if (err || !res) { $("searchStatus").textContent = `Search failed: ${err || "no result"}.`; return; }
     lastResults = res.results;
+    lastTargets = targets.map(t => [t.tree, t.pts]);
+    $("searchResultTools").classList.toggle("hidden", !res.results.length);
+    if (res.results.length) buildFilterOptions();
     const talMode = $("searchTalMode").value;
     const hint = talMode === "mine" && !api.getTalismans().length
       ? " No talismans stored yet — only talisman-free sets were considered."
       : "";
     const partial = !res.complete;
+    // A talisman category can genuinely be unable to reach a combination —
+    // e.g. a one-skill talisman can't cover two skills that need a shared
+    // slot, even though a two-skill one could. That is a real, checked answer
+    // (the search tried every combination and none worked), not a stall, so
+    // it gets its own message rather than reading like the search gave up.
+    const otherModes = talMode === "one" ? `"Any — two skills" or your own talismans`
+      : talMode === "two" ? `your own talismans` : `a generated talisman`;
     $("searchStatus").textContent = res.results.length
       ? `${res.results.length} set(s) in ${ms} ms.${partial
           ? " Stopped early — there are more; narrow the skills or allow weapon slots." : ""}${hint}`
       : partial
         ? `No sets found before stopping at ${(ms / 1000).toFixed(1)} s — these skills are demanding. Try fewer, or allow weapon slots.${hint}`
-        : `Nothing reaches those skills with these options (${ms} ms).${hint}`;
-    renderResults();
+        : `No possible set reaches those skills this way — every combination with ${talMode === "mine" ? "your stored talismans" : talMode === "one" ? "a one-skill talisman (or none)" : "a two-skill talisman (or none)"} was checked. Try ${otherModes}, or relax gender/class/rarity/weapon slots.${hint}`;
+    applyView();
   }
 
   // With up to 1000 results, a rich row-per-result with a listener-per-button
@@ -213,20 +244,154 @@ window.SBSearchUI = (function () {
   // at a time so the DOM never holds more than what's been asked to see.
   const RESULTS_PAGE = 100;
   let shown = 0;
+
+  // ── Bonus skills ───────────────────────────────────────────────────────
+  // Two kinds, both worked out per row as it is drawn rather than during the
+  // search: skills the set already grants beyond what was asked for, and
+  // skills that spare slots could still reach. The second is the useful one —
+  // it's how you notice a set is one jewel away from something you'd want.
+  // Cached on the result so scrolling and re-sorting never recompute it.
+  function bonusesOf(r) {
+    if (r._bonus) return r._bonus;
+    const asked = new Set(lastTargets.map(t => t[0]));
+    const active = r.engine.active
+      .filter(a => !a.negative && !a.soul && !asked.has(a.tree))
+      .map(a => a.name);
+    // Spare slots, biggest first — a 3-slot hole can take any jewel.
+    const holes = [];
+    for (const [, s] of Object.entries(r.engine.slots)) {
+      const free = s.total - s.used;
+      if (free > 0) holes.push(free);
+    }
+    const reachable = [];
+    if (holes.length) {
+      const biggest = Math.max(...holes);
+      const totalFree = holes.reduce((a, b) => a + b, 0);
+      for (const [treeStr, pts] of Object.entries(r.engine.treePoints)) {
+        const tree = Number(treeStr);
+        if (pts <= 0 || asked.has(tree)) continue;
+        const ladder = window.SB_SKILLS.active[tree];
+        if (!ladder) continue;
+        const next = ladder.find(s => s[0] > 0 && s[0] > pts);
+        if (!next) continue;
+        // Best jewel for this skill that would actually fit a free hole.
+        let best = 0;
+        for (const d of Object.values(window.SB_DECOS)) {
+          if (d.slots > biggest) continue;
+          const sk = d.sk.find(([tr, p]) => tr === tree && p > 0);
+          if (sk && sk[1] > best) best = sk[1];
+        }
+        if (!best) continue;
+        const shortBy = next[0] - pts;
+        const jewels = Math.ceil(shortBy / best);
+        if (jewels * 1 <= totalFree && jewels <= holes.length)
+          reachable.push({ name: next[1], jewels });
+      }
+      reachable.sort((a, b) => a.jewels - b.jewels);
+    }
+    r._bonus = { active, reachable: reachable.slice(0, 3) };
+    return r._bonus;
+  }
+
+  // ── Sort / filter — pure array work over what the search already returned;
+  // none of this ever re-runs a search.
+  const SORTS = {
+    best: (a, b) => a.talCost - b.talCost || b.spare - a.spare || b.defense - a.defense,
+    def: (a, b) => b.defense - a.defense || b.spare - a.spare,
+    defmax: (a, b) => b.engine.defenseMax - a.engine.defenseMax || b.spare - a.spare,
+    slots: (a, b) => b.spare - a.spare || b.defense - a.defense,
+    rar: (a, b) => maxRarOf(b) - maxRarOf(a) || b.defense - a.defense,
+  };
+  for (let i = 0; i < 5; i++)
+    SORTS["res" + i] = (a, b) => b.engine.res[i] - a.engine.res[i] || b.defense - a.defense;
+  const maxRarOf = r => {
+    if (r._maxRar === undefined)
+      r._maxRar = Math.max(...["head", "chest", "arms", "waist", "legs"]
+        .map(s => window.SB_ARMOR[s][r.set.pieces[s].id].rar));
+    return r._maxRar;
+  };
+  const rowText = r => {
+    if (r._text === undefined)
+      r._text = (["head", "chest", "arms", "waist", "legs"]
+        .map(s => window.SB_ARMOR[s][r.set.pieces[s].id].n).join(" ")
+        + " " + r.engine.active.map(a => a.name).join(" ")).toLowerCase();
+    return r._text;
+  };
+  function applyView() {
+    const talSel = $("searchFilterTal").value;
+    const bonusSel = $("searchFilterBonus").value;
+    const text = $("searchFilterText").value.trim().toLowerCase();
+    viewResults = lastResults.filter(r => {
+      if (talSel !== "*") {
+        const key = r.set.talisman ? talLabel(r.set.talisman) : "";
+        if (key !== talSel) return false;
+      }
+      if (bonusSel !== "*" && !bonusesOf(r).active.includes(bonusSel)) return false;
+      if (text && !rowText(r).includes(text)) return false;
+      return true;
+    });
+    const cmp = SORTS[$("searchSort").value] || SORTS.best;
+    viewResults.sort(cmp);
+    $("searchShowing").textContent = viewResults.length === lastResults.length
+      ? `${lastResults.length} set(s)`
+      : `${viewResults.length} of ${lastResults.length} set(s)`;
+    renderResults();
+  }
+  // The filter dropdowns list only what the results actually contain, so a
+  // choice can never come back empty.
+  function buildFilterOptions() {
+    const tals = new Map();
+    const bonuses = new Set();
+    for (const r of lastResults) {
+      const key = r.set.talisman ? talLabel(r.set.talisman) : "";
+      tals.set(key, (tals.get(key) || 0) + 1);
+      for (const b of bonusesOf(r).active) bonuses.add(b);
+    }
+    const talOpts = [...tals.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    $("searchFilterTal").innerHTML = `<option value="*">Any</option>`
+      + talOpts.map(([k, n]) =>
+        `<option value="${esc(k)}">${k ? esc(k) : "None needed"} (${n})</option>`).join("");
+    $("searchFilterBonus").innerHTML = `<option value="*">Any</option>`
+      + [...bonuses].sort().map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join("");
+    $("searchFilterText").value = "";
+    $("searchSort").value = "best";
+  }
+
+  // With up to 1000 results, a rich row-per-result with a listener-per-button
+  // is the wrong shape — Athena's own tool renders results as one plain-text
+  // block for exactly this reason. This keeps the click-to-apply interaction
+  // (worth keeping — it's most of the point of the search) but pays for it
+  // cheaply: one compact line of text per row, ONE delegated click listener
+  // for the whole list instead of one per button, and rows are added a page
+  // at a time so the DOM never holds more than what's been asked to see.
+  const TRACKER_URL = "https://armoredraven17.github.io/mhgu-collection-tracker/";
   const rowHtml = (r, i) => {
-    const names = ["head", "chest", "arms", "waist", "legs"].map(slot =>
-      window.SB_ARMOR[slot][r.set.pieces[slot].id].n);
+    const pieces = ["head", "chest", "arms", "waist", "legs"].map(slot => {
+      const a = window.SB_ARMOR[slot][r.set.pieces[slot].id];
+      // Straight to that piece in the Collection Tracker, where its materials
+      // and upgrade costs already live — no need to duplicate them here.
+      return `<a class="srl-piece" href="${TRACKER_URL}#a:${slot}/${r.set.pieces[slot].id}"`
+        + ` target="_blank" rel="noopener" title="Materials and costs in the Collection Tracker">${esc(a.n)}</a>`;
+    }).join(" · ");
     const decoCount = Object.values(r.set.pieces).reduce((n, p) => n + p.decos.length, 0)
       + (r.set.weapon ? r.set.weapon.decos.length : 0)
       + (r.set.talisman ? r.set.talisman.decos.length : 0);
     const neg = r.engine.active.filter(a => a.negative);
     const talText = r.set.talisman ? esc(talLabel(r.set.talisman)) : "no talisman";
+    const bonus = bonusesOf(r);
+    const res = r.engine.res.map((v, k) =>
+      `<span class="srl-res ${v > 0 ? "pos" : v < 0 ? "neg" : ""}" title="${RES_NAMES[k]}">${v > 0 ? "+" + v : v}</span>`).join("");
     return `<div class="search-result-line" data-i="${i}">`
-      + `<span class="srl-set">${names.map(esc).join(" · ")}</span>`
+      + `<span class="srl-set">${pieces}</span>`
       + `<span class="srl-sk">${r.engine.active.filter(a => !a.negative).map(a => esc(a.name)).join(", ")}`
-      + (neg.length ? ` <span class="sr-neg">${neg.map(a => esc(a.name)).join(", ")}</span>` : "") + `</span>`
+      + (neg.length ? ` <span class="sr-neg">${neg.map(a => esc(a.name)).join(", ")}</span>` : "")
+      + (bonus.active.length ? `<span class="srl-bonus"> +${bonus.active.map(esc).join(", ")}</span>` : "")
+      + (bonus.reachable.length
+        ? `<span class="srl-reach"> ${bonus.reachable.map(b =>
+            `${esc(b.name)} (${b.jewels} jwl away)`).join(", ")}</span>` : "")
+      + `</span>`
       + `<span class="srl-tal">${talText}</span>`
-      + `<span class="srl-stat">Def ${r.defense} · ${decoCount} deco · ${r.spare} free</span>`
+      + `<span class="srl-stat">Def ${r.defense}<span class="srl-resgroup">${res}</span>${decoCount} deco · ${r.spare} free</span>`
       + `<button class="nav-btn" data-apply="${i}">Apply</button></div>`;
   };
   function renderResults() {
@@ -236,13 +401,13 @@ window.SBSearchUI = (function () {
   }
   function appendPage() {
     const wrap = $("searchResults");
-    const next = lastResults.slice(shown, shown + RESULTS_PAGE);
+    const next = viewResults.slice(shown, shown + RESULTS_PAGE);
     wrap.querySelector(".srl-more")?.remove();
     wrap.insertAdjacentHTML("beforeend", next.map((r, k) => rowHtml(r, shown + k)).join(""));
     shown += next.length;
-    if (shown < lastResults.length)
+    if (shown < viewResults.length)
       wrap.insertAdjacentHTML("beforeend",
-        `<button class="nav-btn srl-more" id="searchShowMore">Show ${Math.min(RESULTS_PAGE, lastResults.length - shown)} more (of ${lastResults.length})</button>`);
+        `<button class="nav-btn srl-more" id="searchShowMore">Show ${Math.min(RESULTS_PAGE, viewResults.length - shown)} more (of ${viewResults.length})</button>`);
   }
 
   // ── My Talismans ───────────────────────────────────────────────────────
@@ -324,18 +489,25 @@ window.SBSearchUI = (function () {
   function init(appApi) {
     api = appApi;
     fillRaritySelects();
+    fillProgressionSelects();
     wireAddBox();
     $("findSetsBtn").addEventListener("click", open);
     $("searchClose").addEventListener("click", close);
     $("searchRun").addEventListener("click", run);
     $("searchCancel").addEventListener("click", cancel);
     $("searchTalMode").addEventListener("change", syncOptionLabels);
+    // Sorting and filtering only ever re-arrange results already in hand —
+    // they never start a search.
+    $("searchSort").addEventListener("change", applyView);
+    $("searchFilterTal").addEventListener("change", applyView);
+    $("searchFilterBonus").addEventListener("change", applyView);
+    $("searchFilterText").addEventListener("input", applyView);
     // One delegated listener for the whole results list — apply a set, or
     // load the next page — instead of one per row, which matters once a
     // search can return up to 1000 of them.
     $("searchResults").addEventListener("click", e => {
       const applyBtn = e.target.closest("[data-apply]");
-      if (applyBtn) { api.applyFoundSet(lastResults[Number(applyBtn.dataset.apply)].set); close(); return; }
+      if (applyBtn) { api.applyFoundSet(viewResults[Number(applyBtn.dataset.apply)].set); close(); return; }
       if (e.target.id === "searchShowMore") appendPage();
     });
     $("searchModal").addEventListener("mousedown", e => { if (e.target === $("searchModal")) close(); });

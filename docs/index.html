@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MHGU Set Builder</title>
 <link rel="icon" type="image/png" href="assets/icons/icon_armor_body_r7.png">
-<link rel="stylesheet" href="styles.css?v=9">
+<link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
 <div id="app">
@@ -102,11 +102,37 @@
         </select></label>
       <label id="searchTalMineWrap" class="hidden">&nbsp;
         <button id="manageTalBtn" class="nav-btn">Manage my talismans…</button></label>
+      <label>Village ★
+        <select id="searchVillage" class="mini-select"></select></label>
+      <label>Hub ★
+        <select id="searchHub" class="mini-select"></select></label>
     </div>
     <div class="row gap search-runrow">
       <button id="searchRun" class="btn">Search</button>
       <button id="searchCancel" class="btn hidden">Cancel</button>
       <span id="searchStatus" class="search-status"></span>
+    </div>
+    <div id="searchResultTools" class="search-tools hidden">
+      <label>Sort
+        <select id="searchSort" class="mini-select">
+          <option value="best">Best match</option>
+          <option value="def">Defense</option>
+          <option value="defmax">Defense (maxed)</option>
+          <option value="slots">Spare slots</option>
+          <option value="rar">Rarity</option>
+          <option value="res0">Fire res</option>
+          <option value="res1">Water res</option>
+          <option value="res2">Thunder res</option>
+          <option value="res3">Ice res</option>
+          <option value="res4">Dragon res</option>
+        </select></label>
+      <label>Talisman
+        <select id="searchFilterTal" class="mini-select"></select></label>
+      <label>Bonus skill
+        <select id="searchFilterBonus" class="mini-select"></select></label>
+      <label>Find
+        <input type="text" id="searchFilterText" class="mini-input wide" placeholder="piece or skill…" autocomplete="off"></label>
+      <span id="searchShowing" class="search-status"></span>
     </div>
     <div id="searchResults" class="picker-list search-results"></div>
     <div class="row end gap modal-actions">
@@ -261,13 +287,13 @@
 <script src="data/souls.js?v=1"></script>
 <script src="data/decos.js?v=1"></script>
 <script src="data/charm.js?v=2"></script>
-<script src="data/armor.js?v=1"></script>
+<script src="data/armor.js?v=2"></script>
 <script src="data/weapons.js?v=1"></script>
 <script src="engine.js?v=3"></script>
-<script src="search.js?v=8"></script>
+<script src="search.js?v=9"></script>
 <script src="pickers.js?v=2"></script>
 <script src="ui.js?v=7"></script>
-<script src="searchui.js?v=7"></script>
+<script src="searchui.js?v=8"></script>
 <script src="app.js?v=9"></script>
 </body>
 </html>

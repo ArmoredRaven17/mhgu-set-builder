@@ -263,6 +263,55 @@ console.log("independent validation of every returned set:");
   }
 }
 
+console.log("progression gating (Village / Hub stars):");
+{
+  const charm = load("charm.js");
+  const targets = [[treeId("Attack"), 10]];
+  const base = { targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 3, talismans: [], maxResults: 200 };
+  const rarityOf = res => res.results.flatMap(({ set }) =>
+    ["head", "chest", "arms", "waist", "legs"].map(s => data.armor[s][set.pieces[s].id].rar));
+
+  // Unset progression must behave exactly as before the filter existed.
+  const openEnded = S.search(base, data);
+  const explicitMax = S.search({ ...base, villageStar: 10, hubStar: 13 }, data);
+  check(openEnded.results.length === explicitMax.results.length,
+    "leaving progression unset matches searching at full progression");
+
+  // Early game: only low-rank gear can appear.
+  const early = S.search({ ...base, villageStar: 2, hubStar: 1 }, data);
+  check(early.results.length > 0, "early progression still finds sets");
+  const earlyMax = Math.max(...rarityOf(early));
+  check(earlyMax <= 4, `early-game sets use only low rarity gear (max rarity ${earlyMax})`);
+  check(Math.max(...rarityOf(openEnded)) > earlyMax, "endgame reaches gear early game cannot");
+
+  // Every piece returned must genuinely be craftable at that progression.
+  const legal = early.results.every(({ set }) =>
+    ["head", "chest", "arms", "waist", "legs"].every(s => {
+      const a = data.armor[s][set.pieces[s].id];
+      if (a.hub === undefined) return true;                       // ungated event gear
+      const byHub = a.hub !== 99 && 1 >= a.hub, byVil = a.vil !== 99 && 2 >= a.vil;
+      return a.andF ? byHub && byVil : byHub || byVil;
+    }));
+  check(legal, "every piece in an early-game set is actually unlocked by then");
+
+  // The two star tracks are independent: a village-only piece (hub 99) must be
+  // reachable from the village side alone, and vice versa.
+  const villageOnly = Object.values(data.armor.head).find(a => a.hub === 99 && a.vil <= 3 && !a.andF);
+  if (villageOnly) {
+    check(!S.search({ ...base, villageStar: 1, hubStar: 13 }, data).results.some(({ set }) =>
+      data.armor.head[set.pieces.head.id].n === villageOnly.n),
+      `${villageOnly.n} (village ${villageOnly.vil}, never in hub) is absent below its village star`);
+  }
+  // AND-flagged gear needs both tracks, not just one.
+  const andPiece = Object.values(data.armor.head).find(a => a.andF && a.hub < 99 && a.vil < 99);
+  if (andPiece) {
+    const onlyHub = { ...base, villageStar: 1, hubStar: 13, maxResults: 5000 };
+    check(!S.search(onlyHub, data).results.some(({ set }) =>
+      data.armor.head[set.pieces.head.id].n === andPiece.n),
+      `${andPiece.n} (needs village ${andPiece.vil} AND hub ${andPiece.hub}) stays out with only hub met`);
+  }
+}
+
 console.log("the exact reported bug: My Talismans mode, 2 stored charms:");
 {
   const charm = load("charm.js");

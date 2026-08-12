@@ -54,8 +54,19 @@ redistributed.
 
 ### Athena's Armor Set Search for MHGU
 
-Athena's ASS data files are used as a cross-check during data generation
-(compound-skill coverage). No data from that program is redistributed.
+[Athena's Armor Set Search](https://github.com/AthenaADP/MHGU-ASS) (MIT) is
+used during data generation in two ways:
+
+- **Armor availability** — at which Gathering-Hall (HR) star and Village star
+  each armor piece becomes craftable, and whether both conditions or either
+  one is required. This is used to power the search's progression filter.
+  The game's own data tables do not record it and the community database
+  cannot supply it, so Athena's hand-transcribed availability table is the
+  only reliable source for this fact.
+- **Compound-skill coverage**, as a cross-check.
+
+Only these factual values are read, and only at build time; no data files,
+source code, or assets from that program are redistributed here.
 
 ---
 
