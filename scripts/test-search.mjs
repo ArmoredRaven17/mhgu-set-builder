@@ -23,9 +23,14 @@ const check = (cond, msg) => {
   if (cond) console.log(`  ok  ${msg}`);
   else { console.error(`  FAIL ${msg}`); failed++; }
 };
-const verifyAll = (res, targets) => res.results.every(({ set, engine }) => {
+// A set HAS a skill if it has the points, or if a Soul granted the skill
+// outright — the full Redhelm set activates Focus with no Focus points.
+const hasSkill = (r, t, p) => (r.treePoints[t] || 0) >= p
+  || r.active.some(a => a.tree === t && !a.negative && a.threshold >= p)
+  || r.soulGrants.some(gr => gr.tree === t && !gr.negative && gr.threshold >= p);
+const verifyAll = (res, targets) => res.results.every(({ set }) => {
   const r = E.compute({ weapon: set.weapon, pieces: set.pieces, talisman: set.talisman }, data);
-  return targets.every(([t, p]) => (r.treePoints[t] || 0) >= p) && r.problems.length === 0;
+  return targets.every(([t, p]) => hasSkill(r, t, p)) && r.problems.length === 0;
 });
 const genderOk = (res, gender) => res.results.every(({ set }) =>
   Object.entries(set.pieces).every(([slot, p]) => {
@@ -212,7 +217,7 @@ function validateResult(r, targets, query, charm) {
   // Finally: does it actually activate what was asked for?
   const eng = E.compute(rebuilt, data);
   for (const [t, p] of targets)
-    if ((eng.treePoints[t] || 0) < p)
+    if (!hasSkill(eng, t, p))
       problems.push(`${data.skills.trees[t]} reaches ${eng.treePoints[t] || 0}, needed ${p}`);
   for (const pr of eng.problems) problems.push(`engine: ${pr}`);
   return problems;
@@ -237,7 +242,9 @@ console.log("independent validation of every returned set:");
     { name: "5 skills, gunner, one-skill only (no answer exists)",
       targets: [[treeId("Haphazard"), 10], [treeId("Tenderizer"), 10], [treeId("Critical Up"), 10],
                 [treeId("Spirit"), 15], [treeId("Heavy Up"), 10]],
-      gender: 0, cls: "G", maxRar: 11, weaponSlots: 0, twoSkill: false, expectEmpty: true, budgetMs: 15000 },
+      // Proving a negative also has to rule out every Soul that could grant one
+      // of these skills, which is a little extra work for a lot of correctness.
+      gender: 0, cls: "G", maxRar: 11, weaponSlots: 0, twoSkill: false, expectEmpty: true, budgetMs: 25000 },
     { name: "6 skills, blademaster (no cap on how many)",
       targets: [[treeId("Hearing"), 10], [treeId("Attack"), 10], [treeId("Tenderizer"), 10],
                 [treeId("Sharpness"), 10], [treeId("Critical Up"), 10], [treeId("Spirit"), 10]],
@@ -261,6 +268,54 @@ console.log("independent validation of every returned set:");
     check(bad.length === 0, `  every set is valid${bad.length ? " — " + bad[0] : ""}`);
     if (c.budgetMs) check(ms < c.budgetMs, `  finishes within ${c.budgetMs} ms (took ${ms} ms)`);
   }
+}
+
+console.log("skills granted by a Soul, not by points:");
+{
+  // The full Redhelm set activates Focus and Resentment through Redhelm Soul
+  // while carrying zero points in either. The search used to be blind to this
+  // three times over: the pieces looked irrelevant, any that survived were
+  // pruned as dominated, and the final check only ever counted points.
+  const skillTarget = name => {
+    for (const [t, ladder] of Object.entries(data.skills.active))
+      for (const [pts, nm] of ladder) if (nm === name) return [Number(t), pts];
+    throw new Error("no skill " + name);
+  };
+  const focus = skillTarget("Focus"), resent = skillTarget("Resentment");
+
+  // First: the engine agrees this set really does have both skills.
+  const b = { weapon: null, pieces: {}, talisman: null };
+  for (const s of ["head", "chest", "arms", "waist", "legs"]) {
+    const hit = Object.entries(data.armor[s]).find(([, a]) => /^Redhelm /.test(a.n) && a.rar === 11);
+    b.pieces[s] = { id: Number(hit[0]), lv: 0, decos: [] };
+  }
+  const direct = E.compute(b, data);
+  check(direct.treePoints[focus[0]] === undefined && direct.treePoints[resent[0]] === undefined,
+    "the Redhelm set has no Focus or Resentment points at all");
+  check(direct.soulGrants.some(g => g.name === "Focus") && direct.soulGrants.some(g => g.name === "Resentment"),
+    "yet its Soul grants both");
+
+  // Then: the search can actually find it.
+  const targets = [focus, resent];
+  const t0 = Date.now();
+  const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: 0,
+    talismans: [], maxResults: 20000, timeBudgetMs: 60000 }, data);
+  const soulSets = res.results.filter(r => r.engine.soulGrants.length > 0);
+  console.log(`  (${Date.now() - t0} ms, ${res.results.length} results, ${soulSets.length} of them Soul-driven)`);
+  check(soulSets.length > 0, "the search finds a set whose skills come only from a Soul");
+  check(res.results.some(({ set }) => /^Redhelm /.test(data.armor.head[set.pieces.head.id].n)
+    && /^Redhelm /.test(data.armor.legs[set.pieces.legs.id].n)), "specifically, the full Redhelm set");
+  // Every set offered must genuinely have both skills, however it got them.
+  check(res.results.every(({ engine }) =>
+    [focus, resent].every(([t, p]) =>
+      (engine.treePoints[t] || 0) >= p
+      || engine.active.some(a => a.tree === t && a.threshold >= p)
+      || engine.soulGrants.some(g => g.tree === t && g.threshold >= p))),
+    "and every result really does activate both skills");
+  // No duplicates, since the Soul passes revisit armor the main pass saw.
+  const keys = res.results.map(({ set }) =>
+    ["head", "chest", "arms", "waist", "legs"].map(s => set.pieces[s].id).join("/"));
+  check(new Set(keys).size === keys.length, "no set is reported twice across the passes");
 }
 
 console.log("progression gating (Village / Hub stars):");

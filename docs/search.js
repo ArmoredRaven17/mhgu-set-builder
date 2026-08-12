@@ -109,6 +109,15 @@
     return a.andF ? byHub && byVil : byHub || byVil;
   }
 
+  // Does this set actually have the requested skill? Either it has the points,
+  // or a Soul handed the skill over directly (the full Redhelm set activates
+  // Focus with no Focus points anywhere on it).
+  function satisfied(r, tree, pts) {
+    if ((r.treePoints[tree] || 0) >= pts) return true;
+    return r.active.some(a => a.tree === tree && !a.negative && a.threshold >= pts)
+      || r.soulGrants.some(gr => gr.tree === tree && !gr.negative && gr.threshold >= pts);
+  }
+
   // query = {
   //   targets: [[treeId, points], ...],       activation thresholds to reach
   //   gender: 0|1, cls: "B"|"G", maxRar: 1..11, weaponSlots: 0..3,
@@ -131,10 +140,56 @@
       .concat(query.talismans || [])
       .sort((a, b) => talCost(a) - talCost(b));
 
+    // A requested skill does not have to come from points in its own tree.
+    //
+    //  - a Soul grants whole skills outright: the full Redhelm set activates
+    //    Focus and Resentment while carrying zero points in either;
+    //  - Secret Arts adds +2 to every tree that has any points at all, which
+    //    can be what carries a skill over its threshold;
+    //  - Talisman Boost doubles what the talisman contributes.
+    //
+    // Pieces carrying those trees look irrelevant — they hold none of the
+    // requested skills — so without this they were filtered out before the
+    // search began, and any that survived were pruned as "dominated" by
+    // pieces that merely had more of the requested skills. These trees are
+    // therefore treated as relevant in their own right.
+    const aux = new Set([SECRET_ARTS, TALISMAN_BOOST]);
+    for (const [treeStr, byThreshold] of Object.entries(data.souls || {})) {
+      for (const grants of Object.values(byThreshold)) {
+        if (grants.some(([gTree, gPts]) => need[gTree] !== undefined && gPts >= need[gTree]))
+          aux.add(Number(treeStr));
+      }
+    }
+    // Only trees some piece actually carries are worth widening the search for.
+    const auxTrees = [...aux].filter(t => !need[t]);
+    // Which Souls can hand over each requested skill, and at what threshold.
+    // A target on this list can be satisfied without ever earning its points,
+    // so the pruning below must not treat missing points as fatal for it.
+    const soulFor = trees.map(t => {
+      const out = [];
+      for (const [treeStr, byThreshold] of Object.entries(data.souls || {}))
+        for (const [thr, grants] of Object.entries(byThreshold))
+          if (grants.some(([gTree, gPts]) => gTree === t && gPts >= need[t]))
+            out.push([Number(treeStr), Number(thr)]);
+      return out;
+    });
+    const soulMayGive = soulFor.map(list => list.length > 0);
+    // Soul trees are carried as extra dimensions alongside the requested
+    // skills, so the bound can ask "could this branch still reach the Soul?"
+    // instead of simply giving up on pruning that skill — which cost four
+    // times the work for the queries no Soul was ever going to serve.
+    const soulDims = [...new Set([].concat(...soulFor.map(l => l.map(([t]) => t))))];
+    const dims = trees.concat(soulDims);                  // acc/suf/pts space
+    const dimNeed = trees.map(t => need[t]).concat(
+      soulDims.map(st => Math.min(...soulFor.flat().filter(([t]) => t === st).map(([, thr]) => thr))));
+    // For each requested skill, which dimensions are the Souls that grant it.
+    const soulDimsFor = soulFor.map(list =>
+      list.map(([st]) => trees.length + soulDims.indexOf(st)));
+
     // Best jewel per (tree, size) — and each tree's best points-per-slot for
     // the optimistic bound.
     const gems = {}, density = {};
-    for (const t of trees) {
+    for (const t of dims) {
       gems[t] = {};
       for (const [id, d] of Object.entries(data.decos)) {
         const sk = d.sk.find(([tr, p]) => tr === t && p > 0);
@@ -150,52 +205,96 @@
     // exactly as before.
     const vil = query.villageStar == null ? 99 : query.villageStar;
     const hub = query.hubStar == null ? 99 : query.hubStar;
-    const cands = {};
+    const pools = {};
     for (const slot of SLOTS) {
-      const pool = Object.entries(data.armor[slot])
+      pools[slot] = Object.entries(data.armor[slot])
         .map(([id, a]) => ({ id: Number(id), a }))
         .filter(({ a }) =>
           (a.gender === 2 || a.gender === query.gender) &&
           (a.cls === "A" || a.cls === query.cls) &&
           a.rar <= query.maxRar &&
           reachable(a, vil, hub));
-      const maxSlots = Math.max(0, ...pool.map(({ a }) => a.slots));
-      // Dominance is judged on what decides whether a set WORKS: points in the
-      // targeted trees, decoration slots, and Torso Up. Defense is deliberately
-      // not part of it — including it made almost every piece incomparable
-      // (nothing dominates a piece with one more defense), which collapsed the
-      // pruning and left the search wading through hundreds of pieces per slot.
-      // It is kept only to choose the representative among equals.
-      const vec = ({ a }) => {
-        const v = trees.map(t => { const s = a.sk.find(([tr]) => tr === t); return s ? s[1] : 0; });
-        v.push(a.slots, a.sk.some(([tr]) => tr === TORSO_UP) ? 1 : 0);
-        return v;
-      };
-      const def = ({ a }) => a.lv[Math.min(a.maxLv, a.lv.length) - 1];
-      const relevant = pool.filter(({ a }) =>
-        a.sk.some(([tr, p]) => need[tr] && p > 0) ||
-        a.sk.some(([tr]) => tr === TORSO_UP) ||
-        a.slots >= maxSlots);
-      const withVec = relevant.map(c => ({ ...c, v: vec(c), def: def(c) }));
-      const kept = withVec.filter(c => !withVec.some(o =>
-        o !== c &&
-        o.v.every((x, i) => x >= c.v[i]) &&
-        (o.v.some((x, i) => x > c.v[i]) ||
-         o.def > c.def || (o.def === c.def && o.id < c.id))));   // keep the sturdiest of equals
-      // Dense per-candidate vectors: the hot loops must never search a piece's
-      // skill list, and the bound must never rebuild a running total.
-      cands[slot] = kept.map(c => ({
-        id: c.id, a: c.a,
-        pts: trees.map(t => { const s = c.a.sk.find(([tr]) => tr === t); return s ? s[1] : 0; }),
-        slots: c.a.slots,
-        torso: c.a.sk.some(([tr]) => tr === TORSO_UP) ? 1 : 0,
-      }));
-      // Richest pieces first: with a result cap, finding viable sets early is
-      // what lets the search stop early.
-      cands[slot].sort((x, y) =>
-        y.pts.reduce((a, b) => a + b, 0) + y.slots * 2 - (x.pts.reduce((a, b) => a + b, 0) + x.slots * 2));
-      if (!cands[slot].length) return { results: [], complete: true, explored: 0, emptySlot: slot };
     }
+
+    // Candidates for one pass. `soulTree` is the Soul this pass cares about,
+    // or 0 for the main pass.
+    //
+    // Which trees count for dominance is what makes or breaks the search.
+    // Points in the requested skills, slots and Torso Up always count, and so
+    // do Secret Arts and Talisman Boost, since nothing else can replace what
+    // they do. A Soul counts ONLY in its own pass: letting every Soul into the
+    // comparison made pieces from different Deviant sets mutually incomparable
+    // and inflated every pool more than fivefold, for skills most searches
+    // never involve. Defense is deliberately excluded — it made almost
+    // everything incomparable — and is kept only to pick between equals.
+    function buildCands(soulTree) {
+      const out = {};
+      const extra = [SECRET_ARTS, TALISMAN_BOOST].concat(soulTree ? [soulTree] : []);
+      for (const slot of SLOTS) {
+        const pool = pools[slot];
+        const maxSlots = Math.max(0, ...pool.map(({ a }) => a.slots));
+        const vec = ({ a }) => {
+          const v = trees.map(t => { const s = a.sk.find(([tr]) => tr === t); return s ? s[1] : 0; });
+          for (const t of extra) { const s = a.sk.find(([tr]) => tr === t); v.push(s ? s[1] : 0); }
+          v.push(a.slots, a.sk.some(([tr]) => tr === TORSO_UP) ? 1 : 0);
+          return v;
+        };
+        const def = ({ a }) => a.lv[Math.min(a.maxLv, a.lv.length) - 1];
+        const relevant = pool.filter(({ a }) =>
+          a.sk.some(([tr, p]) => need[tr] && p > 0) ||
+          a.sk.some(([tr, p]) => extra.includes(tr) && p > 0) ||
+          a.sk.some(([tr]) => tr === TORSO_UP) ||
+          a.slots >= maxSlots);
+        const withVec = relevant.map(c => ({ ...c, v: vec(c), def: def(c) }));
+        const kept = withVec.filter(c => !withVec.some(o =>
+          o !== c &&
+          o.v.every((x, i) => x >= c.v[i]) &&
+          (o.v.some((x, i) => x > c.v[i]) ||
+           o.def > c.def || (o.def === c.def && o.id < c.id))));   // keep the sturdiest of equals
+        // Dense per-candidate vectors: the hot loops must never search a
+        // piece's skill list, and the bound must never rebuild a running total.
+        out[slot] = kept.map(c => ({
+          id: c.id, a: c.a,
+          pts: dims.map(t => { const s = c.a.sk.find(([tr]) => tr === t); return s ? s[1] : 0; }),
+          slots: c.a.slots,
+          torso: c.a.sk.some(([tr]) => tr === TORSO_UP) ? 1 : 0,
+        }));
+        // Richest pieces first: with a result cap, finding viable sets early is
+        // what lets the search stop early.
+        out[slot].sort((x, y) =>
+          y.pts.reduce((a, b) => a + b, 0) + y.slots * 2 - (x.pts.reduce((a, b) => a + b, 0) + x.slots * 2));
+      }
+      return out;
+    }
+    let cands = buildCands(0);
+    for (const slot of SLOTS)
+      if (!cands[slot].length) return { results: [], complete: true, explored: 0, emptySlot: slot };
+
+    // A Soul is only worth keeping the search open for if the surviving pieces
+    // could actually complete it — gender, class, rarity or progression may
+    // have taken part of the set away. Where they have, that skill goes back
+    // to needing real points, which restores the pruning that relaxing for a
+    // Soul necessarily gives up.
+    for (let si = 0; si < soulDims.length; si++) {
+      const di = trees.length + si;
+      const st = soulDims[si];
+      // Judged on every piece that survived the wearer's own filters, NOT on
+      // the main pass's candidates: that pass compares pieces without regard
+      // to Souls, so the Deviant gear needed here has usually been dominated
+      // out of it, and asking it would rule out every Soul.
+      let best = 0;
+      for (const slot of SLOTS)
+        best += Math.max(0, ...pools[slot].map(({ a }) => {
+          const s = a.sk.find(([tr]) => tr === st);
+          return s ? s[1] : 0;
+        }));
+      if (best < dimNeed[di])
+        for (const list of soulDimsFor) {
+          const at = list.indexOf(di);
+          if (at >= 0) list.splice(at, 1);
+        }
+    }
+    for (let ti = 0; ti < trees.length; ti++) soulMayGive[ti] = soulDimsFor[ti].length > 0;
 
     // Optimistic talisman help, for the bound only: the best any candidate
     // could give per tree (doubled, in case Talisman Boost is up) and the most
@@ -252,47 +351,75 @@
     // Suffix maxima for the branch-and-bound: from slot k onward, the most
     // points any single choice could add per tree, and the most slots.
     const order = SLOTS;
-    const sufPts = [], sufSlots = [];
-    sufPts[order.length] = trees.map(() => 0);
-    sufSlots[order.length] = 0;
-    for (let k = order.length - 1; k >= 0; k--) {
-      const p = sufPts[k + 1].slice();
-      let best = 0;
-      const chestish = order[k] === "chest";
-      for (let ti = 0; ti < trees.length; ti++) {
-        let m = 0;
-        for (const c of cands[order[k]]) {
-          const pts = c.pts[ti] > 0 ? c.pts[ti] * (chestish || c.torso ? OPTIMISTIC_TORSO : 1) : 0;
-          if (pts > m) m = pts;
+    let sufPts = [], sufSlots = [];
+    // Recomputed whenever the pass swaps its candidate pools — the Soul passes
+    // work from a different set of pieces, so the ceilings differ too. The
+    // Soul dimensions are included: the bound has to ask how much of a Soul is
+    // still reachable, not just how many skill points are.
+    function buildSuffixes() {
+      sufPts = []; sufSlots = [];
+      sufPts[order.length] = dims.map(() => 0);
+      sufSlots[order.length] = 0;
+      for (let k = order.length - 1; k >= 0; k--) {
+        const p = sufPts[k + 1].slice();
+        let best = 0;
+        const chestish = order[k] === "chest";
+        for (let ti = 0; ti < dims.length; ti++) {
+          let m = 0;
+          for (const c of cands[order[k]]) {
+            const pts = c.pts[ti] > 0 ? c.pts[ti] * (chestish || c.torso ? OPTIMISTIC_TORSO : 1) : 0;
+            if (pts > m) m = pts;
+          }
+          p[ti] += m;
         }
-        p[ti] += m;
+        for (const c of cands[order[k]]) if (c.slots > best) best = c.slots;
+        sufPts[k] = p; sufSlots[k] = sufSlots[k + 1] + best;
       }
-      for (const c of cands[order[k]]) if (c.slots > best) best = c.slots;
-      sufPts[k] = p; sufSlots[k] = sufSlots[k + 1] + best;
     }
+    buildSuffixes();
 
     // ── DFS with optimistic bound ─────────────────────────────────────────
     // Everything in this loop is indexed by target-tree position and carried
     // incrementally: the bound is O(targets) per node, not O(depth × targets).
-    const needArr = trees.map(t => need[t]);
-    const talBestArr = trees.map(t => talBest[t]);
-    const densityArr = trees.map(t => density[t]);
+    // Indexed over `dims` (requested skills, then the Souls that can grant
+    // them), so the bound can reason about both in the same pass.
+    const needArr = dimNeed;
+    const talBestArr = dims.map(t => talBest[t] || 0);
+    const densityArr = dims.map(t => density[t] || 0);
     const results = [];
-    const acc = trees.map(() => 0);
+    const seen = new Set();   // armor combinations already reported
+    const acc = dims.map(() => 0);
     let explored = 0, leaves = 0, truncated = false, cancelled = false, timedOut = false;
     let nodes = 0, fills = 0;   // diagnostics
     const chosen = new Array(order.length).fill(null);
-    const deadline = query.timeBudgetMs ? Date.now() + query.timeBudgetMs : Infinity;
+    // Both are relaxed for the Soul passes below, which run on their own
+    // allowance so they neither get crowded out nor slow ordinary searches.
+    const SOUL_EXTRA = 60, SOUL_BUDGET_MS = 500;
+    let capNow = maxResults;
+    let dl = query.timeBudgetMs ? Date.now() + query.timeBudgetMs : Infinity;
 
-    const stop = () => cancelled || timedOut || results.length >= maxResults;
+    // Souls are searched for separately rather than by loosening the bound.
+    //
+    // Relaxing "this skill needs points" for every Soul-grantable skill meant
+    // the strongest prune was off for most of the query, and cost 2.5x even on
+    // searches that never involve a Deviant set. Instead the main pass keeps
+    // the strict rule, and each Soul that could grant a requested skill gets
+    // its own pass where that Soul is MANDATORY — which prunes hard, because
+    // nearly every branch fails to reach it. Same answers, a fraction of the
+    // work. `passSoulFor` is which Souls may excuse a skill from needing
+    // points; `passRequire` is the Soul this pass insists on.
+    let passSoulFor = trees.map(() => []);
+    let passRequire = -1;
+
+    const stop = () => cancelled || timedOut || results.length >= capNow;
     const dfs = (k, accSlots) => {
-      if (stop()) { truncated = truncated || results.length >= maxResults; return; }
+      if (stop()) { truncated = truncated || results.length >= capNow; return; }
       if (k === order.length) {
         finalize();
         if (++leaves % PROGRESS_EVERY === 0) {
           if (hooks.progress) hooks.progress({ explored, found: results.length });
           if (hooks.cancelled && hooks.cancelled()) cancelled = true;
-          if (Date.now() > deadline) timedOut = true;
+          if (Date.now() > dl) timedOut = true;
         }
         return;
       }
@@ -312,10 +439,24 @@
           const slotsOpt = slotsNow + query.weaponSlots + sufSlots[k + 1] + talMaxSlots;
           const suf = sufPts[k + 1];
           let totalGap = 0, bestDensity = 0, shortTrees = 0;
-          for (let ti = 0; ti < acc.length; ti++) {
+          // Only the requested skills are mandatory; the Soul dimensions that
+          // follow them are optional routes, tested per skill below.
+          const canReach = ti => {
             const have = acc[ti] + talBestArr[ti] + suf[ti];
-            if (have + slotsOpt * OPTIMISTIC_TORSO * densityArr[ti] + 2 < needArr[ti]) { ok = false; break; }
-            const short = needArr[ti] - have;
+            return have + slotsOpt * OPTIMISTIC_TORSO * densityArr[ti] + 2 >= needArr[ti];
+          };
+          // This pass's Soul is compulsory, so a branch that can no longer
+          // reach it is finished — the prune that makes these passes cheap.
+          if (passRequire >= 0 && !canReach(passRequire)) ok = false;
+          for (let ti = 0; ok && ti < trees.length; ti++) {
+            if (!canReach(ti)) {
+              // Out of reach on its own points — but a Soul still in play would
+              // hand the skill over regardless, so only give up when no
+              // granting Soul can be reached either.
+              if (!passSoulFor[ti].some(canReach)) { ok = false; break; }
+              continue;   // a Soul may still supply it; it needs no gems
+            }
+            const short = needArr[ti] - (acc[ti] + talBestArr[ti] + suf[ti]);
             if (short > 0) {
               totalGap += short;
               shortTrees++;
@@ -334,7 +475,43 @@
       }
       chosen[k] = null;
     };
+    // Main pass first: every requested skill earned with points. It is the
+    // cheap one, and for most queries it is the whole answer.
     dfs(0, 0);
+
+    // Then the Soul passes, each insisting on its own Soul. They get their own
+    // small allowance of time and results, because otherwise they would either
+    // never run (the main pass having already filled the result cap) or slow
+    // every ordinary search down — and a Soul-driven set is precisely the one
+    // a player is least likely to find by hand.
+    const mainTimedOut = timedOut, mainTruncated = truncated;
+    capNow = results.length + SOUL_EXTRA;
+    dl = Math.min(dl, Date.now() + SOUL_BUDGET_MS);
+    timedOut = false;
+    for (let si = 0; si < soulDims.length && !stop(); si++) {
+      const di = trees.length + si;
+      const granted = soulDimsFor.map(list => (list.includes(di) ? [di] : []));
+      if (!granted.some(l => l.length)) continue;
+      passSoulFor = granted;
+      passRequire = di;
+      // This pass compares pieces on this Soul as well, so a Deviant piece is
+      // no longer dominated by one that simply has more of the wanted skills.
+      cands = buildCands(soulDims[si]);
+      if (SLOTS.some(s => !cands[s].length)) continue;
+      buildSuffixes();
+      acc.fill(0);
+      chosen.fill(null);
+      dfs(0, 0);
+    }
+    // Whether the Soul phase got to finish is reported separately: the main
+    // search can be exhaustive while the Souls were only sampled, and saying
+    // "every combination was checked" would then be a lie.
+    const soulTruncated = timedOut || truncated !== mainTruncated;
+    timedOut = mainTimedOut;
+    truncated = mainTruncated;
+    passSoulFor = trees.map(() => []);
+    passRequire = -1;
+    passRequire = -1;
 
     // ── Finalize: exact sums, cascade flags, exact gem fill, engine check ─
     // Talismans are tried cheapest-first; the first that works is the answer
@@ -365,8 +542,17 @@
       // here exactly as the engine applies it afterwards.
       let armorSlots = 0;
       for (const slot of SLOTS) armorSlots += pieces[slot].a.slots;
-      const gapArr = trees.map((t, ti) =>
-        needArr[ti] - ((armorBase[t] || 0) + (skillPlus2 ? 2 : 0)));
+      // By now the armor is known, so whether a Soul is actually active can be
+      // settled exactly rather than assumed: a skill it hands over needs no
+      // points and no gems, and asking for them would waste slots the rest of
+      // the set needs.
+      const gapArr = trees.map((t, ti) => {
+        if (passSoulFor[ti].some(di => {
+          const pts = armorBase[dims[di]] || 0;
+          return pts > 0 && pts + (skillPlus2 ? 2 : 0) >= needArr[di];
+        })) return 0;
+        return needArr[ti] - ((armorBase[t] || 0) + (skillPlus2 ? 2 : 0));
+      });
 
       // Hopeless leaves are skipped without touching the fill solver: not even
       // the strongest candidate plus every slot filled with the densest gem
@@ -476,17 +662,25 @@
             : null,
         };
         const r = g.SBEngine.compute({ weapon: set.weapon, pieces: set.pieces, talisman: set.talisman }, data);
+        // What was asked for is a SKILL, and the engine is the authority on
+        // whether the set has it — by points, or because a Soul granted it
+        // outright. Checking points alone rejected sets that genuinely work.
         let good = !r.problems.length;
-        for (const t of trees) if ((r.treePoints[t] || 0) < need[t]) good = false;
+        for (const t of trees) if (!satisfied(r, t, need[t])) good = false;
         if (!good) continue;   // engine disagrees with the plan: try the next talisman
         const spare = Object.values(r.slots).reduce((a, s) => a + (s.total - s.used), 0);
+        // The Soul passes revisit armor the main pass already cleared, so a
+        // combination is only ever reported once.
+        const key = order.map(s => set.pieces[s].id).join("/");
+        if (seen.has(key)) return;
+        seen.add(key);
         results.push({ set, engine: r, spare, defense: r.defense, talCost: talCost(tal) });
         return;
       }
     }
 
     results.sort((a, b) => a.talCost - b.talCost || b.spare - a.spare || b.defense - a.defense);
-    return { results, complete: !truncated && !cancelled && !timedOut, cancelled, timedOut, explored, stats: { nodes, fills } };
+    return { results, complete: !truncated && !cancelled && !timedOut, soulTruncated, cancelled, timedOut, explored, stats: { nodes, fills } };
   }
 
   // Fit gems into the bins to cover `residual` (indexed like treesSub).

@@ -231,7 +231,9 @@ window.SBSearchUI = (function () {
           ? " Stopped early — there are more; narrow the skills or allow weapon slots." : ""}${hint}`
       : partial
         ? `No sets found before stopping at ${(ms / 1000).toFixed(1)} s — these skills are demanding. Try fewer, or allow weapon slots.${hint}`
-        : `No possible set reaches those skills this way — every combination with ${talMode === "mine" ? "your stored talismans" : talMode === "one" ? "a one-skill talisman (or none)" : "a two-skill talisman (or none)"} was checked. Try ${otherModes}, or relax gender/class/rarity/weapon slots.${hint}`;
+        // Only claim everything was checked when it actually was: the Soul
+        // passes run on a short allowance and may have been cut short.
+        : `No possible set reaches those skills this way — ${res.soulTruncated ? "nearly every" : "every"} combination with ${talMode === "mine" ? "your stored talismans" : talMode === "one" ? "a one-skill talisman (or none)" : "a two-skill talisman (or none)"} was checked. Try ${otherModes}, or relax gender/class/rarity/weapon slots.${hint}`;
     applyView();
   }
 
