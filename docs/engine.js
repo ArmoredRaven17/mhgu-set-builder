@@ -3,7 +3,9 @@
 (function (g) {
   "use strict";
 
-  const TORSO_UP = 203;   // skill-tree id of the Torso Up marker skill
+  const TORSO_UP = 203;       // skill-tree id of the Torso Up marker skill
+  const SECRET_ARTS = 204;    // "Skill +2" at 10: +2 to every tree with points invested
+  const TALISMAN_BOOST = 205; // "Double Talisman" at 10: talisman skills and decos count twice
 
   // build = {
   //   weapon:   { slots, def, decos: [itemId...] } | null   (already resolved to
@@ -70,14 +72,35 @@
       for (const [tree, pts] of decoSk(build.weapon.decos, data)) add(tree, pts);
       slotUse.weapon = { used: decoCost(build.weapon.decos, data), total: build.weapon.slots || 0 };
     }
+    // Talisman contributions are tracked separately so Double Talisman can
+    // count them a second time.
+    const talPoints = {};
     if (build.talisman) {
-      for (const [tree, pts] of build.talisman.sk || []) add(tree, pts);
-      for (const [tree, pts] of decoSk(build.talisman.decos, data)) add(tree, pts);
+      const addTal = (tree, pts) => { add(tree, pts); talPoints[tree] = (talPoints[tree] || 0) + pts; };
+      for (const [tree, pts] of build.talisman.sk || []) addTal(tree, pts);
+      for (const [tree, pts] of decoSk(build.talisman.decos, data)) addTal(tree, pts);
       slotUse.talisman = { used: decoCost(build.talisman.decos, data), total: build.talisman.slots || 0 };
     }
 
     for (const [what, u] of Object.entries(slotUse))
       if (u.used > u.total) problems.push(`${what}: ${u.used} slot(s) of decorations in ${u.total}.`);
+
+    // Secret Arts, then Talisman Boost — in that order, because the game's own
+    // Neset set sums Secret Arts 10 / Talisman Boost 8 and relies on the +2 to
+    // push Talisman Boost over its threshold (Athena's ASS models the same by
+    // force-enabling both on a full Neset set). The +2 goes to every tree with
+    // a nonzero total, negatives included, matching ASS AddAllSkillsPlus2().
+    const posThreshold = tree => {
+      const ladder = data.skills.active[tree];
+      const step = ladder && ladder.find(s => s[0] > 0);
+      return step ? step[0] : Infinity;
+    };
+    const skillPlus2 = (treePoints[SECRET_ARTS] || 0) >= posThreshold(SECRET_ARTS);
+    if (skillPlus2)
+      for (const k of Object.keys(treePoints)) if (treePoints[k] !== 0) treePoints[k] += 2;
+    const talismanDoubled = (treePoints[TALISMAN_BOOST] || 0) >= posThreshold(TALISMAN_BOOST);
+    if (talismanDoubled)
+      for (const [k, pts] of Object.entries(talPoints)) treePoints[k] = (treePoints[k] || 0) + pts;
 
     // Activation: per tree, the highest positive threshold reached, and the
     // deepest negative threshold reached. (A tree can't hold both — points are
@@ -115,7 +138,7 @@
 
     return {
       defense, defenseMax, res, slots: slotUse,
-      treePoints, torsoUpCount,
+      treePoints, torsoUpCount, skillPlus2, talismanDoubled,
       active, soulGrants, problems,
     };
   }

@@ -24,12 +24,14 @@ const emptyBuild = () => ({ weapon: null, pieces: { head: null, chest: null, arm
 // granting (1,+10) and (2,+10).
 const syn = {
   skills: {
-    trees: { 1: "Attack", 2: "Guard", 9: "Soul", 203: "Torso Up" },
+    trees: { 1: "Attack", 2: "Guard", 9: "Soul", 203: "Torso Up", 204: "Secret Arts", 205: "Talisman Boost" },
     active: {
       1: [[-20, "Attack Down (L)", ""], [-15, "Attack Down (M)", ""], [-10, "Attack Down (S)", ""],
           [10, "Attack Up (S)", ""], [15, "Attack Up (M)", ""], [20, "Attack Up (L)", ""]],
       2: [[10, "Guard +1", ""], [15, "Guard +2", ""]],
       9: [[10, "Soul", ""]],
+      204: [[10, "Skill +2", ""]],
+      205: [[10, "Double Talisman", ""]],
     },
   },
   souls: { 9: { 10: [[1, 10], [2, 10]] } },
@@ -43,8 +45,12 @@ const syn = {
              2: { n: "HT", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[203, 0]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 2, set: 0 } },
     chest: { 1: { n: "C", def: [2, 20], lv: [2, 20], res: [0, 2, 0, 0, 0], slots: 2, sk: [[1, 3]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 1, set: 0 } },
     arms:  { 1: { n: "A", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[203, 0]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 1, set: 0 } },
-    waist: { 1: { n: "W", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[9, 10]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 1, set: 0 } },
-    legs:  { 1: { n: "L", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[1, 3]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 1, set: 0 } },
+    waist: { 1: { n: "W", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[9, 10]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 1, set: 0 },
+             2: { n: "WSA", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[204, 10]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 2, set: 0 },
+             3: { n: "WTB", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[205, 10]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 3, set: 0 } },
+    legs:  { 1: { n: "L", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[1, 3]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 1, set: 0 },
+             2: { n: "LG8", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[2, 8]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 2, set: 0 },
+             3: { n: "LTB8", def: [1, 10], lv: [1, 10], res: [0, 0, 0, 0, 0], slots: 0, sk: [[205, 8]], rar: 1, cls: "A", gender: 2, pair: 0, maxLv: 2, ord: 3, set: 0 } },
   },
 };
 
@@ -105,6 +111,53 @@ console.log("souls:");
   check(r2.active.some(a => a.tree === 1) && r2.soulGrants.length === 1, "naturally-active grant deduped");
 }
 
+console.log("secret arts (+2 to invested trees):");
+{
+  const b = emptyBuild();
+  b.pieces.waist = { id: 2, lv: 2, decos: [] };   // Secret Arts 10
+  b.pieces.legs = { id: 2, lv: 2, decos: [] };    // Guard 8
+  b.weapon = { slots: 3, def: 0, decos: [102, 102] };  // Guard +2, Attack -4
+  const r = E.compute(b, syn);
+  check(r.skillPlus2 === true, "Skill +2 flag set at 10 points");
+  check(r.treePoints[204] === 12, `Secret Arts boosts itself (got ${r.treePoints[204]})`);
+  check(r.treePoints[2] === 8 + 2 + 2, `Guard 8+2 deco +2 boost (got ${r.treePoints[2]})`);
+  check(r.active.some(a => a.name === "Guard +1"), "boost pushes Guard over its threshold");
+  check(r.treePoints[1] === -4 + 2, `negative tree also gets +2, ASS-style (got ${r.treePoints[1]})`);
+  const b2 = emptyBuild();
+  b2.pieces.legs = { id: 2, lv: 2, decos: [] };
+  const r2 = E.compute(b2, syn);
+  check(r2.skillPlus2 === false && r2.treePoints[2] === 8, "no boost without Secret Arts");
+}
+
+console.log("talisman boost (double talisman):");
+{
+  const b = emptyBuild();
+  b.pieces.waist = { id: 3, lv: 2, decos: [] };   // Talisman Boost 10
+  b.talisman = { rar: 8, slots: 1, sk: [[1, 5]], decos: [100] };  // Attack 5 + Atk Jwl (Attack +1)
+  const r = E.compute(b, syn);
+  check(r.talismanDoubled === true, "Double Talisman flag set");
+  check(r.treePoints[1] === (5 + 1) * 2, `talisman skills AND talisman decos doubled (got ${r.treePoints[1]})`);
+  check(r.active.some(a => a.name === "Attack Up (S)"), "doubled talisman activates Attack Up (S)");
+  const b2 = emptyBuild();
+  b2.pieces.waist = { id: 3, lv: 2, decos: [] };
+  b2.pieces.head = { id: 1, lv: 2, decos: [100] };   // armor deco, must NOT double
+  b2.talisman = { rar: 8, slots: 0, sk: [[1, 5]], decos: [] };
+  const r2 = E.compute(b2, syn);
+  check(r2.treePoints[1] === 4 + 1 + 5 * 2, `armor decos not doubled (got ${r2.treePoints[1]})`);
+}
+
+console.log("neset cascade (Skill +2 pushes Talisman Boost to 10):");
+{
+  const b = emptyBuild();
+  b.pieces.waist = { id: 2, lv: 2, decos: [] };   // Secret Arts 10
+  b.pieces.legs = { id: 3, lv: 2, decos: [] };    // Talisman Boost 8
+  b.talisman = { rar: 8, slots: 0, sk: [[1, 3]], decos: [] };
+  const r = E.compute(b, syn);
+  check(r.skillPlus2 && r.talismanDoubled, "both effects active via the cascade");
+  check(r.treePoints[205] === 10, `Talisman Boost lands on 10 (got ${r.treePoints[205]})`);
+  check(r.treePoints[1] === 3 + 2 + 3, `talisman skill boosted then doubled (got ${r.treePoints[1]})`);
+}
+
 console.log("slots and problems:");
 {
   const b = emptyBuild();
@@ -141,6 +194,28 @@ console.log("real data: Redhelm XR set (true soul):");
   check(r.active.some(a => a.name === "Redhelm Soul X" && a.soul), "Redhelm Soul X activates as a compound");
   for (const n of ["Resentment", "Focus", "Marathon Runner"])
     check(r.active.some(a => a.name === n) || r.soulGrants.some(s => s.name === n), `soul grants ${n}`);
+}
+
+console.log("real data: full Neset set (Secret Arts + cascade):");
+{
+  // Blademaster Neset: Helm/Mail/Gloves/Coat/Boots, all series id 1066.
+  // Raw sums are Secret Arts 10, Talisman Boost 8 — the +2 must carry
+  // Talisman Boost over the line, as in the game and Athena's ASS.
+  const b = emptyBuild();
+  for (const slot of ["head", "chest", "arms", "waist", "legs"]) {
+    const a = data.armor[slot][1066];
+    check(a && /^Neset/.test(a.n), `${slot} 1066 is a Neset piece (${a && a.n})`);
+    b.pieces[slot] = { id: 1066, lv: a.maxLv, decos: [] };
+  }
+  b.talisman = { rar: 5, slots: 0, sk: [[treeId("Hearing"), 5]], decos: [] };
+  const r = E.compute(b, data);
+  check(r.skillPlus2 === true, "Skill +2 active on the full set");
+  check(r.talismanDoubled === true, "Double Talisman active via the +2 cascade");
+  check(r.treePoints[205] === 10, `Talisman Boost 8 -> 10 (got ${r.treePoints[205]})`);
+  check(r.active.some(a => a.name === "Skill +2") && r.active.some(a => a.name === "Double Talisman"),
+    "both skills appear in the activated list");
+  check(r.treePoints[treeId("Hearing")] === 5 + 2 + 5, `talisman Hearing 5 boosted and doubled (got ${r.treePoints[treeId("Hearing")]})`);
+  check(r.active.some(a => a.name === "Earplugs"), "12 points of Hearing activates Earplugs");
 }
 
 console.log("real data: talisman validation (rarity model):");
