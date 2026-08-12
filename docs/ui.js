@@ -11,6 +11,10 @@ window.SBUI = (function () {
   const ELEMENTS = ["Fire", "Water", "Thunder", "Ice", "Dragon"];
   const SHARP_COLORS = ["#d1312d", "#d8623b", "#d9c440", "#7ac74f", "#4f9bd9", "#eeeef4", "#b78fe8"];
   const treeName = t => window.SB_SKILLS.trees[t] || `#${t}`;
+  // A talisman the search produced belongs to a whole tier, not to one named
+  // talisman — every rarity in the tier rolls the same table.
+  const TIER_LABEL = { mystery: "Mystery", shining: "Shining", timeworn: "Timeworn", enduring: "Enduring" };
+  const tierName = rar => TIER_LABEL[window.SBEngine.TAL_TIER[rar]] || "Talisman";
 
   function toast(msg, ms = 2600) {
     const t = $("toast"); t.textContent = msg; t.classList.remove("hidden");
@@ -194,7 +198,7 @@ window.SBUI = (function () {
       if (problems.length) form += `<div class="tal-problems">${problems.map(p => `<div>${esc(p)}</div>`).join("")}</div>`;
       form += decoRowHtml({ kind: "talisman" }, t.decos, t.slots);
     }
-    const summary = t ? `${charm.names[t.rar]}` : "No talisman";
+    const summary = t ? (t.gen ? `${tierName(t.rar)} tier talisman` : `${charm.names[t.rar]}`) : "No talisman";
     card.innerHTML = `<div class="card-head">
       <img class="card-icon" src="assets/icons/icon_talisman${t ? "_r" + t.rar : ""}.png" alt="">
       <span class="card-kind">Talisman</span>
@@ -305,5 +309,5 @@ window.SBUI = (function () {
     renderTalismanCard(set, api);
   }
 
-  return { renderCards, renderResults, toast, confirmDialog, SLOTS };
+  return { renderCards, renderResults, toast, confirmDialog, tierName, SLOTS };
 })();

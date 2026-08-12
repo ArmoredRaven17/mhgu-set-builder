@@ -207,6 +207,29 @@
       if (s > talBestSum) talBestSum = s;
     }
 
+    // Group candidates that share a skill set and slot count. Same skills,
+    // same slots, more points can only SHRINK what gems have to cover — so
+    // within a group, if the strongest candidate still can't be filled, no
+    // weaker one in that group can either. This is what turns "prove no
+    // one-skill talisman works" from testing every point value on every skill
+    // (dozens of fills) into testing one representative per group, which is
+    // the difference between a query finishing in seconds and grinding.
+    const groupOfCand = new Array(talCands.length);
+    const groups = new Map();
+    for (let ci = 0; ci < talCands.length; ci++) {
+      const tal = talCands[ci];
+      const key = tal ? tal.sk.map(([t]) => t).join(",") + "|" + tal.slots : "none";
+      groupOfCand[ci] = key;
+      let grp = groups.get(key);
+      if (!grp) { grp = { probe: ci, probeSum: 0, members: [] }; groups.set(key, grp); }
+      grp.members.push(ci);
+      if (tal) {
+        const sum = tal.sk.reduce((s, [, p]) => s + Math.abs(p), 0);
+        if (sum > grp.probeSum) { grp.probe = ci; grp.probeSum = sum; }
+      }
+    }
+    const groupList = [...groups.values()];
+
     // Suffix maxima for the branch-and-bound: from slot k onward, the most
     // points any single choice could add per tree, and the most slots.
     const order = SLOTS;
@@ -236,8 +259,6 @@
     const talBestArr = trees.map(t => talBest[t]);
     const densityArr = trees.map(t => density[t]);
     const results = [];
-    const loadoutTable = new Map();   // (cap x multiplier) -> packings, per search
-    const frontCache = new Map();     // (slot layout, remaining gap) -> coverage front
     const acc = trees.map(() => 0);
     let explored = 0, leaves = 0, truncated = false, cancelled = false, timedOut = false;
     let nodes = 0, fills = 0;   // diagnostics
@@ -367,51 +388,66 @@
       // Coverage is clamped at what is still MISSING, never at a negative gap:
       // a tree the armor already satisfies needs zero further cover, and
       // clamping to a negative number would make every vector fail the test.
-      const clampAt = gapArr.map(gp => (gp > 0 ? gp : 0));
-      // Armor combinations repeat their slot layout and their remaining gap
-      // constantly, and the front depends on nothing else — so build it once
-      // per (layout, gap) and reuse it across leaves.
-      const frontKey = armorBins.map(b => b.key + b.cap + "x" + b.mult).join("/") + "|" + clampAt.join(",");
-      let baseFront = frontCache.get(frontKey);
-      if (!baseFront) {
-        fills++;
-        baseFront = coverageFront(armorBins, clampAt, trees, gems, loadoutTable);
-        frontCache.set(frontKey, baseFront);
-      }
-      const frontFor = [];   // by talisman slot count
-      const frontOf = s => {
-        if (frontFor[s] === undefined) {
-          frontFor[s] = s > 0
-            ? extendFront(baseFront, { key: "talisman", cap: s, mult: talMult }, clampAt, trees, gems, loadoutTable)
-            : baseFront;
-        }
-        return frontFor[s];
-      };
+      // Only skills that are actually SHORT need covering.
+      const act = [];
+      for (let ti = 0; ti < trees.length; ti++) if (gapArr[ti] > 0) act.push(ti);
+      const treesSub = act.map(ti => trees[ti]);
 
-      const tried = new Set();
-      for (let ci = 0; ci < talCands.length; ci++) {
+      // What the armor and weapon slots could contribute per short skill if
+      // every slot served that one skill — the ceiling a talisman has to make
+      // up. Computed once so testing a candidate costs a few comparisons
+      // instead of a fill; without this, a leaf with no answer pays for a fill
+      // per candidate, which is where a one-skill query lost its minute.
+      const baseCap = act.map(() => 0);
+      for (const b of armorBins)
+        for (let j = 0; j < act.length; j++) baseCap[j] += b.cap * b.mult * densityArr[act[j]];
+
+      // fill-or-null per (residual, talisman slots) key, so repeated point
+      // values that collapse to the same residual after clamping share one
+      // fitGems call.
+      const tried = new Map();
+      function attempt(ci) {
         const tal = talCands[ci];
         const contrib = talContrib[ci];
-        // What this talisman leaves for the gems to cover.
+        let possible = true;
+        for (let j = 0; j < act.length; j++) {
+          const ti = act[j];
+          if (contrib[ti] * talMult + baseCap[j] + talSlots[ci] * talMult * densityArr[ti] < gapArr[ti]) {
+            possible = false; break;
+          }
+        }
+        if (!possible) return null;
         let key = "";
         const residual = [];
-        for (let ti = 0; ti < trees.length; ti++) {
-          const left = gapArr[ti] - contrib[ti] * talMult;
+        for (let j = 0; j < act.length; j++) {
+          const left = gapArr[act[j]] - contrib[act[j]] * talMult;
           residual.push(left > 0 ? left : 0);
           key += (left > 0 ? left : 0) + ",";
         }
         key += "|" + talSlots[ci];
-        if (tried.has(key)) continue;
-        tried.add(key);
+        if (tried.has(key)) return tried.get(key);
+        fills++;
+        const bins = tal && tal.slots
+          ? armorBins.concat([{ key: "talisman", cap: tal.slots, mult: talMult }])
+          : armorBins;
+        const fill = fitGems(residual, bins, treesSub, gems);
+        tried.set(key, fill);
+        return fill;
+      }
 
-        const hit = frontOf(talSlots[ci]).find(v => {
-          for (let ti = 0; ti < trees.length; ti++) if (v.pts[ti] < residual[ti]) return false;
-          return true;
-        });
-        if (!hit) continue;
-        const fill = hit.place;
+      // Pass A: probe only the strongest candidate per group. A group whose
+      // probe can't be filled is dead — nothing weaker in it needs testing.
+      const feasible = new Set();
+      for (const grp of groupList) if (attempt(grp.probe)) feasible.add(grp);
 
-        // Materialize and let the engine be the judge.
+      // Pass B: within feasible groups, walk the cheapest-first order and
+      // take the first that actually fills (repeats, including the probe
+      // itself, are cache hits via `tried`).
+      for (let ci = 0; ci < talCands.length; ci++) {
+        if (!feasible.has(groups.get(groupOfCand[ci]))) continue;
+        const fill = attempt(ci);
+        if (!fill) continue;
+        const tal = talCands[ci];
         const set = {
           pieces: Object.fromEntries(order.map(slot =>
             [slot, { id: pieces[slot].id, lv: 0, decos: fill[slot] || [] }])),
@@ -431,106 +467,62 @@
     }
 
     results.sort((a, b) => a.talCost - b.talCost || b.spare - a.spare || b.defense - a.defense);
-    return { results, complete: !truncated && !cancelled && !timedOut, cancelled, timedOut, explored, stats: { nodes, fills, loadouts: loadoutTable.size } };
+    return { results, complete: !truncated && !cancelled && !timedOut, cancelled, timedOut, explored, stats: { nodes, fills } };
   }
 
-  // Every way to pack gems for the target trees into `cap` slots, as dense
-  // point vectors. Built ONCE per (cap, multiplier) for a whole search — this
-  // used to be rebuilt on every call, which dominated the runtime — and
-  // Pareto-pruned, since a packing beaten on every tree by another of the same
-  // size can never be the one that makes a set work.
-  function buildLoadouts(cap, mult, trees, gems) {
-    const raw = [];
-    const cur = trees.map(() => 0);
-    const step = (capLeft, startTree, ids) => {
-      raw.push({ ids: ids.slice(), pts: cur.slice() });
-      for (let ti = startTree; ti < trees.length; ti++) {
-        const sizes = gems[trees[ti]];
-        for (const sizeStr in sizes) {
-          const size = Number(sizeStr);
-          if (size > capLeft) continue;
-          const gm = sizes[sizeStr];
-          ids.push(gm.id);
-          cur[ti] += gm.pts * mult;
-          step(capLeft - size, ti, ids);
-          cur[ti] -= gm.pts * mult;
-          ids.pop();
+  // Fit gems into the bins to cover `residual` (indexed like treesSub).
+  //
+  // This is the hot path — it runs once per armor combination per talisman, so
+  // it has to cost microseconds, not milliseconds. It is a greedy fill, like
+  // Athena's, run under a few different priorities: each pass places, in the
+  // slots available, whichever jewel buys the most *useful* points per slot,
+  // and a pass that leaves nothing outstanding wins. Trying several priorities
+  // recovers most of what a single greedy pass misses; anything that still
+  // slips through simply is not offered, and every set that IS offered is
+  // verified by the engine afterwards, so nothing wrong is ever shown.
+  const FILL_MODES = 3;
+  function fitGems(residual, bins, treesSub, gems) {
+    for (let mode = 0; mode < FILL_MODES; mode++) {
+      const left = residual.slice();
+      let outstanding = 0;
+      for (const r of left) if (r > 0) outstanding += r;
+      if (!outstanding) return {};
+      const placement = {};
+      // mode 0: biggest bins first (keeps 3-slot jewels usable)
+      // mode 1: multiplier bins first (chest/talisman points count double)
+      // mode 2: smallest bins first (spends awkward single slots early)
+      const order = bins.slice().sort(
+        mode === 0 ? (a, b) => b.cap - a.cap || b.mult - a.mult
+        : mode === 1 ? (a, b) => b.mult - a.mult || b.cap - a.cap
+        : (a, b) => a.cap - b.cap || b.mult - a.mult);
+      for (const bin of order) {
+        let cap = bin.cap;
+        while (cap > 0 && outstanding > 0) {
+          let bestJ = -1, bestSize = 0, bestId = 0, bestGain = 0, bestScore = 0;
+          for (let j = 0; j < treesSub.length; j++) {
+            if (left[j] <= 0) continue;
+            const sizes = gems[treesSub[j]];
+            for (const sizeStr in sizes) {
+              const size = +sizeStr;
+              if (size > cap) continue;
+              const gm = sizes[sizeStr];
+              const pts = gm.pts * bin.mult;
+              const gain = pts < left[j] ? pts : left[j];   // points that actually count
+              const score = gain / size;
+              if (score > bestScore) { bestScore = score; bestJ = j; bestSize = size; bestId = gm.id; bestGain = gain; }
+            }
+          }
+          if (bestJ < 0) break;
+          left[bestJ] -= bestGain;
+          outstanding -= bestGain;
+          cap -= bestSize;
+          (placement[bin.key] || (placement[bin.key] = [])).push(bestId);
         }
+        if (!outstanding) break;
       }
-    };
-    step(cap, 0, []);
-    const kept = raw.filter((o, i) => !raw.some((p, j) =>
-      j !== i && p.pts.every((x, ti) => x >= o.pts[ti]) &&
-      (p.pts.some((x, ti) => x > o.pts[ti]) || p.ids.length < o.ids.length)));
-    const sum = o => o.pts.reduce((x, y) => x + y, 0);
-    kept.sort((a, b) => sum(b) - sum(a));
-    return kept;
-  }
-
-  const loadoutsFor = (bin, trees, gems, table) => {
-    const ck = bin.cap + "x" + bin.mult;
-    let opts = table.get(ck);
-    if (!opts) { opts = buildLoadouts(bin.cap, bin.mult, trees, gems); table.set(ck, opts); }
-    return opts;
-  };
-
-  // Keep only the coverage vectors nothing else beats. Values are clamped at
-  // the gap before they get here, so two vectors that both cover a tree fully
-  // are the same vector as far as the search is concerned — which is what
-  // keeps these fronts small.
-  function pareto(list) {
-    // Clamping makes many packings identical; folding those together first
-    // keeps the quadratic comparison below working on a much shorter list.
-    const uniq = new Map();
-    for (const v of list) {
-      const key = v.pts.join(",");
-      const prev = uniq.get(key);
-      if (!prev || v.count < prev.count) uniq.set(key, v);
+      if (!outstanding) return placement;
     }
-    const out = [];
-    list = [...uniq.values()];
-    list.sort((a, b) => b.total - a.total || a.count - b.count);
-    for (const v of list) {
-      let dominated = false;
-      for (const k of out) {
-        let ge = true;
-        for (let i = 0; i < v.pts.length; i++) if (k.pts[i] < v.pts[i]) { ge = false; break; }
-        if (ge) { dominated = true; break; }
-      }
-      if (!dominated) out.push(v);
-    }
-    return out;
-  }
-  const vecOf = (pts, place, count) => ({
-    pts, place, count,
-    total: pts.reduce((a, b) => a + b, 0),
-  });
-
-  // One bin's worth of extension: every way to add this bin's gems to each
-  // vector already on the front, re-pruned.
-  function extendFront(front, bin, gapArr, trees, gems, table) {
-    const opts = loadoutsFor(bin, trees, gems, table);
-    const next = [];
-    for (const f of front) {
-      for (const o of opts) {
-        const pts = new Array(trees.length);
-        for (let ti = 0; ti < trees.length; ti++) {
-          const v = f.pts[ti] + o.pts[ti];
-          pts[ti] = v > gapArr[ti] ? gapArr[ti] : v;
-        }
-        next.push(vecOf(pts, o.ids.length ? { ...f.place, [bin.key]: o.ids } : f.place,
-          f.count + o.ids.length));
-      }
-    }
-    return pareto(next);
-  }
-
-  // Everything the given bins can cover, as a Pareto front of clamped vectors,
-  // each carrying the decoration placement that achieves it.
-  function coverageFront(bins, gapArr, trees, gems, table) {
-    let front = [vecOf(trees.map(() => 0), {}, 0)];
-    for (const bin of bins) front = extendFront(front, bin, gapArr, trees, gems, table);
-    return front;
+    return null;
   }
 
   g.SBSearch = { search, generateTalismans, talCost };

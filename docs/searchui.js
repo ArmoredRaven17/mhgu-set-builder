@@ -10,10 +10,9 @@ window.SBSearchUI = (function () {
   const $ = id => document.getElementById(id);
   const esc = window.SBPickers.esc;
   const treeName = t => window.SB_SKILLS.trees[t] || `#${t}`;
-  const MAX_TARGETS = 5;
 
   let api = null;
-  let targets = [];          // [{tree, pts, name}]
+  let targets = [];          // [{tree, pts, name}] — no arbitrary limit on how many
   let lastResults = [];
   let worker = null, workerReady = false, running = false;
 
@@ -24,13 +23,15 @@ window.SBSearchUI = (function () {
   OPTIONS.sort((a, b) => a.name.localeCompare(b.name));
 
   // A talisman is points and slots; where it drops is not something to plan a
-  // set around. Stored ones keep their name because that is how they were
-  // entered; generated ones are described by what they must roll.
-  const talLabel = t => {
+  // set around. One the user entered keeps the name they chose. One the search
+  // produced is named by its TIER, never by a specific talisman: those rolls
+  // are available from every rarity in the tier, so calling it a "Hero
+  // Talisman" would claim a precision it does not have.
+  const talLabel = (t, withTier) => {
     const skills = t.sk.map(([tr, p]) => `${treeName(tr)} ${p > 0 ? "+" + p : p}`).join(", ");
     const slots = `${t.slots} slot${t.slots === 1 ? "" : "s"}`;
-    return t.gen ? `${skills}, ${slots}`
-      : `${window.SB_CHARM.names[t.rar] || "Talisman"} — ${skills}, ${slots}`;
+    if (t.gen) return withTier ? `${window.SBUI.tierName(t.rar)} tier — ${skills}, ${slots}` : `${skills}, ${slots}`;
+    return `${window.SB_CHARM.names[t.rar] || "Talisman"} — ${skills}, ${slots}`;
   };
 
   // ── Targets: a stationary add box, chips collect below it ──────────────
@@ -41,16 +42,16 @@ window.SBSearchUI = (function () {
         ${esc(t.name)} <span class="tc-sub">(${esc(treeName(t.tree))} ${t.pts})</span> ✕</span>`).join("");
     wrap.querySelectorAll(".target-chip").forEach(chip =>
       chip.addEventListener("click", () => { targets.splice(Number(chip.dataset.i), 1); renderTargets(); }));
-    const full = targets.length >= MAX_TARGETS;
-    $("searchAdd").disabled = full;
-    $("searchAddHint").textContent = full ? `${MAX_TARGETS} skills max — remove one to swap.` : "";
-    if (full) $("searchAddList").classList.add("hidden");
+    // Each extra skill costs search time, so say so once it starts to matter —
+    // but nothing stops you adding more.
+    $("searchAddHint").textContent = targets.length >= 6
+      ? `${targets.length} skills — demanding queries may stop early.` : "";
   }
   function wireAddBox() {
     const inp = $("searchAdd"), list = $("searchAddList");
     const refresh = () => {
       const q = inp.value.trim().toLowerCase();
-      if (!q || targets.length >= MAX_TARGETS) { list.classList.add("hidden"); return; }
+      if (!q) { list.classList.add("hidden"); return; }
       const hits = OPTIONS.filter(o =>
         !targets.some(t => t.tree === o.tree) &&
         (o.name.toLowerCase().includes(q) || treeName(o.tree).toLowerCase().includes(q))).slice(0, 12);
@@ -64,7 +65,7 @@ window.SBSearchUI = (function () {
           inp.value = "";
           list.classList.add("hidden");
           renderTargets();
-          if (targets.length < MAX_TARGETS) inp.focus();   // stay put, keep typing
+          inp.focus();   // stay put, keep typing
         }));
     };
     inp.addEventListener("input", refresh);
@@ -276,7 +277,7 @@ window.SBSearchUI = (function () {
     const list = api.getTalismans();
     $("talList").innerHTML = list.length
       ? list.map((t, i) => `<div class="picker-row">
-          <div class="pr-main"><div class="pr-name">${esc(talLabel(t))}</div></div>
+          <div class="pr-main"><div class="pr-name">${esc(talLabel(t, true))}</div></div>
           <div class="pr-right"><button class="nav-btn" data-del="${i}">Remove</button></div>
         </div>`).join("")
       : `<div class="picker-note">No talismans stored yet.</div>`;
@@ -303,7 +304,7 @@ window.SBSearchUI = (function () {
     syncOptionLabels();
     renderTargets();
     $("searchModal").classList.remove("hidden");
-    if (targets.length < MAX_TARGETS) $("searchAdd").focus();
+    $("searchAdd").focus();
     startWorker();   // warm it up while the user picks skills
   }
   function close() { $("searchModal").classList.add("hidden"); if (running) cancel(); }
@@ -326,11 +327,6 @@ window.SBSearchUI = (function () {
     $("talAddSk1").addEventListener("change", syncTalAddForm);
     $("talAddSk2").addEventListener("change", syncTalAddForm);
     $("talAddBtn").addEventListener("click", () => addTalisman(readTalForm()));
-    $("talFromCurrent").addEventListener("click", () => {
-      const cur = api.currentTalisman();
-      if (!cur) { $("talAddProblems").textContent = "This set has no talisman on it."; return; }
-      addTalisman({ rar: cur.rar, slots: cur.slots, sk: cur.sk.map(e => e.slice()) });
-    });
     document.addEventListener("keydown", e => {
       if (e.key !== "Escape") return;
       if (!$("talModal").classList.contains("hidden")) { $("talModal").classList.add("hidden"); return; }

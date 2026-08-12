@@ -236,7 +236,7 @@
         const sk = (Array.isArray(t.sk) ? t.sk : []).slice(0, 2)
           .filter(e => Array.isArray(e) && window.SB_SKILLS.trees[e[0]] && Number.isInteger(e[1]))
           .map(e => [Number(e[0]), Number(e[1])]);
-        if (sk.length) s.talisman = { rar, slots: Math.min(Math.max(Number(t.slots) || 0, 0), 3), sk, decos: decoList(t.decos) };
+        if (sk.length) s.talisman = { rar, slots: Math.min(Math.max(Number(t.slots) || 0, 0), 3), sk, decos: decoList(t.decos), gen: !!t.gen };
       }
     }
     return s;
@@ -335,12 +335,6 @@
   };
   // ── Hooks for the Find Sets search ─────────────────────────────────────
   const currentWeaponSlots = () => (resolved.weaponStat ? resolved.weaponStat.slots : 0);
-  // The talisman as the search wants it: skills and slots, decos left behind
-  // (the search decides its own gems).
-  const currentTalisman = () => {
-    const t = currentSet().talisman;
-    return t ? { rar: t.rar, slots: t.slots, sk: t.sk.map(e => e.slice()) } : null;
-  };
   let foundCounter = 0;
   function applyFoundSet(found) {
     const cur = currentSet();
@@ -358,6 +352,9 @@
       rar: found.talisman.rar || (cur.talisman ? cur.talisman.rar : 1),
       slots: found.talisman.slots, sk: found.talisman.sk.map(e => e.slice()),
       decos: found.talisman.decos.slice(),
+      // Carried so it keeps being described by its tier rather than being
+      // given one rarity's name.
+      gen: !!found.talisman.gen,
     };
     sets.list.push(set);
     sets.active = sets.list.length - 1;
@@ -368,7 +365,6 @@
     freeSlots,
     weaponArmorClass,
     currentWeaponSlots,
-    currentTalisman,
     applyFoundSet,
     getTalismans: () => sets.talismans,
     addTalisman: t => {

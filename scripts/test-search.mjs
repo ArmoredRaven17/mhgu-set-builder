@@ -167,5 +167,119 @@ console.log("progress and cancellation hooks:");
   check(res.cancelled === true && res.complete === false, "cancellation stops the search and is reported");
 }
 
+// Independent validation: rebuild each result from nothing but its ids and
+// check it against the game's rules, rather than trusting what the search
+// reported about itself.
+function validateResult(r, targets, query, charm) {
+  const problems = [];
+  const SLOTS5 = ["head", "chest", "arms", "waist", "legs"];
+  const rebuilt = {
+    weapon: r.set.weapon ? { slots: r.set.weapon.slots, def: r.set.weapon.def || 0, decos: r.set.weapon.decos.slice() } : null,
+    pieces: {}, talisman: null,
+  };
+  for (const slot of SLOTS5) {
+    const p = r.set.pieces[slot];
+    if (!p) { problems.push(`${slot} empty`); continue; }
+    const a = data.armor[slot][p.id];
+    if (!a) { problems.push(`${slot} id ${p.id} not in the armor tables`); continue; }
+    if (a.gender !== 2 && a.gender !== query.gender) problems.push(`${slot} ${a.n} is the wrong gender`);
+    if (a.cls !== "A" && a.cls !== query.cls) problems.push(`${slot} ${a.n} is the wrong class`);
+    if (a.rar > query.maxRar) problems.push(`${slot} ${a.n} exceeds the rarity cap`);
+    // Decorations must exist and fit the piece's own slots.
+    let used = 0;
+    for (const id of p.decos) {
+      const d = data.decos[id];
+      if (!d) { problems.push(`${slot} has decoration ${id} which does not exist`); continue; }
+      used += d.slots;
+    }
+    if (used > a.slots) problems.push(`${slot} ${a.n} holds ${used} slots of gems in ${a.slots}`);
+    rebuilt.pieces[slot] = { id: p.id, lv: 0, decos: p.decos.slice() };
+  }
+  if (r.set.talisman) {
+    const t = r.set.talisman;
+    const legal = E.validateTalisman(t, charm, data.skills);
+    if (legal.length) problems.push(`talisman is not obtainable: ${legal.join("; ")}`);
+    let used = 0;
+    for (const id of t.decos) { const d = data.decos[id]; if (d) used += d.slots; else problems.push(`talisman gem ${id} missing`); }
+    if (used > t.slots) problems.push(`talisman holds ${used} slots of gems in ${t.slots}`);
+    rebuilt.talisman = { slots: t.slots, sk: t.sk.map(e => e.slice()), decos: t.decos.slice() };
+  }
+  if (rebuilt.weapon) {
+    let used = 0;
+    for (const id of rebuilt.weapon.decos) { const d = data.decos[id]; if (d) used += d.slots; }
+    if (used > rebuilt.weapon.slots) problems.push(`weapon holds ${used} slots of gems in ${rebuilt.weapon.slots}`);
+  }
+  // Finally: does it actually activate what was asked for?
+  const eng = E.compute(rebuilt, data);
+  for (const [t, p] of targets)
+    if ((eng.treePoints[t] || 0) < p)
+      problems.push(`${data.skills.trees[t]} reaches ${eng.treePoints[t] || 0}, needed ${p}`);
+  for (const pr of eng.problems) problems.push(`engine: ${pr}`);
+  return problems;
+}
+
+console.log("independent validation of every returned set:");
+{
+  const charm = load("charm.js");
+  const cases = [
+    { name: "3 skills, blademaster, 3 weapon slots",
+      targets: [[treeId("Hearing"), 15], [treeId("Attack"), 20], [treeId("Tenderizer"), 10]],
+      gender: 0, cls: "B", maxRar: 11, weaponSlots: 3, twoSkill: false },
+    // The exact five-skill gunner query reported as taking too long: TrueShot
+    // Up, Weakness Exploit, Critical Boost, Challenger +2, Heavy/Heavy Up.
+    { name: "5 skills, gunner, no weapon slots (reported case)",
+      targets: [[treeId("Haphazard"), 10], [treeId("Tenderizer"), 10], [treeId("Critical Up"), 10],
+                [treeId("Spirit"), 15], [treeId("Heavy Up"), 10]],
+      gender: 0, cls: "G", maxRar: 11, weaponSlots: 0, twoSkill: true, budgetMs: 3000 },
+    // The same query with only one-skill talismans allowed: no answer exists
+    // (only two-skill talismans reach it), so this exercises proving a NEGATIVE
+    // fast rather than grinding — the failure mode from the bug report.
+    { name: "5 skills, gunner, one-skill only (no answer exists)",
+      targets: [[treeId("Haphazard"), 10], [treeId("Tenderizer"), 10], [treeId("Critical Up"), 10],
+                [treeId("Spirit"), 15], [treeId("Heavy Up"), 10]],
+      gender: 0, cls: "G", maxRar: 11, weaponSlots: 0, twoSkill: false, expectEmpty: true, budgetMs: 15000 },
+    { name: "6 skills, blademaster (no cap on how many)",
+      targets: [[treeId("Hearing"), 10], [treeId("Attack"), 10], [treeId("Tenderizer"), 10],
+                [treeId("Sharpness"), 10], [treeId("Critical Up"), 10], [treeId("Spirit"), 10]],
+      gender: 0, cls: "B", maxRar: 11, weaponSlots: 3, twoSkill: true, budgetMs: 3000 },
+  ];
+  for (const c of cases) {
+    const talismans = S.generateTalismans(c.targets.map(t => t[0]), charm, { twoSkill: c.twoSkill });
+    const q = { targets: c.targets, gender: c.gender, cls: c.cls, maxRar: c.maxRar,
+      weaponSlots: c.weaponSlots, talismans, maxResults: 30, timeBudgetMs: 30000 };
+    const t0 = Date.now();
+    const res = S.search(q, data);
+    const ms = Date.now() - t0;
+    const bad = [];
+    for (const r of res.results) {
+      const probs = validateResult(r, c.targets, q, charm);
+      if (probs.length) bad.push(`${probs.join(" | ")}`);
+    }
+    console.log(`  ${c.name}: ${res.results.length} sets, ${ms} ms`);
+    if (c.expectEmpty) check(res.results.length === 0 && res.complete, `  correctly proves no set exists (${c.name})`);
+    else check(res.results.length > 0, `  finds sets (${c.name})`);
+    check(bad.length === 0, `  every set is valid${bad.length ? " — " + bad[0] : ""}`);
+    if (c.budgetMs) check(ms < c.budgetMs, `  finishes within ${c.budgetMs} ms (took ${ms} ms)`);
+  }
+}
+
+console.log("the exact reported bug: My Talismans mode, 2 stored charms:");
+{
+  const charm = load("charm.js");
+  const targets = [[treeId("Haphazard"), 10], [treeId("Tenderizer"), 10], [treeId("Critical Up"), 10],
+    [treeId("Spirit"), 15], [treeId("Heavy Up"), 10]];
+  const myTalismans = [
+    { rar: 8, slots: 3, sk: [[treeId("Normal Up"), 6]] },
+    { rar: 10, slots: 0, sk: [[treeId("Ammo Saver"), 7]] },
+  ];
+  const q = { targets, gender: 0, cls: "G", maxRar: 11, weaponSlots: 0, talismans: myTalismans, maxResults: 30, timeBudgetMs: 30000 };
+  const t0 = Date.now();
+  const res = S.search(q, data);
+  const ms = Date.now() - t0;
+  console.log(`  ${res.results.length} sets, ${ms} ms, complete ${res.complete}`);
+  check(res.complete, "  search runs to completion rather than timing out");
+  check(ms < 3000, `  answers in under 3s (took ${ms} ms)`);
+}
+
 console.log(failed ? `\n${failed} FAILURE(S)` : "\nall search tests passed");
 process.exit(failed ? 1 : 0);
