@@ -282,6 +282,35 @@ input,select,button,textarea{font-family:inherit}
 .results-empty{opacity:.5;font-style:italic;font-size:13px;margin-top:8px}
 .slot-summary{font-size:12px;opacity:.8;font-variant-numeric:tabular-nums}
 
+/* ── Find Sets ───────────────────────────────────────────────────────── */
+.search-card{display:flex;flex-direction:column;max-height:88vh}
+.search-targets{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;min-height:28px}
+.target-chip{cursor:pointer;padding:3px 10px;font-size:12px}
+.target-chip:hover{border-color:var(--negative)}
+.tc-sub{opacity:.55;font-size:10px}
+.search-add{width:190px}
+.name-search{position:relative;display:inline-block}
+.name-search input{
+  background:var(--control-bg);color:var(--text);border:1px solid var(--line);border-radius:6px;
+  padding:5px 8px;font-size:12px;width:100%
+}
+.name-search-list{
+  position:absolute;top:100%;left:0;right:0;z-index:5;margin:2px 0 0;padding:0;
+  list-style:none;max-height:210px;overflow-y:auto;
+  background:#1b1b22;border:1px solid var(--line);border-radius:6px;
+  box-shadow:0 6px 18px rgba(0,0,0,.55)
+}
+.name-search-list li{padding:5px 9px;font-size:12px;cursor:pointer}
+.name-search-list li:hover{background:var(--accent-hover);color:#fff}
+.name-search-list li.ns-overflow{opacity:.55;font-style:italic;cursor:default}
+.search-opts{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:10px}
+.search-opts label{display:flex;flex-direction:column;gap:3px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
+.search-runrow{margin-bottom:10px}
+.search-status{font-size:12px;opacity:.75}
+.search-results{flex:1;min-height:120px}
+.search-result .pr-sub{white-space:normal}
+.sr-stat{font-size:11px;opacity:.7;font-variant-numeric:tabular-nums;white-space:nowrap}
+
 /* ── Modals ──────────────────────────────────────────────────────────── */
 .modal{
   position:fixed;inset:0;background:#000000a8;display:flex;align-items:center;

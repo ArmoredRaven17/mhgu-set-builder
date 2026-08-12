@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MHGU Set Builder</title>
 <link rel="icon" type="image/png" href="assets/icons/icon_armor_body_r7.png">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 <div id="app">
@@ -21,6 +21,7 @@
       <button id="setRename" class="nav-btn" title="Rename this set">Rename</button>
       <button id="setDelete" class="nav-btn" title="Delete this set">Delete</button>
     </div>
+    <button id="findSetsBtn" class="nav-btn" title="Search for sets that reach chosen skills">Find Sets</button>
     <span class="titlebar-spacer"></span>
     <button id="saveBtn"   class="btn tiny">Save <span id="dirtyDot" class="dirty-dot hidden">●</span></button>
     <button id="saveAsBtn" class="btn tiny">Save As…</button>
@@ -54,6 +55,50 @@
     <div id="pickerList" class="picker-list"></div>
     <div class="row end gap modal-actions">
       <button id="pickerCancel" class="btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Find Sets -->
+<div id="searchModal" class="modal hidden">
+  <div class="modal-card wide search-card">
+    <h2>Find Sets</h2>
+    <p class="muted">Pick up to five skills; the search finds full armor sets that reach them,
+      gems included. Results use the same math as the builder itself.</p>
+    <div id="searchTargets" class="search-targets"></div>
+    <div class="search-opts">
+      <label>Gender
+        <select id="searchGender" class="mini-select">
+          <option value="0">Male</option><option value="1">Female</option>
+        </select></label>
+      <label>Class
+        <select id="searchClass" class="mini-select">
+          <option value="auto">Auto</option><option value="B">Blademaster</option><option value="G">Gunner</option>
+        </select></label>
+      <label>Max rarity
+        <select id="searchRar" class="mini-select">
+          <option value="11">RX</option><option value="10">R10</option><option value="9">R9</option>
+          <option value="8">R8</option><option value="7">R7</option><option value="6">R6</option>
+          <option value="5">R5</option><option value="4">R4</option><option value="3">R3</option>
+          <option value="2">R2</option><option value="1">R1</option>
+        </select></label>
+      <label>Weapon slots
+        <select id="searchWSlots" class="mini-select">
+          <option value="auto">Auto</option><option value="0">0</option><option value="1">1</option>
+          <option value="2">2</option><option value="3">3</option>
+        </select></label>
+      <label>Talisman
+        <select id="searchTal" class="mini-select">
+          <option value="none">None</option><option value="current">Current</option>
+        </select></label>
+    </div>
+    <div class="row gap search-runrow">
+      <button id="searchRun" class="btn">Search</button>
+      <span id="searchStatus" class="search-status"></span>
+    </div>
+    <div id="searchResults" class="picker-list search-results"></div>
+    <div class="row end gap modal-actions">
+      <button id="searchClose" class="btn">Close</button>
     </div>
   </div>
 </div>
@@ -181,8 +226,10 @@
 <script src="data/armor.js?v=1"></script>
 <script src="data/weapons.js?v=1"></script>
 <script src="engine.js?v=3"></script>
+<script src="search.js?v=1"></script>
 <script src="pickers.js?v=2"></script>
 <script src="ui.js?v=6"></script>
-<script src="app.js?v=5"></script>
+<script src="searchui.js?v=1"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
