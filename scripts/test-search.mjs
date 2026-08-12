@@ -270,6 +270,36 @@ console.log("independent validation of every returned set:");
   }
 }
 
+console.log("weapon slots sweep — a set can hinge entirely on them:");
+{
+  const charm = load("charm.js");
+  // The Black X set: Sheath Control has no jewel and one piece per slot
+  // carries it, so the armor is forced and brings just 2 slots. Whether the
+  // set is possible at all comes down to how many the weapon adds.
+  const targets = ["Focus", "Critical Boost", "Critical Draw", "Sheath Control",
+    "Blightproof", "Challenge Sheath"].map(n => {
+    for (const [t, ladder] of Object.entries(data.skills.active))
+      for (const [pts, nm] of ladder) if (nm === n) return [Number(t), pts];
+    throw new Error("no skill " + n);
+  });
+  const talismans = S.generateTalismans(targets.map(t => t[0]), charm, { twoSkill: false });
+  const counts = [];
+  for (let ws = 0; ws <= 3; ws++) {
+    const res = S.search({ targets, gender: 0, cls: "B", maxRar: 11, weaponSlots: ws,
+      talismans, maxResults: 50, timeBudgetMs: 60000 }, data);
+    counts.push(res.results.length);
+    check(verifyAll(res, targets), `  ${ws} weapon slots: ${res.results.length} set(s), all valid`);
+  }
+  console.log(`  sets by weapon slots 0..3: ${counts.join(", ")}`);
+  // Slots can only ever help. If a wider weapon found FEWER sets, something is
+  // pruning wrongly — this is the invariant that would have caught testing at
+  // one slot count and generalising from it.
+  check(counts.every((n, i) => i === 0 || n >= counts[i - 1]),
+    "more weapon slots never finds fewer sets");
+  check(counts[3] > 0, "this set is reachable once the weapon has 3 slots");
+  check(counts[0] === 0, "and genuinely out of reach with a slotless weapon");
+}
+
 console.log("skills granted by a Soul, not by points:");
 {
   // The full Redhelm set activates Focus and Resentment through Redhelm Soul

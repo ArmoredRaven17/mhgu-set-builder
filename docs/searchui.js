@@ -314,11 +314,15 @@ window.SBSearchUI = (function () {
     const base = { ...opts, targets: targets.map(t => [t.tree, t.pts]),
       maxResults: 1, timeBudgetMs: 20000, soulBudgetMs: 2000 };
     probeQueue = [];
-    if (opts.weaponSlots < 3) probeQueue.push({
-      query: { ...base, weaponSlots: 3 },
-      describe: () => `A weapon with 3 slots would reach these skills with the talismans you are already asking for.`,
-      apply: () => { $("searchWSlots").value = "3"; },
-      button: "Search with a 3-slot weapon",
+    // Fewest extra slots first, so the answer is the least weapon it takes —
+    // telling someone they need a 3-slot weapon when a 1-slot one would do
+    // sends them hunting for gear they do not need.
+    for (let ws = opts.weaponSlots + 1; ws <= 3; ws++) probeQueue.push({
+      query: { ...base, weaponSlots: ws },
+      describe: () => `A weapon with ${ws} slot${ws === 1 ? "" : "s"} would reach these skills, `
+        + `with the talismans you are already asking for.`,
+      apply: () => { $("searchWSlots").value = String(ws); },
+      button: `Search with a ${ws}-slot weapon`,
     });
     if ($("searchTalMode").value !== "two") probeQueue.push({
       query: { ...base, talismans: window.SBSearch.generateTalismans(trees, window.SB_CHARM, { twoSkill: true }) },
