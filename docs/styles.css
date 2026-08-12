@@ -309,11 +309,22 @@ input,select,button,textarea{font-family:inherit}
 .search-opts label{display:flex;flex-direction:column;gap:3px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
 .search-runrow{margin-bottom:10px}
 .search-status{font-size:12px;opacity:.75}
-.search-results{flex:1;min-height:120px}
-.search-result .pr-sub{white-space:normal}
-.sr-stat{font-size:11px;opacity:.7;font-variant-numeric:tabular-nums;white-space:nowrap}
+.search-results{flex:1;min-height:120px;overflow-y:auto}
+/* One compact line per result — cheap enough to render hundreds of them.
+   Grid, not flex: fixed-width columns keep every row's Apply button and
+   stats aligned without each row paying for its own layout pass. */
+.search-result-line{
+  display:grid;grid-template-columns:1fr 1fr 180px 170px 56px;gap:10px;align-items:baseline;
+  padding:4px 8px;font-size:12px;border-bottom:1px solid #ffffff0a
+}
+.search-result-line:hover{background:#ffffff08}
+.search-result-line .srl-set{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.search-result-line .srl-sk{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.85}
+.search-result-line .srl-tal{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.7;font-style:italic}
+.search-result-line .srl-stat{font-size:11px;opacity:.65;font-variant-numeric:tabular-nums;white-space:nowrap}
+.search-result-line .nav-btn{justify-self:end}
 .sr-neg{color:var(--negative)}
-.sr-tal{opacity:.75;font-style:italic}
+.srl-more{display:block;width:100%;margin-top:6px;padding:8px;text-align:center}
 
 /* My Talismans */
 .tal-list{max-height:230px;margin-bottom:10px}

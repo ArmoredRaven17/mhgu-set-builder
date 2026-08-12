@@ -147,11 +147,13 @@ window.SBSearchUI = (function () {
     const opts = currentOptions();
     if ($("searchTalMode").value === "mine" && !opts.talismans.length)
       $("searchAddHint").textContent = "";
-    // Normal queries land in tens of milliseconds. A demanding one — several
-    // skills with few slots to spend — has genuinely few answers, and proving
-    // that means walking most of the space, so it returns the first sets it
-    // finds and says it stopped rather than grinding on.
-    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 30, timeBudgetMs: 4000, ...opts };
+    // Up to 1000 results — enough variety without chasing full exhaustiveness,
+    // which for an easy query could mean thousands of near-duplicate sets for
+    // no benefit. Most queries reach that cap in well under a second; a
+    // demanding one (several skills, few slots to spend) has genuinely sparse
+    // answers; either way the time budget is the real speed guarantee — it
+    // returns whatever it found and says it stopped rather than grinding on.
+    const query = { targets: targets.map(t => [t.tree, t.pts]), maxResults: 1000, timeBudgetMs: 4000, ...opts };
     running = true;
     searchStart = performance.now();
     $("searchRun").disabled = true;
@@ -202,35 +204,45 @@ window.SBSearchUI = (function () {
     renderResults();
   }
 
+  // With up to 1000 results, a rich row-per-result with a listener-per-button
+  // is the wrong shape — Athena's own tool renders results as one plain-text
+  // block for exactly this reason. This keeps the click-to-apply interaction
+  // (worth keeping — it's most of the point of the search) but pays for it
+  // cheaply: one compact line of text per row, ONE delegated click listener
+  // for the whole list instead of one per button, and rows are added a page
+  // at a time so the DOM never holds more than what's been asked to see.
+  const RESULTS_PAGE = 100;
+  let shown = 0;
+  const rowHtml = (r, i) => {
+    const names = ["head", "chest", "arms", "waist", "legs"].map(slot =>
+      window.SB_ARMOR[slot][r.set.pieces[slot].id].n);
+    const decoCount = Object.values(r.set.pieces).reduce((n, p) => n + p.decos.length, 0)
+      + (r.set.weapon ? r.set.weapon.decos.length : 0)
+      + (r.set.talisman ? r.set.talisman.decos.length : 0);
+    const neg = r.engine.active.filter(a => a.negative);
+    const talText = r.set.talisman ? esc(talLabel(r.set.talisman)) : "no talisman";
+    return `<div class="search-result-line" data-i="${i}">`
+      + `<span class="srl-set">${names.map(esc).join(" · ")}</span>`
+      + `<span class="srl-sk">${r.engine.active.filter(a => !a.negative).map(a => esc(a.name)).join(", ")}`
+      + (neg.length ? ` <span class="sr-neg">${neg.map(a => esc(a.name)).join(", ")}</span>` : "") + `</span>`
+      + `<span class="srl-tal">${talText}</span>`
+      + `<span class="srl-stat">Def ${r.defense} · ${decoCount} deco · ${r.spare} free</span>`
+      + `<button class="nav-btn" data-apply="${i}">Apply</button></div>`;
+  };
   function renderResults() {
+    shown = 0;
+    $("searchResults").innerHTML = "";
+    appendPage();
+  }
+  function appendPage() {
     const wrap = $("searchResults");
-    wrap.innerHTML = lastResults.map((r, i) => {
-      const names = ["head", "chest", "arms", "waist", "legs"].map(slot =>
-        window.SB_ARMOR[slot][r.set.pieces[slot].id].n);
-      const decoCount = Object.values(r.set.pieces).reduce((n, p) => n + p.decos.length, 0)
-        + (r.set.weapon ? r.set.weapon.decos.length : 0)
-        + (r.set.talisman ? r.set.talisman.decos.length : 0);
-      const neg = r.engine.active.filter(a => a.negative);
-      return `<div class="picker-row search-result" data-i="${i}">
-        <div class="pr-main">
-          <div class="pr-name">${names.map(esc).join(" · ")}</div>
-          <div class="pr-sub">${r.engine.active.filter(a => !a.negative).map(a => esc(a.name)).join(", ")}${
-            neg.length ? ` <span class="sr-neg">${neg.map(a => esc(a.name)).join(", ")}</span>` : ""}</div>
-          <div class="pr-sub sr-tal">${r.set.talisman ? esc(talLabel(r.set.talisman)) : "No talisman needed"}</div>
-        </div>
-        <div class="pr-right">
-          <span class="sr-stat">Def ${r.defense}</span>
-          <span class="sr-stat">${decoCount} deco</span>
-          <span class="sr-stat">${r.spare} free</span>
-          <button class="nav-btn" data-apply="${i}">Apply</button>
-        </div>
-      </div>`;
-    }).join("");
-    wrap.querySelectorAll("[data-apply]").forEach(btn =>
-      btn.addEventListener("click", () => {
-        api.applyFoundSet(lastResults[Number(btn.dataset.apply)].set);
-        close();
-      }));
+    const next = lastResults.slice(shown, shown + RESULTS_PAGE);
+    wrap.querySelector(".srl-more")?.remove();
+    wrap.insertAdjacentHTML("beforeend", next.map((r, k) => rowHtml(r, shown + k)).join(""));
+    shown += next.length;
+    if (shown < lastResults.length)
+      wrap.insertAdjacentHTML("beforeend",
+        `<button class="nav-btn srl-more" id="searchShowMore">Show ${Math.min(RESULTS_PAGE, lastResults.length - shown)} more (of ${lastResults.length})</button>`);
   }
 
   // ── My Talismans ───────────────────────────────────────────────────────
@@ -318,6 +330,14 @@ window.SBSearchUI = (function () {
     $("searchRun").addEventListener("click", run);
     $("searchCancel").addEventListener("click", cancel);
     $("searchTalMode").addEventListener("change", syncOptionLabels);
+    // One delegated listener for the whole results list — apply a set, or
+    // load the next page — instead of one per row, which matters once a
+    // search can return up to 1000 of them.
+    $("searchResults").addEventListener("click", e => {
+      const applyBtn = e.target.closest("[data-apply]");
+      if (applyBtn) { api.applyFoundSet(lastResults[Number(applyBtn.dataset.apply)].set); close(); return; }
+      if (e.target.id === "searchShowMore") appendPage();
+    });
     $("searchModal").addEventListener("mousedown", e => { if (e.target === $("searchModal")) close(); });
     // My Talismans
     $("manageTalBtn").addEventListener("click", openTalManager);
