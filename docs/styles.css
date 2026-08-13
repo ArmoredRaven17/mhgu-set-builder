@@ -155,16 +155,6 @@ input,select,button,textarea{font-family:inherit}
 .sharp-bar{display:flex;height:8px;width:200px;background:#111;border:1px solid #000;border-radius:2px;overflow:hidden}
 .sharp-bar span{height:100%}
 
-/* Talisman form */
-.tal-form{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:8px;align-items:flex-end}
-.tal-field{display:flex;flex-direction:column;gap:3px}
-.tal-field label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.65}
-.tal-field select,.tal-field input{
-  background:var(--control-bg);color:var(--text);border:1px solid var(--line);border-radius:5px;
-  padding:4px 7px;font-size:12px
-}
-.tal-field input[type=number]{width:64px}
-.tal-problems{margin-top:6px;font-size:11px;color:var(--negative);display:flex;flex-direction:column;gap:2px}
 
 /* ── Picker modal ────────────────────────────────────────────────────── */
 .picker-card{width:min(680px,94vw);display:flex;flex-direction:column;max-height:88vh}
@@ -282,15 +272,9 @@ input,select,button,textarea{font-family:inherit}
 .results-empty{opacity:.5;font-style:italic;font-size:13px;margin-top:8px}
 .slot-summary{font-size:12px;opacity:.8;font-variant-numeric:tabular-nums}
 
-/* ── Find Sets ───────────────────────────────────────────────────────── */
-.search-card{display:flex;flex-direction:column;max-height:88vh}
-.search-addrow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.search-addrow input:disabled{opacity:.45}
-.search-targets{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;min-height:24px}
 .target-chip{cursor:pointer;padding:3px 10px;font-size:12px}
 .target-chip:hover{border-color:var(--negative)}
 .tc-sub{opacity:.55;font-size:10px}
-.search-add{width:190px}
 .name-search{position:relative;display:inline-block}
 .name-search input{
   background:var(--control-bg);color:var(--text);border:1px solid var(--line);border-radius:6px;
@@ -305,65 +289,11 @@ input,select,button,textarea{font-family:inherit}
 .name-search-list li{padding:5px 9px;font-size:12px;cursor:pointer}
 .name-search-list li:hover{background:var(--accent-hover);color:#fff}
 .name-search-list li.ns-overflow{opacity:.55;font-style:italic;cursor:default}
-.search-opts{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:10px}
-.search-opts label{display:flex;flex-direction:column;gap:3px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
-.search-runrow{margin-bottom:10px}
-.search-status{font-size:12px;opacity:.75}
-.search-results{flex:1;min-height:120px;overflow-y:auto}
-/* One compact line per result — cheap enough to render hundreds of them.
-   Grid, not flex: fixed-width columns keep every row's Apply button and
-   stats aligned without each row paying for its own layout pass. */
-.search-result-line{
-  display:grid;grid-template-columns:1fr 1fr 180px 170px 56px;gap:10px;align-items:baseline;
-  padding:4px 8px;font-size:12px;border-bottom:1px solid #ffffff0a
-}
-.search-result-line:hover{background:#ffffff08}
-.search-result-line .srl-set{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.search-result-line .srl-sk{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.85}
-.search-result-line .srl-tal{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.7;font-style:italic}
-.search-result-line .srl-stat{font-size:11px;opacity:.65;font-variant-numeric:tabular-nums;white-space:nowrap}
-.search-result-line .nav-btn{justify-self:end}
-.sr-neg{color:var(--negative)}
-.srl-more{display:block;width:100%;margin-top:6px;padding:8px;text-align:center}
 
-/* Offered when a search comes up empty but another talisman option would not. */
-.search-suggest{
-  margin:0 0 10px;padding:8px 12px;font-size:12px;line-height:1.5;
-  border:1px solid var(--line);border-left:3px solid var(--accent-hover);
-  border-radius:6px;background:#ffffff0c
-}
-.search-suggest .nav-btn{margin-left:8px}
 
-/* Sort/filter bar — these only re-arrange results already found. */
-.search-tools{
-  display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;
-  margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line)
-}
-.search-tools label{
-  display:flex;flex-direction:column;gap:3px;
-  font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.8
-}
-.search-tools .mini-select{max-width:190px}
 .mini-input.wide{width:150px}
-.search-tools .search-status{margin-left:auto;align-self:center}
 
-/* A piece links through to its materials in the Collection Tracker. */
-.srl-piece{color:inherit;text-decoration:none;border-bottom:1px dotted #ffffff40}
-.srl-piece:hover{color:var(--accent-hover);border-bottom-color:var(--accent-hover)}
-/* Skills the set grants beyond what was asked for, and ones a spare slot
-   could still reach. */
-.srl-bonus{color:var(--positive);opacity:.85}
-.srl-reach{opacity:.6;font-style:italic}
-.srl-resgroup{display:inline-flex;gap:4px;margin:0 8px}
-.srl-res{font-variant-numeric:tabular-nums;opacity:.6}
-.srl-res.pos{color:var(--positive);opacity:.9}
-.srl-res.neg{color:var(--negative);opacity:.9}
 
-/* My Talismans */
-.tal-list{max-height:230px;margin-bottom:10px}
-.tal-add{border-top:1px solid var(--line);padding-top:10px}
-.tal-add-row{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end}
-.tal-add-row label{display:flex;flex-direction:column;gap:3px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
 .mini-input{
   background:var(--control-bg);color:var(--text);border:1px solid var(--line);border-radius:4px;
   padding:3px 6px;font-size:11px;width:62px;font-variant-numeric:tabular-nums

@@ -59,7 +59,7 @@ used during data generation in two ways:
 
 - **Armor availability** — at which Gathering-Hall (HR) star and Village star
   each armor piece becomes craftable, and whether both conditions or either
-  one is required. This is used to power the search's progression filter.
+  one is required.
   The game's own data tables do not record it and the community database
   cannot supply it, so Athena's hand-transcribed availability table is the
   only reliable source for this fact.
@@ -67,15 +67,6 @@ used during data generation in two ways:
 
 Only these factual values are read, and only at build time; no data files,
 source code, or assets from that program are redistributed here.
-
-### MHXX / GU Speedrun Archive
-
-`scripts/ta-sets.json` holds the armor skill lists from the community
-**MHXX_GU Speedrun Archive** spreadsheet — 332 sets that runners actually
-built and used. They serve only as test queries for the search
-(`scripts/test-ta-sets.mjs`), on the principle that real sets test it better
-than anything invented for the purpose. Skill names are normalised to this
-project's in-game names; nothing else from the archive is reproduced.
 
 ---
 

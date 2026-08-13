@@ -41,18 +41,3 @@ python -m http.server 8128 --directory docs
 ```
 
 Data is `fetch()`ed, so the site must be served — `file://` won't work.
-
-## Tests
-
-```
-node scripts/test-engine.mjs
-node scripts/test-search.mjs
-node scripts/fuzz-search.mjs [seed] [trials]
-```
-
-`fuzz-search.mjs` is the differential one: it assembles a random legal set,
-asks the engine which skills that set activates, then requires the search to
-find a set for those skills. The witness proves an answer exists, so a miss is
-a search bug rather than a hard query, and a failure prints the witness plus a
-seed to reproduce it. It is what turned up sets whose skills come from a Soul
-bought with jewels rather than worn on the armor.

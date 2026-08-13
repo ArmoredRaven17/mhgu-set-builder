@@ -33,9 +33,7 @@
     pieces: { head: null, chest: null, arms: null, waist: null, legs: null },
     talisman: null,                   // { tier, slots, sk: [[tree,pts],...], decos: [] }
   });
-  // `talismans` is the user's own charm collection, used by the search's
-  // "My talismans" mode. It travels with the sets in the shared save.
-  let sets = { version: 1, active: 0, list: [newSet("Set 1")], talismans: [] };
+  let sets = { version: 1, active: 0, list: [newSet("Set 1")] };
   let host = null;          // tracker-file envelope (minus `sets`) when hosted
   let fileHandle = null;
   let dirty = false;
@@ -187,7 +185,7 @@
   }
 
   // ── Save / load ────────────────────────────────────────────────────────
-  const sectionPayload = () => ({ version: sets.version, active: sets.active, list: sets.list, talismans: sets.talismans });
+  const sectionPayload = () => ({ version: sets.version, active: sets.active, list: sets.list });
   function serializeSave() {
     if (host) {
       const out = Object.assign({}, host);
@@ -248,15 +246,10 @@
       else host = null;
     }
     const list = section && Array.isArray(section.list) ? section.list.map(sanitizeSet).filter(Boolean) : [];
-    const stored = section && Array.isArray(section.talismans) ? section.talismans : [];
     sets = {
       version: 1,
       active: section && Number.isInteger(section.active) ? section.active : 0,
       list: list.length ? list : [newSet("Set 1")],
-      // Only talismans the game could actually roll are kept, so a hand-edited
-      // file can't feed the search impossible charms.
-      talismans: stored.filter(t => t && typeof t === "object" && Array.isArray(t.sk) &&
-        !Engine.validateTalisman(t, window.SB_CHARM, window.SB_SKILLS).length),
     };
     if (sets.active < 0 || sets.active >= sets.list.length) sets.active = 0;
     renderSetSelect();
@@ -333,48 +326,9 @@
     const w = currentSet().weapon;
     return w ? (GUNNER_CLASSES.has(w.cls) ? "G" : "B") : null;
   };
-  // ── Hooks for the Find Sets search ─────────────────────────────────────
-  const currentWeaponSlots = () => (resolved.weaponStat ? resolved.weaponStat.slots : 0);
-  let foundCounter = 0;
-  function applyFoundSet(found) {
-    const cur = currentSet();
-    const set = newSet(`Found ${++foundCounter}`);
-    // Keep the real weapon when the search ran on its slots; its gem fill
-    // carries over. A mismatched manual slot choice just surfaces as a
-    // slot-budget problem in the results panel, which is the honest outcome.
-    if (cur.weapon && found.weapon) set.weapon = { ...cur.weapon, decos: found.weapon.decos.slice() };
-    else if (cur.weapon) set.weapon = { ...cur.weapon, decos: [] };
-    for (const slot of SLOTS) {
-      const p = found.pieces[slot];
-      set.pieces[slot] = { id: p.id, lv: 0, decos: p.decos.slice() };
-    }
-    if (found.talisman) set.talisman = {
-      rar: found.talisman.rar || (cur.talisman ? cur.talisman.rar : 1),
-      slots: found.talisman.slots, sk: found.talisman.sk.map(e => e.slice()),
-      decos: found.talisman.decos.slice(),
-      // Carried so it keeps being described by its tier rather than being
-      // given one rarity's name.
-      gen: !!found.talisman.gen,
-    };
-    sets.list.push(set);
-    sets.active = sets.list.length - 1;
-    renderSetSelect(); markDirty(); render();
-    UI.toast(`Applied as “${set.name}”.`);
-  }
   const api = {
     freeSlots,
     weaponArmorClass,
-    currentWeaponSlots,
-    applyFoundSet,
-    getTalismans: () => sets.talismans,
-    addTalisman: t => {
-      const key = x => x.rar + "|" + x.slots + "|" + x.sk.map(e => e.join(":")).join(",");
-      if (sets.talismans.some(x => key(x) === key(t))) { UI.toast("You already have that one."); return; }
-      sets.talismans.push(t);
-      markDirty();
-      UI.toast("Talisman stored.");
-    },
-    removeTalisman: i => { sets.talismans.splice(i, 1); markDirty(); },
     setPiece: (slot, id) => update(s => { s.pieces[slot] = { id, lv: 0, decos: [] }; }),
     clearPiece: slot => update(s => { s.pieces[slot] = null; }),
     setPieceLevel: (slot, lv) => update(s => { if (s.pieces[slot]) s.pieces[slot].lv = lv; }),
@@ -520,7 +474,6 @@
   // ── Startup ────────────────────────────────────────────────────────────
   Pickers.init();
   wireHeader();
-  window.SBSearchUI.init(api);
   buildSwatches();
   let savedTheme = "#1E2025";
   try { savedTheme = localStorage.getItem(THEME_KEY) || savedTheme; } catch (e) {}

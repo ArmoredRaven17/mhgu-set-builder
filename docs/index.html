@@ -21,7 +21,6 @@
       <button id="setRename" class="nav-btn" title="Rename this set">Rename</button>
       <button id="setDelete" class="nav-btn" title="Delete this set">Delete</button>
     </div>
-    <button id="findSetsBtn" class="nav-btn" title="Search for sets that reach chosen skills">Find Sets</button>
     <span class="titlebar-spacer"></span>
     <button id="saveBtn"   class="btn tiny">Save <span id="dirtyDot" class="dirty-dot hidden">●</span></button>
     <button id="saveAsBtn" class="btn tiny">Save As…</button>
@@ -55,107 +54,6 @@
     <div id="pickerList" class="picker-list"></div>
     <div class="row end gap modal-actions">
       <button id="pickerCancel" class="btn">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- Find Sets -->
-<div id="searchModal" class="modal hidden">
-  <div class="modal-card wide search-card">
-    <h2>Find Sets</h2>
-    <p class="muted">Pick the skills you want; the search finds full armor sets that reach them,
-      gems included. Results use the same math as the builder itself.</p>
-    <div class="search-addrow">
-      <span class="name-search search-add">
-        <input type="text" id="searchAdd" placeholder="Add a skill…" autocomplete="off">
-        <ul id="searchAddList" class="name-search-list hidden"></ul>
-      </span>
-      <span id="searchAddHint" class="search-status"></span>
-    </div>
-    <div id="searchTargets" class="search-targets"></div>
-    <div class="search-opts">
-      <label>Gender
-        <select id="searchGender" class="mini-select">
-          <option value="0">Male</option><option value="1">Female</option>
-        </select></label>
-      <label>Class
-        <select id="searchClass" class="mini-select">
-          <option value="B">Blademaster</option><option value="G">Gunner</option>
-        </select></label>
-      <label>Weapon slots
-        <select id="searchWSlots" class="mini-select">
-          <option value="0">0</option><option value="1">1</option>
-          <option value="2">2</option><option value="3">3</option>
-        </select></label>
-      <label>Talismans
-        <select id="searchTalMode" class="mini-select">
-          <option value="one">Any — one skill</option>
-          <option value="two">Any — two skills</option>
-          <option value="mine">My talismans</option>
-        </select></label>
-      <label id="searchTalMineWrap" class="hidden">&nbsp;
-        <button id="manageTalBtn" class="nav-btn">Manage my talismans…</button></label>
-      <label>Village ★
-        <select id="searchVillage" class="mini-select"></select></label>
-      <label>Hub ★
-        <select id="searchHub" class="mini-select"></select></label>
-    </div>
-    <div class="row gap search-runrow">
-      <button id="searchRun" class="btn">Search</button>
-      <button id="searchCancel" class="btn hidden">Cancel</button>
-      <span id="searchStatus" class="search-status"></span>
-    </div>
-    <div id="searchResultTools" class="search-tools hidden">
-      <label>Sort
-        <select id="searchSort" class="mini-select">
-          <option value="best">Best match</option>
-          <option value="def">Defense</option>
-          <option value="defmax">Defense (maxed)</option>
-          <option value="slots">Spare slots</option>
-          <option value="rar">Rarity</option>
-          <option value="res0">Fire res</option>
-          <option value="res1">Water res</option>
-          <option value="res2">Thunder res</option>
-          <option value="res3">Ice res</option>
-          <option value="res4">Dragon res</option>
-        </select></label>
-      <label>Talisman
-        <select id="searchFilterTal" class="mini-select"></select></label>
-      <label>Bonus skill
-        <select id="searchFilterBonus" class="mini-select"></select></label>
-      <label>Find
-        <input type="text" id="searchFilterText" class="mini-input wide" placeholder="piece or skill…" autocomplete="off"></label>
-      <span id="searchShowing" class="search-status"></span>
-    </div>
-    <div id="searchResults" class="picker-list search-results"></div>
-    <div class="row end gap modal-actions">
-      <button id="searchClose" class="btn">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- My Talismans -->
-<div id="talModal" class="modal hidden">
-  <div class="modal-card wide">
-    <h2>My Talismans</h2>
-    <p class="muted">The talismans you actually own. Entries are checked against the game's
-      roll tables, so an impossible talisman can't be stored. They are saved with your sets.</p>
-    <div id="talList" class="picker-list tal-list"></div>
-    <div class="tal-add">
-      <div class="tal-add-row">
-        <label>Talisman<select id="talAddRar" class="mini-select"></select></label>
-        <label>Skill 1<select id="talAddSk1" class="mini-select"></select></label>
-        <label>Points<input type="number" id="talAddPts1" class="mini-input"></label>
-        <label>Skill 2<select id="talAddSk2" class="mini-select"></select></label>
-        <label>Points<input type="number" id="talAddPts2" class="mini-input"></label>
-        <label>Slots<select id="talAddSlots" class="mini-select">
-          <option>0</option><option>1</option><option>2</option><option>3</option></select></label>
-      </div>
-      <div id="talAddProblems" class="tal-problems"></div>
-    </div>
-    <div class="row end gap modal-actions">
-      <button id="talAddBtn" class="btn">Add</button>
-      <button id="talClose" class="btn">Close</button>
     </div>
   </div>
 </div>
@@ -283,10 +181,8 @@
 <script src="data/armor.js?v=2"></script>
 <script src="data/weapons.js?v=1"></script>
 <script src="engine.js?v=4"></script>
-<script src="search.js?v=17"></script>
 <script src="pickers.js?v=2"></script>
 <script src="ui.js?v=7"></script>
-<script src="searchui.js?v=17"></script>
-<script src="app.js?v=11"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>
