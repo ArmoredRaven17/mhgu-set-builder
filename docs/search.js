@@ -52,6 +52,7 @@
   function generateTalismans(trees, charm, opts) {
     const maxSlots = opts.maxSlots == null ? 3 : opts.maxSlots;
     const slotOpts = [0, 1, 2, 3].filter(s => s <= maxSlots);
+    const tierOrder = ["mystery", "shining", "timeworn", "enduring"];
     const byKey = new Map();
     const keep = tal => {
       if (byKey.size >= GEN_CAP) return;
@@ -61,6 +62,17 @@
     };
     for (let rar = 1; rar <= 10; rar++) {
       const table = (charm.tiers || {})[g.SBEngine.TAL_TIER[rar]] || {};
+      // How many slots a talisman carries is not free of which tier rolled it.
+      // Athena encodes this as `start[4] = {0,0,1,2}` in
+      // CharmDatabase::CharmIsLegal: two slots cannot come from a mystery roll,
+      // three cannot come from mystery or shining. Neither the roll tables here
+      // nor the save editor's record it, so this was enumerating 0-3 slots
+      // against every tier and inventing charms like a 3-slot Pawn Talisman.
+      // The effect was to UNDERSTATE what a set costs — reporting the lowest
+      // rarity that could roll it, when that rarity cannot produce those slots.
+      const tierIdx = tierOrder.indexOf(g.SBEngine.TAL_TIER[rar]);
+      const slotsHere = slotOpts.filter(s => tierIdx >= g.SBEngine.SLOT_TIER_FLOOR[s]);
+      if (!slotsHere.length) continue;
       // Positive ranges only: a talisman that rolls a malus is never something
       // to go hunting for.
       const range = (t, pos) => {
@@ -73,7 +85,7 @@
         const r1 = range(t, 0);
         if (!r1) continue;
         for (let p = r1[0]; p <= r1[1]; p++)
-          for (const s of slotOpts) keep({ rar, slots: s, sk: [[t, p]], gen: true });
+          for (const s of slotsHere) keep({ rar, slots: s, sk: [[t, p]], gen: true });
       }
       if (!opts.twoSkill) continue;
       for (const t1 of trees) {
@@ -85,7 +97,7 @@
           if (!r2) continue;
           for (let p1 = r1[0]; p1 <= r1[1]; p1++)
             for (let p2 = r2[0]; p2 <= r2[1]; p2++)
-              for (const s of slotOpts) keep({ rar, slots: s, sk: [[t1, p1], [t2, p2]], gen: true });
+              for (const s of slotsHere) keep({ rar, slots: s, sk: [[t1, p1], [t2, p2]], gen: true });
         }
       }
     }

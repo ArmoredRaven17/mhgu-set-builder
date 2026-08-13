@@ -139,8 +139,23 @@ console.log("generated talisman candidates:");
   // search can report the smallest talisman that works rather than the biggest.
   const atkPts = [...new Set(oneAtk.filter(t => t.sk[0][0] === atk).map(t => t.sk[0][1]))].sort((a, b) => a - b);
   check(atkPts.length > 1 && atkPts[0] === 1, `every point value is offered, not just the maximum (${atkPts.join(",")})`);
-  check(oneAtk.filter(t => t.sk[0][0] === atk && t.sk[0][1] === atkPts[0])
-    .map(t => t.slots).sort().join(",") === "0,1,2,3", "each point value is offered at every slot count");
+  // Slot counts are NOT free of the tier that rolled them: two slots never come
+  // from a mystery talisman, three never from mystery or shining. This asserted
+  // "0,1,2,3 at every point value" until Athena's CharmDatabase::CharmIsLegal
+  // showed that was inventing charms — a 3-slot Pawn Talisman among them.
+  const atkSlots = oneAtk.filter(t => t.sk[0][0] === atk && t.sk[0][1] === atkPts[0]);
+  check(atkSlots.every(t => E.TIER_ORDER.indexOf(E.TAL_TIER[t.rar]) >= E.SLOT_TIER_FLOOR[t.slots]),
+    "no talisman is attributed to a tier that cannot roll that many slots");
+  // Attack is the awkward case on purpose: it only rolls as a FIRST skill on
+  // the low tiers, and those cannot produce three slots — so a 3-slot Attack
+  // talisman correctly does not exist. The floor is checked on a wider pool.
+  check(Math.max(...atkSlots.map(t => t.slots)) <= 2,
+    `a one-skill Attack talisman tops out at 2 slots (offered: ${[...new Set(atkSlots.map(t => t.slots))].sort().join(",")})`);
+  const wide = S.generateTalismans([treeId("Expert"), treeId("Tenderizer"), treeId("Critical Up")],
+    charm, { twoSkill: false });
+  const threeSlot = wide.filter(t => t.slots === 3);
+  check(threeSlot.length > 0 && threeSlot.every(t => t.rar >= 5),
+    "and where 3 slots ARE offered, never below Timeworn (rarity 5)");
   check(oneAtk.every(t => t.rar >= 1 && t.rar <= 10), "each candidate carries the rarity that can roll it");
   // Only requested trees appear.
   check(one.every(t => t.sk.every(([tr]) => tr === atk || tr === hear)), "only targeted skills are generated");

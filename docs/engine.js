@@ -148,6 +148,13 @@
   // the save editor and the Equipment Box.
   const TAL_TIER = [null, "mystery", "mystery", "shining", "shining",
     "timeworn", "timeworn", "timeworn", "enduring", "enduring", "enduring"];
+  // How many slots a talisman has restricts which tier can have rolled it:
+  // two slots never come from a mystery roll, three never from mystery or
+  // shining. Athena's CharmDatabase::CharmIsLegal states it as start[4] =
+  // {0,0,1,2} over the same four tiers. The roll tables carry point ranges
+  // only, so without this a 3-slot Pawn Talisman looks perfectly legal.
+  const TIER_ORDER = ["mystery", "shining", "timeworn", "enduring"];
+  const SLOT_TIER_FLOOR = [0, 0, 1, 2];
 
   // Talisman entry validation. tal = { rar: 1-10, slots, sk: [[treeId, pts], ...] }
   // — returns problem strings; empty means legal.
@@ -159,6 +166,10 @@
     if (!table) return [`No roll table for rarity ${tal.rar}.`];
     if (!Number.isInteger(tal.slots) || tal.slots < 0 || tal.slots > 3)
       problems.push("Slots must be 0-3.");
+    else if (TIER_ORDER.indexOf(TAL_TIER[tal.rar]) < SLOT_TIER_FLOOR[tal.slots]) {
+      const need = TIER_ORDER[SLOT_TIER_FLOOR[tal.slots]];
+      problems.push(`A ${tal.slots}-slot talisman only rolls from the ${need} tier upward.`);
+    }
     const sk = tal.sk || [];
     if (sk.length < 1) problems.push("A talisman always has a first skill.");
     if (sk.length > 2) problems.push("A talisman has at most two skills.");
@@ -183,5 +194,5 @@
     return problems;
   }
 
-  g.SBEngine = { compute, validateTalisman, decoCost, TORSO_UP, TAL_TIER };
+  g.SBEngine = { compute, validateTalisman, decoCost, TORSO_UP, TAL_TIER, TIER_ORDER, SLOT_TIER_FLOOR };
 })(typeof window !== "undefined" ? window : globalThis);

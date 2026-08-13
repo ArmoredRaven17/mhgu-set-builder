@@ -55,7 +55,7 @@ const BUDGET = Number(process.argv[4] || 0) || 20000;
 
 function runPass(twoSkill) {
   const label = twoSkill ? "two-skill" : "one-skill";
-  let found = 0, missing = 0, unmapped = 0, slowest = 0;
+  let found = 0, missing = 0, unmapped = 0, slowest = 0, unknownWeapon = 0;
   const unmappedNames = new Set();
   const misses = [];
   const t00 = Date.now();
@@ -68,26 +68,33 @@ function runPass(twoSkill) {
     }
     const cls = GUNNER.has(c.sheet) ? "G" : "B";
     const talismans = S.generateTalismans(targets.map(t => t[0]), charm, { twoSkill });
-    // The archive records neither gender nor the weapon's slots, so a set
-    // counts as reachable if either gender can produce it. Only three weapon
-    // slots are tried: more slots can never yield fewer sets, so the most
-    // generous setting decides reachability, and sweeping downward would only
-    // establish the minimum — which this pass does not need.
+    // The run's OWN weapon decides the slots. Searching everything at three
+    // slots — as this did at first — quietly hands every set up to three free
+    // decorations it never had: 157 of these runs use a zero-slot weapon, so
+    // "found" meant nothing. Gender is still swept, because the archive does
+    // not record it.
+    const weaponSlots = c.weaponSlots;
+    if (weaponSlots == null) { unknownWeapon++; continue; }
     let hit = false, ms = 0;
     for (const gender of [0, 1]) {
       const t0 = Date.now();
-      const r = S.search({ targets, gender, cls, maxRar: 11, weaponSlots: 3,
+      const r = S.search({ targets, gender, cls, maxRar: 11, weaponSlots,
         talismans, maxResults: 1, timeBudgetMs: BUDGET }, data);
       ms += Date.now() - t0;
       if (r.results.length) { hit = true; break; }
     }
     if (ms > slowest) slowest = ms;
     if (hit) found++;
-    else { missing++; misses.push(`${c.sheet}/${c.monster || "?"}: ${c.skills.join(" / ")}`); }
+    else {
+      missing++;
+      misses.push(`${c.sheet}/${c.monster || "?"} [${c.weapon || "?"}, ${weaponSlots} slot`
+        + `${weaponSlots === 1 ? "" : "s"}]: ${c.skills.join(" / ")}`);
+    }
   }
   const secs = Math.round((Date.now() - t00) / 1000);
   console.log(`${label}: ${found} found, ${missing} not found`
     + (unmapped ? `, ${unmapped} unmappable` : "")
+    + (unknownWeapon ? `, ${unknownWeapon} unknown weapon` : "")
     + ` — ${secs}s, slowest set ${(slowest / 1000).toFixed(1)}s`);
   if (unmappedNames.size)
     console.log(`  names with no match here: ${[...unmappedNames].join(", ")}`);

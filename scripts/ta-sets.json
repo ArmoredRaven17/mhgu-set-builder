@@ -1,6 +1,6 @@
 {
  "source": "MHXX_GU Speedrun Archive.xlsx (community TA archive)",
- "note": "skill names normalised to this project's in-game names; see scripts/test-ta-sets.mjs",
+ "note": "skill names normalised to this project's in-game names; weaponSlots resolved from docs/data/weapons",
  "sets": [
   {
    "sheet": "GS",
@@ -11,7 +11,9 @@
     "Weakness Exploit",
     "Critical Eye +3",
     "Sharpness +1"
-   ]
+   ],
+   "weapon": "Cloaked Dreamsleeper",
+   "weaponSlots": 0
   },
   {
    "sheet": "GS",
@@ -24,7 +26,9 @@
     "Blightproof",
     "Challenge Sheath",
     "Knockout King"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "GS",
@@ -35,7 +39,9 @@
     "Quick Sheath",
     "Critical Boost",
     "Focus"
-   ]
+   ],
+   "weapon": "Thrash Schneider",
+   "weaponSlots": 1
   },
   {
    "sheet": "GS",
@@ -46,7 +52,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Focus"
-   ]
+   ],
+   "weapon": "Cloaked Dreamsleeper",
+   "weaponSlots": 0
   },
   {
    "sheet": "GS",
@@ -58,7 +66,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Focus"
-   ]
+   ],
+   "weapon": "Cloaked Dreamsleeper",
+   "weaponSlots": 0
   },
   {
    "sheet": "GS",
@@ -69,7 +79,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Focus"
-   ]
+   ],
+   "weapon": "Capon Decapitator",
+   "weaponSlots": 2
   },
   {
    "sheet": "GS",
@@ -81,7 +93,9 @@
     "Sheath Control",
     "Blightproof",
     "Challenge Sheath"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "GS",
@@ -92,7 +106,9 @@
     "Punishing Draw",
     "Challenger +2",
     "Weakness Exploit"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "GS",
@@ -103,7 +119,9 @@
     "Weakness Exploit",
     "Critical Eye +2",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "GS",
@@ -114,7 +132,9 @@
     "Weakness Exploit",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "GS",
@@ -124,7 +144,9 @@
     "Critical Boost",
     "Sharpness +2",
     "HG Earplugs"
-   ]
+   ],
+   "weapon": "Bone Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "GS",
@@ -135,7 +157,9 @@
     "Critical Draw",
     "Quick Sheath",
     "Sharpness +1"
-   ]
+   ],
+   "weapon": "Cloaked Dreamsleeper",
+   "weaponSlots": 0
   },
   {
    "sheet": "GS",
@@ -147,7 +171,9 @@
     "Sheath Control",
     "Blightproof",
     "Weakness Exploit"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "GS",
@@ -158,7 +184,9 @@
     "Weakness Exploit",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "GS",
@@ -170,7 +198,9 @@
     "Sheath Control",
     "Blightproof",
     "Challenge Sheath"
-   ]
+   ],
+   "weapon": "Martyr",
+   "weaponSlots": 1
   },
   {
    "sheet": "GS",
@@ -182,7 +212,9 @@
     "Sharpness +1",
     "Challenge Sheath",
     "Quick Sheath"
-   ]
+   ],
+   "weapon": "Thrash Schneider",
+   "weaponSlots": 1
   },
   {
    "sheet": "GS",
@@ -194,7 +226,9 @@
     "Sharpness +1",
     "Challenge Sheath",
     "Quick Sheath"
-   ]
+   ],
+   "weapon": "Thrash Schneider",
+   "weaponSlots": 1
   },
   {
    "sheet": "GS",
@@ -205,7 +239,9 @@
     "Weakness Exploit",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "GS",
@@ -216,7 +252,9 @@
     "Weakness Exploit",
     "Critical Eye +3",
     "Sharpness +1"
-   ]
+   ],
+   "weapon": "Cloaked Dreamsleeper",
+   "weaponSlots": 0
   },
   {
    "sheet": "GS",
@@ -227,7 +265,9 @@
     "Weakness Exploit",
     "Earplugs",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "LS",
@@ -237,7 +277,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -248,7 +290,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Tropic Hunter"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -259,7 +303,9 @@
     "Critical Eye +3",
     "Repeat Offender",
     "Dragon Atk +2"
-   ]
+   ],
+   "weapon": "Magnastar Yuj",
+   "weaponSlots": 2
   },
   {
    "sheet": "LS",
@@ -270,7 +316,9 @@
     "Critical Eye +2",
     "Repeat Offender",
     "Attack Up L"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -280,7 +328,9 @@
     "Critical Boost",
     "Critical Eye +2",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Dreadking's Heir",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -291,7 +341,9 @@
     "Critical Eye +2",
     "Challenger +2",
     "Resentment"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -302,7 +354,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -312,7 +366,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -323,7 +379,9 @@
     "Repeat Offender",
     "Challenger +2",
     "Polar Hunter"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -334,7 +392,9 @@
     "Critical Eye +2",
     "Challenger +2",
     "Resentment"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -345,7 +405,9 @@
     "Repeat Offender",
     "Challenger +2",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -356,7 +418,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -367,7 +431,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Supercharged",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -377,7 +443,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "HG Earplugs"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -387,7 +455,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -397,7 +467,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -408,7 +480,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Sharpness +1"
-   ]
+   ],
+   "weapon": "Meretseger",
+   "weaponSlots": 3
   },
   {
    "sheet": "LS",
@@ -419,7 +493,9 @@
     "Critical Eye +2",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Wyvern Blade \"Perditio\"",
+   "weaponSlots": 1
   },
   {
    "sheet": "LS",
@@ -429,7 +505,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -440,7 +518,9 @@
     "Critical Eye +2",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Mutinous Swirl",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -451,7 +531,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Fatalis Veneranda",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -462,7 +544,9 @@
     "Critical Eye +2",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Tamakiharu Romeimetsu",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -475,7 +559,9 @@
     "Challenge Sheath",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -486,7 +572,9 @@
     "Critical Eye +2",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Mutinous Swirl",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -497,7 +585,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Blango Gorefest",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -508,7 +598,9 @@
     "Repeat Offender",
     "Critical Eye +2",
     "Polar Hunter"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "LS",
@@ -519,7 +611,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Cloaked Duke",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -530,7 +624,9 @@
     "Razor Sharp",
     "Sharpness +2",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Firewaltz Edge",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -541,7 +637,9 @@
     "Razor Sharp",
     "Sharpness +2",
     "Critical Eye +2"
-   ]
+   ],
+   "weapon": "Permafrost Edge",
+   "weaponSlots": 2
   },
   {
    "sheet": "SnS",
@@ -553,7 +651,9 @@
     "Challenger +1",
     "Sharpness +2",
     "Tropic Hunter"
-   ]
+   ],
+   "weapon": "Firewaltz Edge",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -564,7 +664,9 @@
     "Repeat Offender",
     "Elemental Crit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Altheos Zodiarch",
+   "weaponSlots": 1
   },
   {
    "sheet": "SnS",
@@ -575,7 +677,9 @@
     "Polar Hunter",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Firewaltz Edge",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -586,7 +690,9 @@
     "Elemental Crit",
     "Sharpness +2",
     "Challenger +1"
-   ]
+   ],
+   "weapon": "Firewaltz Edge",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -597,7 +703,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Tremor Res"
-   ]
+   ],
+   "weapon": "Firewaltz Edge",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -609,7 +717,9 @@
     "Repeat Offender",
     "Elemental Crit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Kirin Bolt Perfectus",
+   "weaponSlots": 2
   },
   {
    "sheet": "SnS",
@@ -620,7 +730,9 @@
     "Razor Sharp",
     "Repeat Offender",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Elderfrost Giant Slalom",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -631,7 +743,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Elderfrost Giant Slalom",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -642,7 +756,9 @@
     "Challenger +2",
     "Sharpness +2",
     "Fire Atk +2"
-   ]
+   ],
+   "weapon": "Firewaltz Edge",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -653,7 +769,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Elderfrost Giant Slalom",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -664,7 +782,9 @@
     "Razor Sharp",
     "Sharpness +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Sanitsurau",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -675,7 +795,9 @@
     "Elemental Crit",
     "Repeat Offender",
     "Sharpness +1"
-   ]
+   ],
+   "weapon": "Thunderlord Skybolt",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -686,7 +808,9 @@
     "Elemental Crit",
     "Challenger +2",
     "Thunder Atk +2"
-   ]
+   ],
+   "weapon": "Thunderlord Skybolt",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -697,7 +821,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Elderfrost Giant Slalom",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -708,7 +834,9 @@
     "Repeat Offender",
     "Critical Eye +2",
     "Elemental Crit"
-   ]
+   ],
+   "weapon": "Magnastar Akri",
+   "weaponSlots": 2
   },
   {
    "sheet": "SnS",
@@ -719,7 +847,9 @@
     "Challenger +2",
     "Critical Eye +2",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Magnastar Akri",
+   "weaponSlots": 2
   },
   {
    "sheet": "SnS",
@@ -730,7 +860,9 @@
     "Elemental Crit",
     "Sharpness +2",
     "Fire Atk +2"
-   ]
+   ],
+   "weapon": "Firewaltz Edge",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -741,7 +873,9 @@
     "Elemental Crit",
     "Sharpness +2",
     "Fire Atk +2"
-   ]
+   ],
+   "weapon": "Firewaltz Edge",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -752,7 +886,9 @@
     "Elemental Crit",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Thunderlord Skybolt",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -763,7 +899,9 @@
     "Elemental Crit",
     "Repeat Offender",
     "Thunder Atk +1"
-   ]
+   ],
+   "weapon": "Thunderlord Skybolt",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -774,7 +912,9 @@
     "Challenger +2",
     "Sharpness +2",
     "Critical Eye +2"
-   ]
+   ],
+   "weapon": "Sanitsurau",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -785,7 +925,9 @@
     "Sharpness +2",
     "Challenger +2",
     "Water Atk +2"
-   ]
+   ],
+   "weapon": "Sanitsurau",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -796,7 +938,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Elderfrost Giant Slalom",
+   "weaponSlots": 0
   },
   {
    "sheet": "SnS",
@@ -807,7 +951,9 @@
     "Repeat Offender",
     "Elemental Crit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Thunderlord Skybolt",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -818,7 +964,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Scoria Agnaktor",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -830,7 +978,8 @@
     "Razor Sharp",
     "Sharpness +2",
     "Fire Atk +2"
-   ]
+   ],
+   "weapon": "Reverie Star Blades (MHXX Only)"
   },
   {
    "sheet": "DB",
@@ -841,7 +990,9 @@
     "Razor Sharp",
     "Sharpness +2",
     "Water Atk +2"
-   ]
+   ],
+   "weapon": "Double Droth Flood",
+   "weaponSlots": 2
   },
   {
    "sheet": "DB",
@@ -854,7 +1005,9 @@
     "Tremor Res",
     "Skill +2",
     "Double Talisman"
-   ]
+   ],
+   "weapon": "Scoria Agnaktor",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -866,7 +1019,9 @@
     "Razor Sharp",
     "Tremor Res",
     "Fire Atk +2"
-   ]
+   ],
+   "weapon": "Aesonique",
+   "weaponSlots": 1
   },
   {
    "sheet": "DB",
@@ -877,7 +1032,9 @@
     "Repeat Offender",
     "Elemental Crit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Solid Levin Acrus",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -888,7 +1045,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Scoria Agnaktor",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -899,7 +1058,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Scoria Agnaktor",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -910,7 +1071,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Scoria Agnaktor",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -921,7 +1084,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Blood Wind Skards",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -932,7 +1097,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Scoria Agnaktor",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -943,7 +1110,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Her Dance",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -954,7 +1123,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Her Dance",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -965,7 +1136,9 @@
     "Elemental Crit",
     "Challenger +2",
     "Thunder Atk +2"
-   ]
+   ],
+   "weapon": "Solid Levin Acrus",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -976,7 +1149,9 @@
     "Critical Eye +1",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Snow Ravines",
+   "weaponSlots": 1
   },
   {
    "sheet": "DB",
@@ -988,7 +1163,8 @@
     "Fire Atk +2",
     "Razor Sharp",
     "Element Atk Up"
-   ]
+   ],
+   "weapon": "Reverie Star Blades (MHXX Only)"
   },
   {
    "sheet": "DB",
@@ -999,7 +1175,8 @@
     "Repeat Offender",
     "Sharpness +2",
     "Fire Atk +2"
-   ]
+   ],
+   "weapon": "Reverie Star Blades (MHXX Only)"
   },
   {
    "sheet": "DB",
@@ -1011,7 +1188,9 @@
     "Thunder Atk +2",
     "Elemental Crit",
     "Element Atk Up"
-   ]
+   ],
+   "weapon": "Wunderkirins",
+   "weaponSlots": 2
   },
   {
    "sheet": "DB",
@@ -1023,7 +1202,9 @@
     "Thunder Atk +2",
     "Elemental Crit",
     "Stam Recov Up"
-   ]
+   ],
+   "weapon": "Solid Levin Acrus",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -1034,7 +1215,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Her Dance",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -1045,7 +1228,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Her Dance",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -1056,7 +1241,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Blood Wind Skards",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -1067,7 +1254,9 @@
     "Critical Eye +1",
     "Razor Sharp",
     "Thunder Atk +2"
-   ]
+   ],
+   "weapon": "Solid Levin Acrus",
+   "weaponSlots": 0
   },
   {
    "sheet": "DB",
@@ -1078,7 +1267,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Blood Wind Skards",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1089,7 +1280,9 @@
     "Repeat Offender",
     "Sharpness +2",
     "Critical Eye +3"
-   ]
+   ],
+   "weapon": "Fatalis Destroyer",
+   "weaponSlots": 3
   },
   {
    "sheet": "Hammer",
@@ -1100,7 +1293,9 @@
     "Weakness Exploit",
     "Repeat Offender",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Ba'alat Gebal",
+   "weaponSlots": 3
   },
   {
    "sheet": "Hammer",
@@ -1111,7 +1306,9 @@
     "Critical Boost",
     "Tremor Res",
     "Weakness Exploit"
-   ]
+   ],
+   "weapon": "Deadeye Trouble",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1123,7 +1320,9 @@
     "Sharpness +2",
     "Razor Sharp",
     "Airborne"
-   ]
+   ],
+   "weapon": "Shamash Starbuster",
+   "weaponSlots": 2
   },
   {
    "sheet": "Hammer",
@@ -1134,7 +1333,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Armored Megagogue",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1145,7 +1346,9 @@
     "Challenger +2",
     "Sharpness +2",
     "Critical Eye +2"
-   ]
+   ],
+   "weapon": "Shamash Starbuster",
+   "weaponSlots": 2
   },
   {
    "sheet": "Hammer",
@@ -1157,7 +1360,9 @@
     "Repeat Offender",
     "Critical Boost",
     "Challenger +1"
-   ]
+   ],
+   "weapon": "Fatalis Destroyer",
+   "weaponSlots": 3
   },
   {
    "sheet": "Hammer",
@@ -1168,7 +1373,9 @@
     "Polar Hunter",
     "Attack Up S",
     "Weakness Exploit"
-   ]
+   ],
+   "weapon": "Deadeye Trouble",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1179,7 +1386,9 @@
     "Weakness Exploit",
     "Repeat Offender",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Ba'alat Gebal",
+   "weaponSlots": 3
   },
   {
    "sheet": "Hammer",
@@ -1190,7 +1399,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Earplugs"
-   ]
+   ],
+   "weapon": "Ba'alat Gebal",
+   "weaponSlots": 3
   },
   {
    "sheet": "Hammer",
@@ -1201,7 +1412,9 @@
     "Repeat Offender",
     "Sharpness +2",
     "Critical Eye +2"
-   ]
+   ],
+   "weapon": "Fatalis Destroyer",
+   "weaponSlots": 3
   },
   {
    "sheet": "Hammer",
@@ -1212,7 +1425,9 @@
     "Critical Eye +1",
     "Challenger +2",
     "HG Earplugs"
-   ]
+   ],
+   "weapon": "Deadeye Trouble",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1223,7 +1438,9 @@
     "Challenger +2",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Fatalis Destroyer",
+   "weaponSlots": 3
   },
   {
    "sheet": "Hammer",
@@ -1234,7 +1451,9 @@
     "Earplugs",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "\u00c4chtungsblick",
+   "weaponSlots": 2
   },
   {
    "sheet": "Hammer",
@@ -1245,7 +1464,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Earplugs"
-   ]
+   ],
+   "weapon": "\u00c4chtungsblick",
+   "weaponSlots": 2
   },
   {
    "sheet": "Hammer",
@@ -1256,7 +1477,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Elderfrost Grandslam",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1267,7 +1490,9 @@
     "Weakness Exploit",
     "Attack Up S",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Rustrazor Smasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1278,7 +1503,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Attack UpS"
-   ]
+   ],
+   "weapon": "Rustrazor Smasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1289,7 +1516,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Earplugs"
-   ]
+   ],
+   "weapon": "Rustrazor Smasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "Hammer",
@@ -1300,7 +1529,9 @@
     "Repeat Offender",
     "Challenger +2",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Huge Tigrex Hammer",
+   "weaponSlots": 2
   },
   {
    "sheet": "Hammer",
@@ -1311,7 +1542,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Fatalis Destroyer",
+   "weaponSlots": 3
   },
   {
    "sheet": "HH",
@@ -1322,7 +1555,9 @@
     "Challenger +2",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Old Fatalis Aria",
+   "weaponSlots": 0
   },
   {
    "sheet": "HH",
@@ -1333,7 +1568,9 @@
     "Challenger +2",
     "Bludgeoner",
     "Tremor Res"
-   ]
+   ],
+   "weapon": "Akantor Dirge",
+   "weaponSlots": 0
   },
   {
    "sheet": "HH",
@@ -1344,7 +1581,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Scaldertina",
+   "weaponSlots": 1
   },
   {
    "sheet": "HH",
@@ -1355,7 +1594,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Flying Pub Soul"
-   ]
+   ],
+   "weapon": "Glavepyre Horn",
+   "weaponSlots": 0
   },
   {
    "sheet": "HH",
@@ -1366,7 +1607,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Heavy Bone Horn",
+   "weaponSlots": 2
   },
   {
    "sheet": "HH",
@@ -1377,7 +1620,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Polar Hunter"
-   ]
+   ],
+   "weapon": "Crimson Superb Horn",
+   "weaponSlots": 0
   },
   {
    "sheet": "HH",
@@ -1388,7 +1633,9 @@
     "Tropic Hunter",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Crimson Superb Horn",
+   "weaponSlots": 0
   },
   {
    "sheet": "HH",
@@ -1399,7 +1646,9 @@
     "Critical Boost",
     "Sharpness +1",
     "Weakness Exploit"
-   ]
+   ],
+   "weapon": "Gr\u00fcnlicht Flap",
+   "weaponSlots": 1
   },
   {
    "sheet": "HH",
@@ -1410,7 +1659,9 @@
     "Sharpness +1",
     "Challenger +1",
     "HG Earplugs"
-   ]
+   ],
+   "weapon": "Crimson Superb Horn",
+   "weaponSlots": 0
   },
   {
    "sheet": "HH",
@@ -1421,7 +1672,9 @@
     "Critical Eye +2",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Old Fatalis Aria",
+   "weaponSlots": 0
   },
   {
    "sheet": "HH",
@@ -1432,7 +1685,9 @@
     "Critical Eye +2",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Glavenus Hornova",
+   "weaponSlots": 1
   },
   {
    "sheet": "HH",
@@ -1443,7 +1698,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Gr\u00fcnlicht Flap",
+   "weaponSlots": 1
   },
   {
    "sheet": "HH",
@@ -1454,7 +1711,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Heavy Bone Horn",
+   "weaponSlots": 2
   },
   {
    "sheet": "Lance",
@@ -1465,7 +1724,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Elderfrost Stampede",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1476,7 +1737,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Rustrazor Stinger",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1487,7 +1750,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Okimi Kaisei",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1500,7 +1765,9 @@
     "Tremor Res",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Rustrazor Stinger",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1510,7 +1777,9 @@
     "Critical Boost",
     "Critical Eye +2",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Rustrazor Stinger",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1521,7 +1790,9 @@
     "Critical Eye +2",
     "Repeat Offender",
     "Polar Hunter"
-   ]
+   ],
+   "weapon": "Rustrazor Stinger",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1532,7 +1803,9 @@
     "Repeat Offender",
     "Challenger +2",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Rustrazor Stinger",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1543,7 +1816,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Serket-Hetit",
+   "weaponSlots": 3
   },
   {
    "sheet": "Lance",
@@ -1554,7 +1829,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Rustrazor Stinger",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1565,7 +1842,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Elderfrost Stampede",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1577,7 +1856,9 @@
     "Challenger +1",
     "Repeat Offender",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Serket-Hetit",
+   "weaponSlots": 3
   },
   {
    "sheet": "Lance",
@@ -1588,7 +1869,9 @@
     "Critical Eye +3",
     "Challenger +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Red Prominence",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1599,7 +1882,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Perfect Storm Doris",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1610,7 +1895,9 @@
     "Razor Sharp",
     "Repeat Offender",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Okimi Kaisei",
+   "weaponSlots": 0
   },
   {
    "sheet": "Lance",
@@ -1621,7 +1908,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Serket-Hetit",
+   "weaponSlots": 3
   },
   {
    "sheet": "GL",
@@ -1632,7 +1921,9 @@
     "Critical Eye +2",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Burnt Chariot",
+   "weaponSlots": 2
   },
   {
    "sheet": "GL",
@@ -1643,7 +1934,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Elderfrost Broadside",
+   "weaponSlots": 0
   },
   {
    "sheet": "GL",
@@ -1654,7 +1947,9 @@
     "Load Up",
     "Guard +1",
     "Trump Card"
-   ]
+   ],
+   "weapon": "Blackhare Cannon",
+   "weaponSlots": 0
   },
   {
    "sheet": "GL",
@@ -1665,7 +1960,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Ajimura Chinju",
+   "weaponSlots": 0
   },
   {
    "sheet": "GL",
@@ -1676,7 +1973,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Ajimura Chinju",
+   "weaponSlots": 0
   },
   {
    "sheet": "GL",
@@ -1688,7 +1987,9 @@
     "Guard +1",
     "Sharpness +1",
     "Trump Card"
-   ]
+   ],
+   "weapon": "Blackhare Cannon",
+   "weaponSlots": 0
   },
   {
    "sheet": "GL",
@@ -1700,7 +2001,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Burnt Chariot",
+   "weaponSlots": 2
   },
   {
    "sheet": "GL",
@@ -1713,7 +2016,9 @@
     "Trump Card",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Star-Crossed Centaurus",
+   "weaponSlots": 2
   },
   {
    "sheet": "GL",
@@ -1725,7 +2030,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Guard Up"
-   ]
+   ],
+   "weapon": "Burnt Chariot",
+   "weaponSlots": 2
   },
   {
    "sheet": "SwAxe",
@@ -1737,7 +2044,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Composed"
-   ]
+   ],
+   "weapon": "Exoskeleton Hacker",
+   "weaponSlots": 3
   },
   {
    "sheet": "SwAxe",
@@ -1751,7 +2060,9 @@
     "Evade Extender",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Anat Karnaim",
+   "weaponSlots": 3
   },
   {
    "sheet": "SwAxe",
@@ -1762,7 +2073,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Anat Karnaim",
+   "weaponSlots": 3
   },
   {
    "sheet": "SwAxe",
@@ -1773,7 +2086,9 @@
     "Challenger +2",
     "Razor Sharp",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Anat Karnaim",
+   "weaponSlots": 3
   },
   {
    "sheet": "SwAxe",
@@ -1784,7 +2099,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Trump Card"
-   ]
+   ],
+   "weapon": "Anat Karnaim",
+   "weaponSlots": 3
   },
   {
    "sheet": "SwAxe",
@@ -1795,7 +2112,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Elderfrost Unleasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "SwAxe",
@@ -1806,7 +2125,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Trump Card"
-   ]
+   ],
+   "weapon": "Anat Karnaim",
+   "weaponSlots": 3
   },
   {
    "sheet": "SwAxe",
@@ -1817,7 +2138,9 @@
     "Bludgeoner",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Diamante Axe",
+   "weaponSlots": 0
   },
   {
    "sheet": "SwAxe",
@@ -1828,7 +2151,9 @@
     "Repeat Offender",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Anat Karnaim",
+   "weaponSlots": 3
   },
   {
    "sheet": "SwAxe",
@@ -1839,7 +2164,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Evasion +1"
-   ]
+   ],
+   "weapon": "Fatalis End",
+   "weaponSlots": 1
   },
   {
    "sheet": "SwAxe",
@@ -1850,7 +2177,9 @@
     "Critical Eye +1",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Elderfrost Unleasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "SwAxe",
@@ -1861,7 +2190,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Elderfrost Unleasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "SwAxe",
@@ -1874,7 +2205,9 @@
     "Repeat Offender",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Magnastar Batis",
+   "weaponSlots": 2
   },
   {
    "sheet": "SwAxe",
@@ -1886,7 +2219,9 @@
     "Attack Up S",
     "Repeat Offender",
     "Earplugs"
-   ]
+   ],
+   "weapon": "Magnastar Batis",
+   "weaponSlots": 2
   },
   {
    "sheet": "SwAxe",
@@ -1898,7 +2233,9 @@
     "Challenger +1",
     "Repeat Offender",
     "Peak Performance"
-   ]
+   ],
+   "weapon": "Magnastar Batis",
+   "weaponSlots": 2
   },
   {
    "sheet": "SwAxe",
@@ -1909,7 +2246,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Trump Card"
-   ]
+   ],
+   "weapon": "Anat Karnaim",
+   "weaponSlots": 3
   },
   {
    "sheet": "SwAxe",
@@ -1920,7 +2259,9 @@
     "Critical Eye +2",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Fatalis Feint",
+   "weaponSlots": 0
   },
   {
    "sheet": "SwAxe",
@@ -1931,7 +2272,9 @@
     "Razor Sharp",
     "Repeat Offender",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Lanternlight Grave",
+   "weaponSlots": 0
   },
   {
    "sheet": "SwAxe",
@@ -1942,7 +2285,9 @@
     "Critical Eye +2",
     "Razor Sharp",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Anat Karnaim",
+   "weaponSlots": 3
   },
   {
    "sheet": "CB",
@@ -1954,7 +2299,9 @@
     "Challenger +2",
     "Critical Eye +3",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Nebethetepet",
+   "weaponSlots": 3
   },
   {
    "sheet": "CB",
@@ -1965,7 +2312,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Sharpness +1"
-   ]
+   ],
+   "weapon": "Adoration Unwound",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -1976,7 +2325,9 @@
     "Partbreaker",
     "HG Earplugs",
     "Mind's Eye"
-   ]
+   ],
+   "weapon": "Magnastar Tobah",
+   "weaponSlots": 2
   },
   {
    "sheet": "CB",
@@ -1988,7 +2339,9 @@
     "Razor Sharp",
     "Sharpness +1",
     "Tremor Res"
-   ]
+   ],
+   "weapon": "Cera Cediment",
+   "weaponSlots": 1
   },
   {
    "sheet": "CB",
@@ -1999,7 +2352,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Rustrazor Slasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2011,7 +2366,9 @@
     "Bludgeoner",
     "Razor Sharp",
     "Challenger +1"
-   ]
+   ],
+   "weapon": "Akantor Supremacy",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2024,7 +2381,9 @@
     "Challenger +2",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Rustrazor Slasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2036,7 +2395,9 @@
     "Razor Sharp",
     "Challenger +2",
     "Critical Eye +3"
-   ]
+   ],
+   "weapon": "Nebethetepet",
+   "weaponSlots": 3
   },
   {
    "sheet": "CB",
@@ -2047,7 +2408,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Cera Cediment",
+   "weaponSlots": 1
   },
   {
    "sheet": "CB",
@@ -2059,7 +2422,9 @@
     "Critical Boost",
     "Challenger +1",
     "Knockout King"
-   ]
+   ],
+   "weapon": "Rustrazor Slasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2070,7 +2435,9 @@
     "Sharpness +2",
     "Bitter Affinity",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Aged C. Blade",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2082,7 +2449,9 @@
     "Critical Eye +3",
     "Razor Sharp",
     "Weakness Exploit"
-   ]
+   ],
+   "weapon": "Nebethetepet",
+   "weaponSlots": 3
   },
   {
    "sheet": "CB",
@@ -2095,7 +2464,9 @@
     "HG Earplugs",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Akantor Supremacy",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2107,7 +2478,9 @@
     "Repeat Offender",
     "Challenger +1",
     "Earplugs"
-   ]
+   ],
+   "weapon": "Magnastar Tobah",
+   "weaponSlots": 2
   },
   {
    "sheet": "CB",
@@ -2118,7 +2491,9 @@
     "Sharpness +2",
     "Critical Boost",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Cera Cediment",
+   "weaponSlots": 1
   },
   {
    "sheet": "CB",
@@ -2129,7 +2504,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Adoration Unwound",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2140,7 +2517,9 @@
     "Element Atk Up",
     "Sharpness +1",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Dear Lutemineva",
+   "weaponSlots": 1
   },
   {
    "sheet": "CB",
@@ -2152,7 +2531,9 @@
     "Sharpness +2",
     "Razor Sharp",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Dear Lutemineva",
+   "weaponSlots": 1
   },
   {
    "sheet": "CB",
@@ -2164,7 +2545,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Artillery Novice"
-   ]
+   ],
+   "weapon": "Akantor Supremacy",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2176,7 +2559,9 @@
     "Critical Boost",
     "Attack Up S",
     "Earplugs"
-   ]
+   ],
+   "weapon": "Akantor Supremacy",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2187,7 +2572,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +3"
-   ]
+   ],
+   "weapon": "Rustrazor Slasher",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2199,7 +2586,9 @@
     "Critical Boost",
     "Load Up",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Akantor Supremacy",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2210,7 +2599,9 @@
     "Sharpness +1",
     "Element Atk Up",
     "HG Earplugs"
-   ]
+   ],
+   "weapon": "Fatalis Countenance",
+   "weaponSlots": 0
   },
   {
    "sheet": "CB",
@@ -2221,7 +2612,9 @@
     "Load Up",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Cera Cediment",
+   "weaponSlots": 1
   },
   {
    "sheet": "CB",
@@ -2233,7 +2626,9 @@
     "Critical Eye +1",
     "Sharpness +2",
     "Airborne"
-   ]
+   ],
+   "weapon": "Cera Cediment",
+   "weaponSlots": 1
   },
   {
    "sheet": "IG",
@@ -2244,7 +2639,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Stratosphere Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "IG",
@@ -2255,7 +2652,9 @@
     "Challenger +2",
     "Razor Sharp",
     "Tropic Hunter"
-   ]
+   ],
+   "weapon": "Inferno Halberd",
+   "weaponSlots": 1
   },
   {
    "sheet": "IG",
@@ -2266,7 +2665,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Absolute Ruiner Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "IG",
@@ -2278,7 +2679,9 @@
     "Sharpness +2",
     "Razor Sharp",
     "Polar Hunter"
-   ]
+   ],
+   "weapon": "Absolute Ruiner Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "IG",
@@ -2289,7 +2692,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Dragonebula",
+   "weaponSlots": 0
   },
   {
    "sheet": "IG",
@@ -2301,7 +2706,9 @@
     "Repeat Offender",
     "Elemental Crit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Emperor Boltbrute",
+   "weaponSlots": 2
   },
   {
    "sheet": "IG",
@@ -2313,7 +2720,9 @@
     "Repeat Offender",
     "Elemental Crit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Inferno Halberd",
+   "weaponSlots": 1
   },
   {
    "sheet": "IG",
@@ -2324,7 +2733,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Elderfrost Gambado",
+   "weaponSlots": 0
   },
   {
    "sheet": "IG",
@@ -2335,7 +2746,9 @@
     "Challenger +2",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Absolute Ruiner Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "IG",
@@ -2346,7 +2759,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Fleeting Existence",
+   "weaponSlots": 0
   },
   {
    "sheet": "IG",
@@ -2358,7 +2773,9 @@
     "Repeat Offender",
     "Critical Boost",
     "Bombardier"
-   ]
+   ],
+   "weapon": "Absolute Ruiner Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "IG",
@@ -2369,7 +2786,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Fatalis Overlord",
+   "weaponSlots": 0
   },
   {
    "sheet": "IG",
@@ -2380,7 +2799,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Absolute Ruiner Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "IG",
@@ -2391,7 +2812,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Absolute Ruiner Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "IG",
@@ -2402,7 +2825,9 @@
     "Razor Sharp",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Fatalis Overlord",
+   "weaponSlots": 0
   },
   {
    "sheet": "IG",
@@ -2413,7 +2838,9 @@
     "Sharpness +2",
     "Challenger +2",
     "Fire Atk +1"
-   ]
+   ],
+   "weapon": "Glavenus Helldanova",
+   "weaponSlots": 1
   },
   {
    "sheet": "IG",
@@ -2424,7 +2851,9 @@
     "Razor Sharp",
     "Challenger +2",
     "Sharpness +2"
-   ]
+   ],
+   "weapon": "Inferno Halberd",
+   "weaponSlots": 1
   },
   {
    "sheet": "IG",
@@ -2435,7 +2864,9 @@
     "Razor Sharp",
     "Repeat Offender",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Fatalis Overlord",
+   "weaponSlots": 0
   },
   {
    "sheet": "IG",
@@ -2446,7 +2877,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Repeat Offender"
-   ]
+   ],
+   "weapon": "Fatalis Overlord",
+   "weaponSlots": 0
   },
   {
    "sheet": "IG",
@@ -2457,7 +2890,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Fatalis Overlord",
+   "weaponSlots": 0
   },
   {
    "sheet": "IG",
@@ -2468,7 +2903,9 @@
     "Critical Eye +2",
     "Critical Boost",
     "Weakness Exploit"
-   ]
+   ],
+   "weapon": "Inferno Halberd",
+   "weaponSlots": 1
   },
   {
    "sheet": "IG",
@@ -2479,7 +2916,9 @@
     "Critical Eye +2",
     "Sharpness +2",
     "Razor Sharp"
-   ]
+   ],
+   "weapon": "Absolute Ruiner Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "IG",
@@ -2490,7 +2929,9 @@
     "Critical Eye +3",
     "Sharpness +2",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Absolute Ruiner Glaive",
+   "weaponSlots": 3
   },
   {
    "sheet": "LBG",
@@ -2502,7 +2943,8 @@
     "Challenger +2",
     "Attack Up S"
    ],
-   "partial": true
+   "weapon": "Occult Espringal",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2515,7 +2957,9 @@
     "Shot Booster",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Hurricane's Gaze",
+   "weaponSlots": 0
   },
   {
    "sheet": "LBG",
@@ -2527,7 +2971,8 @@
     "HG Earplugs",
     "Heat Cancel"
    ],
-   "partial": true
+   "weapon": "Plesioth Drencher",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2539,7 +2984,8 @@
     "Critical Eye +2",
     "Ammo Saver"
    ],
-   "partial": true
+   "weapon": "Trismegistus",
+   "weaponSlots": 3
   },
   {
    "sheet": "LBG",
@@ -2551,7 +2997,8 @@
     "Critical Eye +2",
     "Challenger +1"
    ],
-   "partial": true
+   "weapon": "Trismegistus",
+   "weaponSlots": 3
   },
   {
    "sheet": "LBG",
@@ -2563,7 +3010,8 @@
     "True Shot Up",
     "Critical Eye +1"
    ],
-   "partial": true
+   "weapon": "Oppressor's Rift",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2574,7 +3022,8 @@
     "Critical Boost",
     "True Shot Up"
    ],
-   "partial": true
+   "weapon": "Oppressor's Rift",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2586,7 +3035,8 @@
     "Challenger +1",
     "Ammo Saver"
    ],
-   "partial": true
+   "weapon": "Occult Espringal",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2598,7 +3048,8 @@
     "Critical Eye +2",
     "Elemental Crit"
    ],
-   "partial": true
+   "weapon": "Orcus Barqus",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2610,7 +3061,8 @@
     "Challenger +2",
     "Critical Eye +1"
    ],
-   "partial": true
+   "weapon": "Oppressor's Rift",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2622,7 +3074,8 @@
     "Challenger +1",
     "Ammo Saver"
    ],
-   "partial": true
+   "weapon": "Occult Espringal",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2634,7 +3087,8 @@
     "Challenger +2",
     "Attack Up S"
    ],
-   "partial": true
+   "weapon": "Occult Espringal",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2646,7 +3100,9 @@
     "Critical Eye +3",
     "Repeat Offender",
     "Quick Sheath"
-   ]
+   ],
+   "weapon": "Mille Blossomayhem",
+   "weaponSlots": 3
   },
   {
    "sheet": "LBG",
@@ -2658,7 +3114,8 @@
     "Critical Eye +2",
     "Ammo Saver"
    ],
-   "partial": true
+   "weapon": "Trismegistus",
+   "weaponSlots": 3
   },
   {
    "sheet": "LBG",
@@ -2670,7 +3127,8 @@
     "Challenger +2",
     "Attack Up S"
    ],
-   "partial": true
+   "weapon": "Occult Espringal",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2682,7 +3140,8 @@
     "Critical Eye +2",
     "Challenger +1"
    ],
-   "partial": true
+   "weapon": "Trismegistus",
+   "weaponSlots": 3
   },
   {
    "sheet": "LBG",
@@ -2694,7 +3153,8 @@
     "Load Up",
     "Critical Eye +2"
    ],
-   "partial": true
+   "weapon": "Oppressor's Rift",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2706,7 +3166,8 @@
     "Challenger +2",
     "Critical Eye +1"
    ],
-   "partial": true
+   "weapon": "Oppressor's Rift",
+   "weaponSlots": 2
   },
   {
    "sheet": "LBG",
@@ -2718,7 +3179,8 @@
     "True Shot Up",
     "Element Atk Up"
    ],
-   "partial": true
+   "weapon": "Pearl Parasol",
+   "weaponSlots": 0
   },
   {
    "sheet": "LBG",
@@ -2730,7 +3192,8 @@
     "Challenger +2",
     "Critical Eye +1"
    ],
-   "partial": true
+   "weapon": "Oppressor's Rift",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2742,7 +3205,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "True Shot Up"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2754,7 +3219,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "True Shot Up"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2765,7 +3232,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Daora's Ceti",
+   "weaponSlots": 1
   },
   {
    "sheet": "HBG",
@@ -2776,7 +3245,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Repeat Offender"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2789,7 +3260,9 @@
     "HG Earplugs",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2800,7 +3273,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2811,7 +3286,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2823,7 +3300,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Tremor Res"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2835,7 +3314,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Tremor Res"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2847,7 +3328,9 @@
     "True Shot Up",
     "Weakness Exploit",
     "Elemental Crit"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2859,7 +3342,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2871,7 +3356,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2882,7 +3369,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2893,7 +3382,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2904,7 +3395,9 @@
     "Challenger +2",
     "Critical Boost",
     "HG Earplugs"
-   ]
+   ],
+   "weapon": "Akantor Descent",
+   "weaponSlots": 0
   },
   {
    "sheet": "HBG",
@@ -2916,7 +3409,9 @@
     "Critical Eye +1",
     "HG Earplugs",
     "Combination Pro"
-   ]
+   ],
+   "weapon": "Akantor Descent",
+   "weaponSlots": 0
   },
   {
    "sheet": "HBG",
@@ -2927,7 +3422,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2938,7 +3435,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2950,7 +3449,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2962,7 +3463,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2974,7 +3477,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2986,7 +3491,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Fleet Feet"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -2997,7 +3504,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Daora's Ceti",
+   "weaponSlots": 1
   },
   {
    "sheet": "HBG",
@@ -3009,7 +3518,9 @@
     "Critical Eye +3",
     "True Shot Up",
     "Fleet Feet"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3021,7 +3532,9 @@
     "Critical Eye +3",
     "True Shot Up",
     "Fleet Feet"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3032,7 +3545,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3043,7 +3558,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3056,7 +3573,9 @@
     "Recoil Down +2",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Destiny's Shoulder",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3069,7 +3588,9 @@
     "Recoil Down +2",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Destiny's Shoulder",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3081,7 +3602,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3093,7 +3616,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "True Shot Up"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3105,7 +3630,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "True Shot Up"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3117,7 +3644,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "True Shot Up"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3129,7 +3658,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "True Shot Up"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3141,7 +3672,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3153,7 +3686,9 @@
     "True Shot Up",
     "Weakness Exploit",
     "Elemental Crit"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3165,7 +3700,9 @@
     "Critical Eye +2",
     "Shot Booster",
     "Tropic Hunter"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3177,7 +3714,9 @@
     "Critical Eye +2",
     "Shot Booster",
     "Earplugs"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3188,7 +3727,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Daora's Ceti",
+   "weaponSlots": 1
   },
   {
    "sheet": "HBG",
@@ -3199,7 +3740,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Daora's Ceti",
+   "weaponSlots": 1
   },
   {
    "sheet": "HBG",
@@ -3211,7 +3754,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3223,7 +3768,9 @@
     "Critical Eye +3",
     "Fleet Feet",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3234,7 +3781,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Daora's Ceti",
+   "weaponSlots": 1
   },
   {
    "sheet": "HBG",
@@ -3246,7 +3795,9 @@
     "Elemental Crit",
     "Critical Eye +3",
     "Ammo Saver"
-   ]
+   ],
+   "weapon": "Wyvern Crasher",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3259,7 +3810,9 @@
     "Shot Booster",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Daora's Ceti",
+   "weaponSlots": 1
   },
   {
    "sheet": "HBG",
@@ -3271,7 +3824,9 @@
     "Critical Eye +3",
     "Combination Pro",
     "Fleet Feet"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "HBG",
@@ -3282,7 +3837,9 @@
     "Critical Boost",
     "Critical Eye +3",
     "Shot Booster"
-   ]
+   ],
+   "weapon": "Orcus Quarcus",
+   "weaponSlots": 2
   },
   {
    "sheet": "Bow",
@@ -3294,7 +3851,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3306,7 +3865,9 @@
     "Critical Boost",
     "Challenger +2",
     "Ammo Saver"
-   ]
+   ],
+   "weapon": "Scylla Webdart",
+   "weaponSlots": 1
   },
   {
    "sheet": "Bow",
@@ -3318,7 +3879,9 @@
     "Weakness Exploit",
     "Load Up",
     "Quick Sheath"
-   ]
+   ],
+   "weapon": "Triumph and Testament",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3330,7 +3893,9 @@
     "Load Up",
     "True Shot Up",
     "Weakness Exploit"
-   ]
+   ],
+   "weapon": "Elysian Manna",
+   "weaponSlots": 1
   },
   {
    "sheet": "Bow",
@@ -3342,7 +3907,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3354,7 +3921,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3366,7 +3935,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3379,7 +3950,9 @@
     "HG Earplugs",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3390,7 +3963,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3402,7 +3977,9 @@
     "Critical Boost",
     "Challenger +2",
     "Ammo Saver"
-   ]
+   ],
+   "weapon": "Scylla Webdart",
+   "weaponSlots": 1
   },
   {
    "sheet": "Bow",
@@ -3414,7 +3991,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3427,7 +4006,9 @@
     "HG Earplugs",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3440,7 +4021,9 @@
     "Critical Eye +3",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3453,7 +4036,9 @@
     "Critical Eye +3",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3465,7 +4050,9 @@
     "Critical Boost",
     "Critical Eye +1",
     "Evade Extender"
-   ]
+   ],
+   "weapon": "Sunlight Gale",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3477,7 +4064,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3489,7 +4078,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3501,7 +4092,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3513,7 +4106,9 @@
     "Critical Boost",
     "Critical Eye +1",
     "Bladescale Hone"
-   ]
+   ],
+   "weapon": "Hellish Virtue",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3525,7 +4120,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3537,7 +4134,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3549,7 +4148,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3562,7 +4163,9 @@
     "HG Earplugs",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3574,7 +4177,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Bow",
@@ -3586,7 +4191,9 @@
     "Critical Boost",
     "Challenger +2",
     "Critical Eye +1"
-   ]
+   ],
+   "weapon": "Harbinger's Battlebow",
+   "weaponSlots": 0
   },
   {
    "sheet": "Dragonheart TA",
@@ -3597,7 +4204,9 @@
     "Critical Boost",
     "Sharpness +2",
     "Challenger +1"
-   ]
+   ],
+   "weapon": "\u00c4chtungsblick",
+   "weaponSlots": 2
   },
   {
    "sheet": "Dragonheart TA",
@@ -3609,7 +4218,9 @@
     "Load Up",
     "Resuscitate",
     "Tremor Res"
-   ]
+   ],
+   "weapon": "Sacred Bow G",
+   "weaponSlots": 3
   },
   {
    "sheet": "Dragonheart TA",
@@ -3622,7 +4233,9 @@
     "Resuscitate",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "Dragonheart TA",
@@ -3633,7 +4246,9 @@
     "Critical Boost",
     "Sharpness +2",
     "Critical Eye +2"
-   ]
+   ],
+   "weapon": "\u00c4chtungsblick",
+   "weaponSlots": 2
   },
   {
    "sheet": "Dragonheart TA",
@@ -3645,7 +4260,9 @@
     "Attack Up S",
     "Razor Sharp",
     "Resuscitate"
-   ]
+   ],
+   "weapon": "Cera Cediment",
+   "weaponSlots": 1
   },
   {
    "sheet": "Dragonheart TA",
@@ -3658,7 +4275,9 @@
     "Challenger +1",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Rustrazor Splitter",
+   "weaponSlots": 0
   },
   {
    "sheet": "Dragonheart TA",
@@ -3670,7 +4289,9 @@
     "Critical Draw",
     "Resuscitate",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "Dragonheart TA",
@@ -3682,7 +4303,9 @@
     "Critical Draw",
     "Resuscitate",
     "Attack Up S"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "Dragonheart TA",
@@ -3693,7 +4316,9 @@
     "Critical Boost",
     "Sharpness +2",
     "Critical Eye +2"
-   ]
+   ],
+   "weapon": "\u00c4chtungsblick",
+   "weaponSlots": 2
   },
   {
    "sheet": "Dragonheart TA",
@@ -3703,7 +4328,9 @@
     "Critical Eye +3",
     "Weakness Exploit",
     "Critical Boost"
-   ]
+   ],
+   "weapon": "Daybreak Horn",
+   "weaponSlots": 0
   },
   {
    "sheet": "Dragonheart TA",
@@ -3714,7 +4341,9 @@
     "Critical Boost",
     "Sharpness +2",
     "Critical Eye +2"
-   ]
+   ],
+   "weapon": "\u00c4chtungsblick",
+   "weaponSlots": 2
   },
   {
    "sheet": "Dragonheart TA",
@@ -3725,7 +4354,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Daora's Yellowjacket",
+   "weaponSlots": 1
   },
   {
    "sheet": "Dragonheart TA",
@@ -3736,7 +4367,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Resuscitate"
-   ]
+   ],
+   "weapon": "Akantor Descent",
+   "weaponSlots": 0
   },
   {
    "sheet": "Dragonheart TA",
@@ -3748,7 +4381,9 @@
     "Punishing Draw",
     "Challenger +2",
     "Challenge Sheath"
-   ]
+   ],
+   "weapon": "Neb-Ta-Djeser",
+   "weaponSlots": 3
   },
   {
    "sheet": "Dragonheart TA",
@@ -3759,7 +4394,9 @@
     "Critical Boost",
     "Razor Sharp",
     "Challenger +1"
-   ]
+   ],
+   "weapon": "Avidya Saber",
+   "weaponSlots": 2
   },
   {
    "sheet": "Dragonheart TA",
@@ -3771,7 +4408,9 @@
     "Attack Up S",
     "Razor Sharp",
     "Resuscitate"
-   ]
+   ],
+   "weapon": "Cera Cediment",
+   "weaponSlots": 1
   },
   {
    "sheet": "Dragonheart TA",
@@ -3782,7 +4421,9 @@
     "Weakness Exploit",
     "Critical Boost",
     "Challenger +2"
-   ]
+   ],
+   "weapon": "Le D\u00e9luge",
+   "weaponSlots": 1
   },
   {
    "sheet": "Dragonheart TA",
@@ -3795,7 +4436,9 @@
     "Shot Booster",
     "Double Talisman",
     "Skill +2"
-   ]
+   ],
+   "weapon": "Diablastazooka",
+   "weaponSlots": 1
   }
  ]
 }
