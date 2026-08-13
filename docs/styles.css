@@ -108,6 +108,16 @@ input,select,button,textarea{font-family:inherit}
 }
 
 /* ── Equipment cards ─────────────────────────────────────────────────── */
+/* The talisman card's own entry form — rarity, skills, points, slots. */
+.tal-form{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:8px;align-items:flex-end}
+.tal-field{display:flex;flex-direction:column;gap:3px}
+.tal-field label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.65}
+.tal-field select,.tal-field input{
+  background:var(--control-bg);color:var(--text);border:1px solid var(--line);border-radius:5px;
+  padding:4px 7px;font-size:12px
+}
+.tal-field input[type=number]{width:64px}
+.tal-problems{margin-top:6px;font-size:11px;color:var(--negative);display:flex;flex-direction:column;gap:2px}
 .equip-card{
   border:1px solid var(--line);border-radius:9px;background:#00000030;
   padding:9px 12px
