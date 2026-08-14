@@ -441,6 +441,7 @@
     $("saveBtn").addEventListener("click", () => saveToFile(false));
     $("saveAsBtn").addEventListener("click", () => saveToFile(true));
     $("openBtn").addEventListener("click", openFile);
+    $("shareBtn").addEventListener("click", shareCurrent);
     $("importFile").addEventListener("change", async e => {
       const f = e.target.files[0];
       if (f) loadFromText(await f.text());
@@ -471,6 +472,33 @@
     });
   }
 
+  // ── Sharing ────────────────────────────────────────────────────────────
+  // A set travels in the link's hash, so it works on a static host and never
+  // reaches a server. Opening one adds it as a new set rather than touching
+  // anything the recipient already has.
+  function shareCurrent() {
+    const link = window.SBShare.linkFor(currentSet());
+    const done = () => UI.toast("Link copied — it contains the whole set.");
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(link).then(done, () => prompt("Copy this link:", link));
+    } else {
+      prompt("Copy this link:", link);
+    }
+  }
+  function openSharedFromHash() {
+    const shared = window.SBShare.fromHash(location.hash, DATA);
+    if (!shared) return false;
+    // Clear the hash first, so a reload does not add the set a second time.
+    history.replaceState(null, "", location.pathname + location.search);
+    sets.list.push(shared);
+    sets.active = sets.list.length - 1;
+    renderSetSelect();
+    render();
+    markDirty();
+    UI.toast(`Opened “${shared.name}”.`);
+    return true;
+  }
+
   // ── Startup ────────────────────────────────────────────────────────────
   Pickers.init();
   wireHeader();
@@ -481,5 +509,9 @@
   const stored = readStored(AUTOSAVE_KEY);
   if (stored && stored[SETS_KEY]) applySave(stored, { adopt: false });
   else { renderSetSelect(); render(); }
+  openSharedFromHash();
+  // Pasting a link into an already-open builder only changes the hash, which
+  // does not reload the page — so listen for that too.
+  window.addEventListener("hashchange", openSharedFromHash);
   window.addEventListener("beforeunload", () => { if (localSaveEnabled && dirty) flushAutosave(); });
 })();
