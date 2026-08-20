@@ -48,8 +48,8 @@
   const THEME_KEY = "mhgu-sets-theme";
   const THEME_COLORS = [
     ["Teostra", "#570B0B"], ["Rathalos", "#b51717"],
-    ["Tetsucabra", "#68360D"], ["Agnaktor", "#B5590D"],
-    ["Tigrex", "#574916"], ["Rajang", "#9C8328"],
+    ["Tetsucabra", "#783E0F"], ["Agnaktor", "#C7620E"],
+    ["Tigrex", "#74631D"], ["Rajang", "#9C8328"],
     ["Deviljho", "#0B570F"], ["Rathian", "#39993E"],
     ["Astalos", "#14503d"], ["Zinogre", "#279773"],
     ["Zamtrios", "#005984"], ["Plesioth", "#0080c1"],
@@ -64,17 +64,20 @@
   ];
   // THE PALETTE'S ONE INVARIANT: every theme takes white text and a white checkbox tick.
   //
-  // Both come off the same number. A native checkbox takes accent-color from the theme and the
-  // browser picks the tick glyph itself — white below relative luminance .1791, black above it —
-  // and applyTheme picks the text direction the same way, light text while the draw block's
-  // ground sits under that same .1791. The ground is the lighter of the two surfaces (a 60/40
-  // composite of darken(hex,.80) and darken(hex,.95), against the tick's darken(hex,.70)), so it
-  // is strictly the binding one: hold the ground under the line and the tick follows for free.
+  // Two requirements, one number. A native checkbox takes accent-color from the theme and the
+  // browser picks the tick glyph itself — white below relative luminance .1791, black above it.
+  // White body text needs its ground at .1833 or below to clear 4.5:1. The checkbox line is the
+  // stricter of the two, so hold a surface under .1791 and white text on it clears AA for free.
   //
-  // Every theme is under it now, so the light-text branch never fires and no theme renders the
-  // other way round from the rest. Worst white-on-ground in the palette is 4.73:1, clearing AA.
-  // The one exemption is the Quest Randomizer's Gypceros, a white gag theme whose whole joke is
-  // tripping the light branch; it is not in this list anywhere else.
+  // The binding surface is the lightest one a theme paints — a 60/40 composite of darken(hex,.80)
+  // and darken(hex,.95), lighter than the tick's own darken(hex,.70), so testing the composite
+  // covers both. Every theme is under it; worst white-on-ground in the palette is 4.73:1.
+  //
+  // This is load-bearing rather than cosmetic. Most of these apps paint white text unconditionally
+  // with no light-theme fallback left, so a swatch over the line is not a slightly-too-bright
+  // swatch, it is unreadable. The Hunting Log and the Randomizer do still carry an isLight branch,
+  // but it trips only at near-white and nothing in the palette comes close. The Randomizer's
+  // Gypceros is the deliberate exception — tripping that branch is its entire joke.
   //
   // A NEW OR RE-CUT COLOUR HAS TO CLEAR THIS. A swatch that fails is not a slightly-too-bright
   // swatch, it is a theme that inverts against every other one.
@@ -89,7 +92,17 @@
   // source pair's saturation and lightness, member for member:
   //
   //   Tigrex / Rajang        <- Astalos / Zinogre,      at the yellow slot (47°)
-  //   Tetsucabra / Agnaktor  <- Brachydios / Lagiacrus, at the orange slot (27°), both lifted 20%
+  //   Tetsucabra / Agnaktor  <- Brachydios / Lagiacrus, at the orange slot (27°)
+  //
+  // Both pairs then come back up as far as the line allows, less a working margin, because a
+  // source pair brings its own lightness along and the teal and blue pairs are the dark ones.
+  //
+  // RAJANG IS THE ONE SITTING ON THE CEILING. Its ground measures .170 against the .1791 line,
+  // so it has no lift left: brightening it buys dark text and a black tick, which is the exact
+  // thing this invariant exists to prevent. If it ever has to read punchier, trade saturation
+  // for lightness along the boundary (#A58100 at S 1.00 is the vivid end) rather than pushing
+  // lightness up — but that drops it to L .32 and squeezes the pair against Tigrex, so check
+  // the separation before taking it.
   //
   // The earth tones (Duramboros, Diablos, Barroth, Bulldrome) share the 27–47° stretch with both
   // of those pairs by design. Swatches sitting close together in there is expected and is not a
@@ -99,14 +112,22 @@
   // longer in the list: it never picks up the change, and anything keyed off the hex (the selected
   // swatch, the theme's icon) stops matching. Remap on read, not on write — the stale value is
   // already in localStorage on every device that chose it. Only hexes that actually shipped are
-  // listed; cuts that never left the working tree are not, because no device can hold them. The
-  // map is kept identical in all nine apps regardless of which app released what, because this
-  // palette is hand-copied with no shared source.
+  // listed; cuts that never left the working tree are not, because no device can hold them.
+  //
+  // "Shipped" is per app, not per palette. #574916 went out on Talisman Bingo alone, and
+  // #68360D / #B5590D / #68581A on MHGU Bingo alone, because an unrelated commit in each of
+  // those repos swept the working tree mid-edit and pushed a cut that was still being tuned.
+  // They are listed in all nine anyway: the map is kept identical regardless of which app
+  // released what, because this palette is hand-copied with no shared source and a per-app map
+  // is one more thing to drift.
   const LEGACY_HEX = {
-    "#C8A319": "#574916", "#57470B": "#574916", "#5E4D0C": "#574916",           // Tigrex
+    "#C8A319": "#74631D", "#57470B": "#74631D", "#5E4D0C": "#74631D",           // Tigrex
+    "#574916": "#74631D",
     "#F1D364": "#9C8328", "#B59417": "#9C8328", "#C39F19": "#9C8328",           // Rajang
     "#BEA031": "#9C8328",
-    "#C65900": "#68360D", "#FC933E": "#B5590D",                                 // Tetsucabra, Agnaktor
+    "#C65900": "#783E0F", "#FC933E": "#C7620E",                                 // Tetsucabra, Agnaktor
+    "#68360D": "#783E0F", "#B5590D": "#C7620E",                                 // ...and the cuts that
+    "#68581A": "#74631D",                                                       // reached MHGU Bingo only
     "#3A9B3F": "#39993E", "#2DAE85": "#279773",                                 // Rathian, Zinogre
     "#D84696": "#D4358C", "#CE79A8": "#C8679D",                                 // Mizutsune, Congalala
     "#B57C45": "#835A32", "#CFAA87": "#B17A47",                                 // Barroth, Bulldrome
