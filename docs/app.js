@@ -49,7 +49,7 @@
   const THEME_COLORS = [
     ["Teostra", "#570B0B"], ["Rathalos", "#b51717"],
     ["Tetsucabra", "#c65900"], ["Agnaktor", "#fc933e"],
-    ["Tigrex", "#C8A319"], ["Rajang", "#f1d364"],
+    ["Tigrex", "#5E4D0C"], ["Rajang", "#C39F19"],
     ["Deviljho", "#0B570F"], ["Rathian", "#3a9b3f"],
     ["Astalos", "#14503d"], ["Zinogre", "#2dae85"],
     ["Zamtrios", "#005984"], ["Plesioth", "#0080c1"],
@@ -62,6 +62,30 @@
     ["K. Daora", "#505358", "Kushala Daora"], ["Valstrax", "#aeb5c1"],
     ["Forbidden", "#1E2025", "Question Mark"],
   ];
+  // Tigrex and Rajang were amber (#C8A319 / #F1D364) until they were re-cut as the yellow
+  // rotation of Teostra and Rathalos — same saturation and lightness as the reds, hue moved to
+  // the palette's yellow slot at 47°, then both lifted 8% so the pair is not as dark as its
+  // source. 8% is a ceiling, not a taste call. A native checkbox takes accent-color from
+  // --accent, which is darken(hex, .70), and the browser picks the tick glyph itself: white
+  // below relative luminance .1791 and BLACK above it. Rajang lands at .1695 and is over the
+  // line by a 10% lift, which would leave one theme ticking in black while the other 26 tick in
+  // white. That is why the old #F1D364 had black ticks — its accent measured .4655.
+  //
+  // A saved theme is a bare hex, so anyone sitting on a retired one keeps a colour that is no
+  // longer in the list: it never picks up the change, and anything keyed off the hex (the selected
+  // swatch, the theme's icon) stops matching. Remap on read, not on write — the stale value is
+  // already in localStorage on every device that chose it.
+  //
+  // Two generations to catch, not one. Talisman Bingo shipped the unlifted #57470B / #B59417 pair
+  // before the 8% went on, so those hexes reached real devices and have to be remapped as well.
+  // The map is kept identical across all the apps even where only the amber ever shipped: this
+  // palette is hand-copied with no shared source, and matching it everywhere is cheaper to hold
+  // in step than trimming each copy to exactly what that app released.
+  const LEGACY_HEX = {
+    "#C8A319": "#5E4D0C", "#F1D364": "#C39F19",   // the original amber
+    "#57470B": "#5E4D0C", "#B59417": "#C39F19",   // the yellow rotation, before the lift
+  };
+  const migrateHex = (h) => (h && LEGACY_HEX[h.toUpperCase()]) || h;
   const COLORS_HEX = Object.fromEntries(THEME_COLORS.map(([name, hex]) => [hex.toUpperCase(), name]));
   const COLORS_ICON = Object.fromEntries(THEME_COLORS.filter(c => c[2]).map(([name, , icon]) => [name, icon]));
   const FALLBACK_ICON = "assets/MonsterIcons/MHGU-Question_Mark_Icon.webp";
@@ -504,7 +528,7 @@
   wireHeader();
   buildSwatches();
   let savedTheme = "#1E2025";
-  try { savedTheme = localStorage.getItem(THEME_KEY) || savedTheme; } catch (e) {}
+  try { savedTheme = migrateHex(localStorage.getItem(THEME_KEY)) || savedTheme; } catch (e) {}
   applyTheme(savedTheme);
   const stored = readStored(AUTOSAVE_KEY);
   if (stored && stored[SETS_KEY]) applySave(stored, { adopt: false });
