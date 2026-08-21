@@ -50,9 +50,11 @@
     ["Teostra", "#570B0B"], ["Rathalos", "#b51717"],
     ["Tetsucabra", "#783E0F"], ["Agnaktor", "#C7620E"],
     ["Tigrex", "#74631D"], ["Rajang", "#9C8328"],
+    ["Najarala", "#436713"], ["Gendrome", "#67922E"],
     ["Deviljho", "#0B570F"], ["Rathian", "#39993E"],
     ["Astalos", "#14503d"], ["Zinogre", "#279773"],
-    ["Zamtrios", "#005984"], ["Plesioth", "#0080c1"],
+    ["Zamtrios", "#0C5D68"], ["Kirin", "#118898"],
+    ["S. Ceanataur", "#005984", "Shogun Ceanataur"], ["Plesioth", "#0080c1"],
     ["Brachydios", "#0B2757"], ["Lagiacrus", "#0b3f97"],
     ["G. Magala", "#1F0B57", "Gore Magala"], ["Nerscylla", "#4e2fa2"],
     ["Y. Garuga", "#62008f", "Yian Garuga"], ["Chameleos", "#8e50ab"],
@@ -93,6 +95,25 @@
   //
   //   Tigrex / Rajang        <- Astalos / Zinogre,      at the yellow slot (47°)
   //   Tetsucabra / Agnaktor  <- Brachydios / Lagiacrus, at the orange slot (27°)
+  //
+  // Najarala / Gendrome and Zamtrios / Kirin are not re-cuts. They fill the palette's two real
+  // hue gaps, and each takes the mean saturation and lightness of the pairs it sits between, which
+  // is why they read as belonging to both sides rather than to neither.
+  //
+  //   Najarala / Gendrome    at 85.4°  — 48° to 123° measured 75° in HSL, double any other span
+  //   Zamtrios / Kirin       at 187°   — 161° to 200° measures only 39° in HSL but 95° in Lab
+  //
+  // MEASURE HUE GAPS IN LAB, NOT HSL. HSL is badly non-uniform through cyan: the 39° between
+  // Zinogre and the old Zamtrios covered 95 perceptual degrees, the widest hole in the palette,
+  // while the 46° between Chameleos and Mizutsune that looks worst in HSL is 31° in Lab and is
+  // the best-spaced span there is. Going by HSL alone fills the wrong gap.
+  //
+  // 187° rather than the 181° midpoint for the same reason. HSL compresses cyan->blue so hard
+  // that a pair placed at the HSL midpoint still left 34° of Lab on the green side and 59° on
+  // the blue; 187° splits it 49/44. The colour barely moves, the spacing does.
+  //
+  // Zamtrios moved off the blue slot to head the new cyan pair and S. Ceanataur took its place,
+  // which suits both: the ice shark on cyan, the deep-water crab on blue.
   //
   // Both pairs then come back up as far as the line allows, less a working margin, because a
   // source pair brings its own lightness along and the teal and blue pairs are the dark ones.
