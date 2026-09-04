@@ -315,19 +315,12 @@ input,select,button,textarea{font-family:inherit}
   position:fixed;inset:0;background:#000000a8;display:flex;align-items:center;
   justify-content:center;z-index:20;padding:20px
 }
-.modal-card{
-  position:relative;border:1px solid var(--line);border-radius:12px;padding:22px;
-  width:min(460px,92vw);max-height:88vh;overflow-y:auto;
-  background-color:var(--bg2);
-  background-image:
-    linear-gradient(color-mix(in srgb,var(--bg2) 84%,transparent),color-mix(in srgb,var(--bg2) 84%,transparent)),
-    url('assets/rockyTextureDark2.png');
-  background-repeat:repeat;background-size:auto,200px 200px
-}
+.modal-card{position:relative;background:var(--bg2);border:1px solid var(--line);border-radius:10px;
+  padding:20px;max-width:560px;width:100%;max-height:82vh;overflow-y:auto}
 .modal-card.wide{width:min(680px,94vw)}
 .modal-card h2{margin:0 0 14px;font-size:18px}
 .modal-card p{margin:0 0 10px;line-height:1.45}
-.modal-card a{color:var(--accent-hover)}
+.modal-card a{color:color-mix(in srgb, hsl(from var(--accent) calc(h + 180) 75% 60%) 50%, var(--text))}
 .modal-card .muted{color:var(--text-dim);font-size:13px;opacity:.75}
 .row{display:flex;align-items:center}
 .row.gap{gap:8px}
