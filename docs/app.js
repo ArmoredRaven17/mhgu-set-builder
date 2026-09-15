@@ -607,4 +607,14 @@
   // does not reload the page — so listen for that too.
   window.addEventListener("hashchange", openSharedFromHash);
   window.addEventListener("beforeunload", () => { if (localSaveEnabled && dirty) flushAutosave(); });
+
+  // Once MHFU has swapped in, Chrome still draws each select's text too low, its bottom
+  // clipped, until the select is restyled: zooming the page does it, a repaint does not.
+  // A font-family round trip restyles them; the serif step is styled but never laid out.
+  if (document.fonts) document.fonts.load("1em MHFU").then(() => {
+    const selects = document.querySelectorAll("select");
+    selects.forEach(s => { s.style.fontFamily = "serif"; });
+    selects.forEach(s => getComputedStyle(s).fontFamily);
+    selects.forEach(s => { s.style.fontFamily = ""; });
+  }, () => {});
 })();
